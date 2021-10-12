@@ -6,11 +6,11 @@ This course is the higher course of SWE 573 - Software Development Practices, wh
 
 The name of the team comes from the initials of the team members.
 
-🍰 C an Dayan
-🍰 A nıl Turan
-🍰 K enan Kural
-🍰 E mre Çalık
-🍰 S emih Solmaz
+- 🍰 C an Dayan
+- 🍰 A nıl Turan
+- 🍰 K enan Kural
+- 🍰 E mre Çalık
+- 🍰 S emih Solmaz
 
 Communicator: 🍰 Semih Solmaz
 Project Manager: 🍰 Can Dayan
