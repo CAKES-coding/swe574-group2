@@ -12,8 +12,10 @@ The name of the team comes from the initials of the team members.
 - 🍰 E mre Çalık
 - 🍰 S emih Solmaz
 
--> Communicator: 🍰 Semih Solmaz
--> Project Manager: 🍰 Can Dayan
+To reach our team;
+
+- Communicator: 🍰 Semih Solmaz
+- Project Manager: 🍰 Can Dayan
 
 Our members together, form a strong and high potential team, while remembering the beauty of teamwork to accomplish high-quality deliverables.
 We aim; 
