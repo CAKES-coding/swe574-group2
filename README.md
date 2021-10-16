@@ -35,3 +35,5 @@ The project will be extending the SWE 573 project in such ways. More details wil
 This repository will keep every step and discussion related to projects.
 Check our [issues](https://github.com/active-sludge/swe574-group2/issues).
 Check our [Wiki pages](https://github.com/active-sludge/swe574-group2/wiki).
+
+Deneme
