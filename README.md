@@ -28,7 +28,9 @@ We aim;
 
 ## Project Details
 
-The project will be extending the SWE 573 project in such ways. More details will be announced.
+The main purpose of the project is to make the application that we developed in the SWE-573 course, which allows users to find articles by searching on the medical domain, to be more user-friendly and to bring the search and tagging processes to a more professional version.
+
+The search function will be enriched by including various suggestions. In addition, the activities of the users will be monitored and the interaction between the users will be increased so the application will be a collabrative platform as well. 
 
 ## Objective
 
