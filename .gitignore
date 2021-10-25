@@ -128,3 +128,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Database Persistence files
+Project/Wikode/data
+
+# Idea
+.idea/
