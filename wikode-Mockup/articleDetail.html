@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Article Detail Screen</title>
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/grid/">
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/navbars/">
+
+    <!-- Bootstrap core CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!--Font Awesome library-->
+    <script src="https://kit.fontawesome.com/f405fd37c0.js" crossorigin="anonymous"></script>
+
+
+
+    <!-- Custom styles for this template -->
+    <link href="css/navbar.css" rel="stylesheet">
+    <link href="css/bootstrap-tagsinput.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-expand-md navbar-dark bg-dark" aria-label="Fourth navbar example">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">TagPub</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample04" aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarsExample04">
+            <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="index.html">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="tagsList.html">Tags</a>
+                </li>
+<!--                <li class="nav-item dropdown">-->
+<!--                    <a class="nav-link dropdown-toggle" href="#" id="dropdown04" data-bs-toggle="dropdown" aria-expanded="false">Dropdown</a>-->
+<!--                    <ul class="dropdown-menu" aria-labelledby="dropdown04">-->
+<!--                        <li><a class="dropdown-item" href="#">Action</a></li>-->
+<!--                        <li><a class="dropdown-item" href="#">Another action</a></li>-->
+<!--                        <li><a class="dropdown-item" href="#">Something else here</a></li>-->
+<!--                    </ul>-->
+<!--                </li>-->
+            </ul>
+<!--            <form>-->
+<!--                <input class="form-control" type="text" placeholder="Search" aria-label="Search">-->
+<!--            </form>-->
+        </div>
+    </div>
+</nav>
+<div class="container py-4">
+
+    <div class="p-5 mb-4 bg-light border rounded-3 ">
+        <h3>Mechanisms of SARS-CoV-2 Transmission and Pathogenesis </h3>
+        <p><span class="fw-bold">Authors: </span>Andrew G Harrison, Tao Lin, Penghua Wang</p>
+        <div class="container">
+            <div class="row">
+                <div class="col">PMID: 33132005</div>
+                <div class="col">PMCID: PMC7556779</div>
+                <div class="col">DOI: 10.1016/j.it.2020.10.004</div>
+            </div>
+        </div>
+        <hr>
+        <p class="fw-bold">Abstract</p>
+        <p>The emergence of severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2) marks the third highly pathogenic coronavirus to spill over into the human population. SARS-CoV-2 is highly transmissible with a broad tissue tropism that is likely perpetuating the pandemic. However, important questions remain regarding its transmissibility and pathogenesis. In this review, we summarize current SARS-CoV-2 research, with an emphasis on transmission, tissue tropism, viral pathogenesis, and immune antagonism. We further present advances in animal models that are important for understanding the pathogenesis of SARS-CoV-2, vaccine development, and therapeutic testing. When necessary, comparisons are made from studies with SARS to provide further perspectives on coronavirus infectious disease 2019 (COVID-19), as well as draw inferences for future investigations.</p>
+        <p class="fw-bold">Keywords</p>
+        <p>COVID-19; SARS, SARS-CoV-2; coronavirus; severe acute respiratory syndrome.</p>
+        <div class="container-fluid py-4">
+            <form class="tagForm noEnter">
+                <label for="searchField" class="form-label"><span class="fw-bold">Tags: </span></label>
+                <input id="searchField" class="form-control form-control-lg" type="text" value="SARS-CoV-2,infectious disease" data-role="tagsinput" placeholder="add tags" />
+                <button type="submit" class="btn btn-primary d-inline"><i class="fas fa-tags"></i> Save tags</button>
+            </form>
+        </div>
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a
+                        class="nav-link active"
+                        id="home-tab"
+                        data-mdb-toggle="tab"
+                        href="#home"
+                        role="tab"
+                        aria-controls="home"
+                        aria-selected="true"
+                >References</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a
+                        class="nav-link"
+                        id="profile-tab"
+                        data-mdb-toggle="tab"
+                        href="#profile"
+                        role="tab"
+                        aria-controls="profile"
+                        aria-selected="false"
+                >Similar articles</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a
+                        class="nav-link"
+                        id="messages-tab"
+                        data-mdb-toggle="tab"
+                        href="#messages"
+                        role="tab"
+                        aria-controls="messages"
+                        aria-selected="false"
+                >Cited by</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a
+                        class="nav-link"
+                        id="settings-tab"
+                        data-mdb-toggle="tab"
+                        href="#settings"
+                        role="tab"
+                        aria-controls="settings"
+                        aria-selected="false"
+                >Mesh Terms</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a
+                        class="nav-link"
+                        id="publication-type-tab"
+                        data-mdb-toggle="tab"
+                        href="#settings"
+                        role="tab"
+                        aria-controls="settings"
+                        aria-selected="false"
+                >Publication Types</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a
+                        class="nav-link"
+                        id="grant-tab"
+                        data-mdb-toggle="tab"
+                        href="#settings"
+                        role="tab"
+                        aria-controls="settings"
+                        aria-selected="false"
+                >Grant Support</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a
+                        class="nav-link"
+                        id="grant-tab"
+                        data-mdb-toggle="tab"
+                        href="#settings"
+                        role="tab"
+                        aria-controls="settings"
+                        aria-selected="false"
+                >Activity</a>
+            </li>
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div class="tab-pane active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                <div class="references" id="references">
+                    <div id="top-references-list" class="references-lists-container">
+                        <div class="refs-list">
+                            <ol id="top-references-list-1" class="references-list">
+                                <li>
+                                    <ol class="references-and-notes-list">
+
+                                        <li class="skip-numbering" value="1">
+
+                                            Zhou P. A pneumonia outbreak associated with a new coronavirus of probable bat origin. Nature. 2020;579:270–273.
+                                            -
+                                            <a class="reference-link" href="http://www.ncbi.nlm.nih.gov/pmc/articles/pmc7095418/" ref="linksrc=references_link&amp;ordinalpos=1" data-ga-category="reference" data-ga-action="PMC7095418">
+                                                PMC
+                                            </a>
+                                            -
+                                            <a class="reference-link" href="/32015507/" ref="linksrc=references_link&amp;ordinalpos=2" data-ga-category="reference" data-ga-action="32015507">
+                                                PubMed
+                                            </a>
+                                        </li>
+
+                                    </ol>
+                                </li>
+                                <li>
+                                    <ol class="references-and-notes-list">
+                                        <li class="skip-numbering" value="1">
+                                            Peiris J. Coronavirus as a possible cause of severe acute respiratory syndrome. Lancet. 2003;361:1319–1325.
+                                            -
+                                            <a class="reference-link" href="http://www.ncbi.nlm.nih.gov/pmc/articles/pmc7112372/" ref="linksrc=references_link&amp;ordinalpos=1" data-ga-category="reference" data-ga-action="PMC7112372">
+                                                PMC
+                                            </a>
+                                            -
+                                            <a class="reference-link" href="/12711465/" ref="linksrc=references_link&amp;ordinalpos=2" data-ga-category="reference" data-ga-action="12711465">
+                                                PubMed
+                                            </a>
+                                        </li>
+
+                                    </ol>
+                                </li>
+                                <li>
+                                    <ol class="references-and-notes-list">
+                                        <li class="skip-numbering" value="1">
+                                            Huang C. Clinical features of patients infected with 2019 novel coronavirus in Wuhan, China. Lancet. 2020;395:497–506.
+                                            -
+                                            <a class="reference-link" href="http://www.ncbi.nlm.nih.gov/pmc/articles/pmc7159299/" ref="linksrc=references_link&amp;ordinalpos=1" data-ga-category="reference" data-ga-action="PMC7159299">
+                                                PMC
+                                            </a>
+                                 -
+                                            <a class="reference-link" href="/31986264/" ref="linksrc=references_link&amp;ordinalpos=2" data-ga-category="reference" data-ga-action="31986264">
+                                                PubMed
+                                            </a>
+
+
+
+
+                                        </li>
+
+                                    </ol>
+                                </li>
+
+                                <li>
+                                    <ol class="references-and-notes-list">
+
+                                        <li class="skip-numbering" value="1">
+
+                                            WHO . WHO; 2020. Coronavirus Disease (COVID-19) Pandemic.
+
+
+
+                                            -
+                                            <a class="reference-link" href="http://www.ncbi.nlm.nih.gov/pmc/articles/pmc7306959/" ref="linksrc=references_link&amp;ordinalpos=1" data-ga-category="reference" data-ga-action="PMC7306959">
+                                                PMC
+                                            </a>
+
+
+
+
+
+                                            -
+                                            <a class="reference-link" href="/32582306/" ref="linksrc=references_link&amp;ordinalpos=2" data-ga-category="reference" data-ga-action="32582306">
+                                                PubMed
+                                            </a>
+
+
+
+
+                                        </li>
+
+                                    </ol>
+                                </li>
+
+                                <li>
+                                    <ol class="references-and-notes-list">
+
+                                        <li class="skip-numbering" value="1">
+
+                                            Gorbalenya A.E. The species Severe acute respiratory syndrome-related coronavirus: classifying 2019-nCoV and naming it SARS-CoV-2. Nat. Microbiol. 2020;5:536–544.
+
+
+
+                                            -
+                                            <a class="reference-link" href="http://www.ncbi.nlm.nih.gov/pmc/articles/pmc7095448/" ref="linksrc=references_link&amp;ordinalpos=1" data-ga-category="reference" data-ga-action="PMC7095448">
+                                                PMC
+                                            </a>
+
+
+
+
+
+                                            -
+                                            <a class="reference-link" href="/32123347/" ref="linksrc=references_link&amp;ordinalpos=2" data-ga-category="reference" data-ga-action="32123347">
+                                                PubMed
+                                            </a>
+
+
+
+
+                                        </li>
+
+                                    </ol>
+                                </li>
+
+
+                            </ol>
+
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                ...
+            </div>
+            <div class="tab-pane" id="messages" role="tabpanel" aria-labelledby="messages-tab">
+                ...
+            </div>
+            <div class="tab-pane" id="settings" role="tabpanel" aria-labelledby="settings-tab">
+                ...
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="mastfoot mt-auto text-center py-4">
+    <div class="inner">
+        <p>Pubmed Artice tagging application by Semih Solmaz</p>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
+<script src="js/bootstrap-tagsinput.js"></script>
+<script src="js/typeahead.js"></script>
+<script src="js/index.js"></script>
+</body>
+</html>
