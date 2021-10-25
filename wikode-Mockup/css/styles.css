@@ -1,0 +1,13 @@
+.div-inline{
+    display:inline-block;
+}
+.searchContainer{
+    display: none;
+}
+
+#tagInput{
+    width: 300px;
+}
+#searchField{
+    width: 400px;
+}

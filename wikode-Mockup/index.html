@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Semih Solmaz">
+    <title>Article Tagging</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/grid/">
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/navbars/">
+
+    <!-- Bootstrap core CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!--Font Awesome library-->
+    <script src="https://kit.fontawesome.com/f405fd37c0.js" crossorigin="anonymous"></script>
+
+
+    
+    <!-- Custom styles for this template -->
+    <link href="css/grid.css" rel="stylesheet">
+    <link href="css/navbar.css" rel="stylesheet">
+    <link href="css/bootstrap-tagsinput.css" rel="stylesheet">
+    <link href="css/styles.css" rel="stylesheet">
+  </head>
+  <body class="">
+
+  <main>
+
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark" aria-label="Fourth navbar example">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">TagPub</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample04" aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarsExample04">
+          <ul class="navbar-nav me-auto mb-2 mb-md-0">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="tagsList.html">Tags</a>
+            </li>
+            <!--                <li class="nav-item dropdown">-->
+            <!--                    <a class="nav-link dropdown-toggle" href="#" id="dropdown04" data-bs-toggle="dropdown" aria-expanded="false">Dropdown</a>-->
+            <!--                    <ul class="dropdown-menu" aria-labelledby="dropdown04">-->
+            <!--                        <li><a class="dropdown-item" href="#">Action</a></li>-->
+            <!--                        <li><a class="dropdown-item" href="#">Another action</a></li>-->
+            <!--                        <li><a class="dropdown-item" href="#">Something else here</a></li>-->
+            <!--                    </ul>-->
+            <!--                </li>-->
+          </ul>
+          <!--            <form>-->
+          <!--                <input class="form-control" type="text" placeholder="Search" aria-label="Search">-->
+          <!--            </form>-->
+        </div>
+      </div>
+    </nav>
+    <div class="container py-4">
+      <div class="p-5 mb-4 bg-light border rounded-3 ">
+        <div class="container-fluid py-2 text-center">
+            <form class="searchForm noEnter">
+              <label for="searchField" class="form-label"><span class="fw-bold">Search: </span></label>
+              <input id="searchField" class="form-control form-control-lg" type="text" value="" data-role="tagsinput" placeholder="Enter keywords" />
+              <div id="searchHelp" class="form-text">Search articles with multiple keywords.</div>
+              <button id="basicSearchButton" type="button" class="btn btn-primary"><i class="fas fa-search"></i> Search</button>
+            </form>
+        </div>
+        <div class="accordion" id="accordionExample">
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="headingOne">
+              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                Advanced Search
+              </button>
+            </h2>
+            <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+              <div class="accordion-body">
+                <div class="container-fluid py-2">
+                  <form class="searchForm">
+                    <div id="advancedSearchDescription" class="form-text">Build advanced queries with specific fields and combine search criteria with AND, OR and NOT operators.</div>
+                    <select id="field-selector" class="adv-search-field field-selector"><option value="Affiliation">Affiliation</option><option value="All Fields" selected="selected">All Fields</option><option value="Author">Author</option><option value="Author - Corporate">Author - Corporate</option><option value="Author - First">Author - First</option><option value="Author - Identifier">Author - Identifier</option><option value="Author - Last">Author - Last</option><option value="Book">Book</option><option value="Conflict of Interest Statements">Conflict of Interest Statements</option><option value="Date - Completion">Date - Completion</option><option value="Date - Create">Date - Create</option><option value="Date - Entry">Date - Entry</option><option value="Date - MeSH">Date - MeSH</option><option value="Date - Modification">Date - Modification</option><option value="Date - Publication">Date - Publication</option><option value="EC/RN Number">EC/RN Number</option><option value="Editor">Editor</option><option value="Filter">Filter</option><option value="Grant Number">Grant Number</option><option value="ISBN">ISBN</option><option value="Investigator">Investigator</option><option value="Issue">Issue</option><option value="Journal">Journal</option><option value="Language">Language</option><option value="Location ID">Location ID</option><option value="MeSH Major Topic">MeSH Major Topic</option><option value="MeSH Subheading">MeSH Subheading</option><option value="MeSH Terms">MeSH Terms</option><option value="Other Term">Other Term</option><option value="Pagination">Pagination</option><option value="Pharmacological Action">Pharmacological Action</option><option value="Publication Type">Publication Type</option><option value="Publisher">Publisher</option><option value="Secondary Source ID">Secondary Source ID</option><option value="Subject - Personal Name">Subject - Personal Name</option><option value="Supplementary Concept">Supplementary Concept</option><option value="Text Word">Text Word</option><option value="Title">Title</option><option value="Title/Abstract">Title/Abstract</option><option value="Transliterated Title">Transliterated Title</option><option value="Volume">Volume</option></select>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" checked>
+                      <label class="form-check-label" for="flexRadioDefault1">
+                        equal
+                      </label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2">
+                      <label class="form-check-label" for="flexRadioDefault2">
+                        not equal
+                      </label>
+                    </div>
+                    <input id="advancedSearchField" class="form-control form-control-lg" type="text" value="" data-role="tagsinput" placeholder="Enter keywords" />
+                    <div class="dropdown  d-inline-block">
+                      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-plus"></i>
+                        ADD
+                      </button>
+                      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                        <li><a class="dropdown-item" href="#">AND</a></li>
+                        <li><a class="dropdown-item" href="#">OR</a></li>
+                      </ul>
+                    </div>
+                    <div id="advancedSearchHelp" class="form-text">Search articles with multiple keywords.</div>
+                    <div class="input-group py-2">
+                      <span class="input-group-text">Query</span>
+                      <textarea class="form-control" aria-label="With textarea"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Search</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+
+  <div class="searchContainer container bg-light border rounded-3">
+
+    <h3 class="lead">Search Results</h3>
+
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Title</th>
+        <th scope="col">Authors</th>
+        <th scope="col">Date</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <th scope="row"><a href="articleDetail.html">#1</a></th>
+        <td>COVID-19 in Latin America: The implications of the first confirmed case in Brazil.</td>
+        <td>Rodriguez-Morales AJ, Gallego V, Escalera-Antezana JP</td>
+        <td>2020 Feb</td>
+      </tr>
+      <tr>
+        <th scope="row">2</th>
+        <td>Current situation of COVID-19 in South America</td>
+        <td>Pinheiro MDCN, Freitas Junior JAB, Carneiro SR.</td>
+        <td>2020 Jun</td>
+      </tr>
+      <tr>
+        <th scope="row">3</th>
+        <td>Genetic variants and source of introduction of SARS-CoV-2 in South America.</td>
+        <td>Poterico JA, Mestanza O.</td>
+        <td>2020 Oct</td>
+      </tr>
+      <tr>
+        <th scope="row">4</th>
+        <td>South America prepares for the impact of COVID-19.</td>
+        <td>Kirby T.</td>
+        <td>2020 Jun</td>
+      </tr>
+      <tr>
+        <th scope="row">5</th>
+        <td>Passengers' destinations from China: low risk of Novel Coronavirus (2019-nCoV) transmission into Africa and South America.</td>
+        <td>Haider N, Yavlinsky A, Simons D, Osman AY, Ntoumi F, Zumla A, Kock R.</td>
+        <td>2020 Feb</td>
+      </tr>
+      </tbody>
+    </table>
+
+    <nav aria-label="Page navigation example">
+      <ul class="pagination">
+        <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+        <li class="page-item"><a class="page-link" href="#">1</a></li>
+        <li class="page-item"><a class="page-link" href="#">2</a></li>
+        <li class="page-item"><a class="page-link" href="#">3</a></li>
+        <li class="page-item"><a class="page-link" href="#">Next</a></li>
+      </ul>
+    </nav>
+
+  </div>
+    <footer class="mastfoot mt-auto text-center py-4">
+      <div class="inner">
+        <p>Pubmed Artice tagging application by Semih Solmaz</p>
+      </div>
+    </footer>
+
+  </main>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
+  <script src="js/bootstrap-tagsinput.js"></script>
+  <script src="js/index.js"></script>
+  </body>
+</html>
