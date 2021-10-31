@@ -38,7 +38,7 @@ jobs:
           context: ./
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/573final:latest
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/574:latest
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
@@ -48,13 +48,13 @@ jobs:
         with:
           command: docker-compose pull
           host: ${{ secrets.HOST }}
-          username: ec2-user
-          privateKey: ${{ secrets.PRIVATE_KEY}}
+          username: ${{ secrets.VM_USER_NAME }}
+          privateKey: ${{ secrets.VM_SSH_KEY}}
           
       - name: update service
         uses: garygrossgarten/github-action-ssh@release
         with:
           command: docker-compose up -d
           host: ${{ secrets.HOST }}
-          username: ec2-user
-          privateKey: ${{ secrets.PRIVATE_KEY}}
+          username: ${{ secrets.VM_USER_NAME }}
+          privateKey: ${{ secrets.VM_SSH_KEY}}

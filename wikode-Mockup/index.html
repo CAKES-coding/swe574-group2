@@ -69,54 +69,6 @@
               <button id="basicSearchButton" type="button" class="btn btn-primary"><i class="fas fa-search"></i> Search</button>
             </form>
         </div>
-        <div class="accordion" id="accordionExample">
-          <div class="accordion-item">
-            <h2 class="accordion-header" id="headingOne">
-              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                Advanced Search
-              </button>
-            </h2>
-            <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-              <div class="accordion-body">
-                <div class="container-fluid py-2">
-                  <form class="searchForm">
-                    <div id="advancedSearchDescription" class="form-text">Build advanced queries with specific fields and combine search criteria with AND, OR and NOT operators.</div>
-                    <select id="field-selector" class="adv-search-field field-selector"><option value="Affiliation">Affiliation</option><option value="All Fields" selected="selected">All Fields</option><option value="Author">Author</option><option value="Author - Corporate">Author - Corporate</option><option value="Author - First">Author - First</option><option value="Author - Identifier">Author - Identifier</option><option value="Author - Last">Author - Last</option><option value="Book">Book</option><option value="Conflict of Interest Statements">Conflict of Interest Statements</option><option value="Date - Completion">Date - Completion</option><option value="Date - Create">Date - Create</option><option value="Date - Entry">Date - Entry</option><option value="Date - MeSH">Date - MeSH</option><option value="Date - Modification">Date - Modification</option><option value="Date - Publication">Date - Publication</option><option value="EC/RN Number">EC/RN Number</option><option value="Editor">Editor</option><option value="Filter">Filter</option><option value="Grant Number">Grant Number</option><option value="ISBN">ISBN</option><option value="Investigator">Investigator</option><option value="Issue">Issue</option><option value="Journal">Journal</option><option value="Language">Language</option><option value="Location ID">Location ID</option><option value="MeSH Major Topic">MeSH Major Topic</option><option value="MeSH Subheading">MeSH Subheading</option><option value="MeSH Terms">MeSH Terms</option><option value="Other Term">Other Term</option><option value="Pagination">Pagination</option><option value="Pharmacological Action">Pharmacological Action</option><option value="Publication Type">Publication Type</option><option value="Publisher">Publisher</option><option value="Secondary Source ID">Secondary Source ID</option><option value="Subject - Personal Name">Subject - Personal Name</option><option value="Supplementary Concept">Supplementary Concept</option><option value="Text Word">Text Word</option><option value="Title">Title</option><option value="Title/Abstract">Title/Abstract</option><option value="Transliterated Title">Transliterated Title</option><option value="Volume">Volume</option></select>
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" checked>
-                      <label class="form-check-label" for="flexRadioDefault1">
-                        equal
-                      </label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2">
-                      <label class="form-check-label" for="flexRadioDefault2">
-                        not equal
-                      </label>
-                    </div>
-                    <input id="advancedSearchField" class="form-control form-control-lg" type="text" value="" data-role="tagsinput" placeholder="Enter keywords" />
-                    <div class="dropdown  d-inline-block">
-                      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fas fa-plus"></i>
-                        ADD
-                      </button>
-                      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                        <li><a class="dropdown-item" href="#">AND</a></li>
-                        <li><a class="dropdown-item" href="#">OR</a></li>
-                      </ul>
-                    </div>
-                    <div id="advancedSearchHelp" class="form-text">Search articles with multiple keywords.</div>
-                    <div class="input-group py-2">
-                      <span class="input-group-text">Query</span>
-                      <textarea class="form-control" aria-label="With textarea"></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Search</button>
-                  </form>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
 
@@ -181,9 +133,139 @@
     </nav>
 
   </div>
+    <div class="container bg-light border rounded-3">
+      <div class="row">
+        <div class="col-md-4 heading">
+          <div class="container">
+            <div class="row bootstrap snippets bootdey">
+              <div class="col-md-12 col-xs-6 col-md-offset-3">
+                <div class="panel" id="daily-suggestions">
+                  <div class="panel-heading">
+                    <h3 class="panel-title">Suggestions
+                    </h3>
+                  </div>
+                  <div class="panel-body">
+                    <h5>Suggested Articles</h5>
+                    <ul class="list-group list-group-dividered list-group-full">
+                      <li class="list-group-item">
+                        <div class="media-body">
+                          <p><a href="#">Current situation of COVID-19 in South America</a>
+                            <small>12.04.2020</small> <p class="no-border">
+                          <small>Rodriguez-Morales AJ, Gallego V, Escalera-Antezana JP </small>
+                          </p>
+                        </div>
+                      </li>
+                      <hr>
+                      <li class="list-group-item">
+                        <div class="media-body">
+                          <p><a href="#">Genetic variants and source of introduction of SARS-CoV-2 in South America.</a>
+                            <small>01.10.2020</small> <p class="no-border">
+                          <small>Poterico JA, Mestanza O. </small>
+                        </p>
+                        </div>
+                      </li>
+                      <hr>
+                      <li class="list-group-item">
+                        <div class="media-body">
+                          <p><a href="#">COVID-19 in Latin America: The implications of the first confirmed case in Brazil.</a>
+                            <small>01.02.2020</small> <p class="no-border">
+                          <small> Rodriguez-Morales AJ, Gallego V, Escalera-Antezana JP  </small>
+                        </p>
+                        </div>
+                      </li>
+                    </ul>
+                    <h5>Suggested Users</h5>
+                    <ul class="list-group list-group-dividered list-group-full">
+                      <li class="list-group-item">
+                        <div class="media-body">
+                          <p><a class="name" href="#">Kamil Kazan</a> - <a>14 followers</a>
+                          </p>
+                        </div>
+                      </li>
+                      <li class="list-group-item">
+                        <div class="media-body">
+                          <p><a class="name" href="#">Kazım Yayan</a> - <a>8 followers</a>
+                          </p>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-8">
+          <div class="container">
+          <div class="row bootstrap snippets bootdey">
+            <div class="col-md-12 col-xs-12 col-md-offset-3">
+              <div class="panel" id="daily-feed">
+                <div class="panel-heading">
+                  <h3 class="panel-title">Feed
+                  </h3>
+                </div>
+                <div class="panel-body">
+                  <ul class="list-group list-group-dividered list-group-full">
+                    <li class="list-group-item">
+                      <div class="media">
+                        <div class="media-body">
+                          <h4 class="media-heading">
+                            <small class="pull-right">5m ago</small>
+                            <a class="name">Edward Fletcher</a> tagged article <a href="#">"Passengers' destinations from China: low risk of Novel Coronavirus (2019-nCoV) transmission into Africa and South America."</a>.
+                          </h4>
+                          <small>Today 5:50 pm - 31.10.2021</small>
+                        </div>
+                      </div>
+                    </li>
+                    <li class="list-group-item">
+                      <div class="media">
+                        <div class="media-body">
+                          <h4 class="media-heading">
+                            <small class="pull-right">2h ago</small>
+                            <a class="name">Justin Martin</a> started following
+                            <a class="name">Crystal Bates</a>.
+                          </h4>
+                          <small>Today 2:55 pm - 31.10.2021</small>
+                        </div>
+                      </div>
+                    </li>
+                    <li class="list-group-item">
+                      <div class="media">
+                        <div class="media-body">
+                          <h4 class="media-heading">
+                            <small class="pull-right">6h ago</small>
+                            <a class="name">Terrance Arnold</a> upvoted tag
+                            <a class="name">SARS-CoV-2</a>.
+                          </h4>
+                          <small>Today 12:00 am - 31.10.2021</small>
+                        </div>
+                      </div>
+                    </li>
+                    <li class="list-group-item">
+                      <div class="media">
+                        <div class="media-body">
+                          <h4 class="media-heading">
+                            <small class="pull-right">20h ago</small>
+                            <a class="name">Heather Harper</a> started following
+                            <a class="name">Terrance Arnold</a>.
+                          </h4>
+                          <small>Yesterday 9:00 pm - 30.10.2021</small>
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                  <button type="button" class="btn btn-block btn-primary waves-effect waves-light"><i class="icon md-chevron-down margin-right-5" aria-hidden="true"></i>Show
+                    More</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div></div>
+      </div>
+    </div>
     <footer class="mastfoot mt-auto text-center py-4">
       <div class="inner">
-        <p>Pubmed Artice tagging application by Semih Solmaz</p>
+        <p>Wikode Article tagging application by CAKES</p>
       </div>
     </footer>
 
