@@ -7,13 +7,13 @@ FROM python:3
 ENV PYTHONUNBUFFERED 1
 
 # create root directory for our project in the container
-RUN mkdir /Tagpub
+RUN mkdir /Wikode
 
 # Set the working directory to /TagPub
-WORKDIR /Tagpub
+WORKDIR /Wikode
 
 # Copy the current directory contents into the container at /TagPub
-ADD . /Tagpub/
+ADD . /Wikode/
 
 # Install any needed packages specified in requirements.txt
 RUN pip install -r requirements.txt
