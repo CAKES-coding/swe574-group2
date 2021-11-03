@@ -6,6 +6,8 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from wikodeApp.forms import ApplicationRegistrationForm
 from wikodeApp.models import RegistrationApplication
+import string
+import random
 
 
 @login_required
@@ -38,13 +40,18 @@ def registrationRequests(request):
         approved_request = RegistrationApplication.objects.get(pk=request.POST['request_id'])
         approved_request.applicationStatus = '2'
         approved_request.save()
+        random_password = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
         user = User(username=approved_request.email,
                     first_name=approved_request.name,
                     last_name=approved_request.surname,
                     email=approved_request.email,
-                    password='TestPwd123')
+                    password=random_password)
         user.set_password(user.password)
         user.save()
+
+        requests_list = RegistrationApplication.objects.filter(applicationStatus='1').order_by('applicationDate')
+        requests_dict = {"registration_requests": requests_list, "password": random_password}
+        return render(request, 'wikodeApp/registrationRequests.html', context=requests_dict)
 
     requests_list = RegistrationApplication.objects.filter(applicationStatus='1').order_by('applicationDate')
     requests_dict = {"registration_requests": requests_list}
@@ -82,12 +89,12 @@ def userList(request):
             removed_user.save()
         elif 'admin_status' in request.POST:
             admin_user = User.objects.get(pk=request.POST['admin_status'])
-            admin_user.userprofileinfo.adminStatus = not admin_user.userprofileinfo.adminStatus
+            admin_user.is_superuser = not admin_user.is_superuser
             admin_user.userprofileinfo.save()
 
     users = User.objects.filter(is_active=True)
     cur_username = request.user.username
-    admin_status = User.objects.filter(username=cur_username).values_list('userprofileinfo__adminStatus')
+    admin_status = User.objects.filter(username=cur_username).values_list('is_superuser')
     print(admin_status[0][0])
     return render(request, 'wikodeApp/userList.html', {'user_list': users, 'admin': admin_status[0][0]})
 

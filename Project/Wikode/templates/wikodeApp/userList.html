@@ -25,7 +25,7 @@
                     <td>{{ item.email }}</td>
                     {% if admin %}
                     <td>
-                        {% if item.userprofileinfo.adminStatus %}
+                        {% if item.is_superuser %}
                             <form method="POST">
                                 {% csrf_token %}
                                 <input type="hidden" value="{{ item.id }}" name="admin_status">
