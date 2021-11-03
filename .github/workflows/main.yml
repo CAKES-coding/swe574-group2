@@ -47,7 +47,7 @@ jobs:
       - name: pull image
         uses: garygrossgarten/github-action-ssh@release
         with:
-          command: docker-compose pull
+          command: pwd
           host: ${{ secrets.HOST }}
           username: ${{ secrets.VM_USER_NAME }}
           privateKey: ${{ secrets.VM_SSH_KEY}}
