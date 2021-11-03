@@ -36,8 +36,8 @@ jobs:
         id: docker_build
         uses: docker/build-push-action@v2
         with:
-          context: ./
-          file: ./Dockerfile
+          context: ./Project/Wikode
+          file: ./Project/Wikode/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/574:latest
 
