@@ -1,0 +1,55 @@
+{% extends 'wikodeApp/base.html' %}
+{% load static %}
+
+{% block body_block %}
+<a href="{% url 'wikodeApp:registrationRequests' %}">Click to view registration requests</a>
+    <div class="container">
+        <h3 class="lead">Users</h3>
+        <table class="table table-striped">
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Surname</th>
+                <th>Email</th>
+                {% if admin %}
+                <th>Admin Status</th>
+                <th>Remove</th>
+                {% endif %}
+
+            </tr>
+            {% for item in user_list %}
+                <tr>
+                    <td>{{ item.id }}</td>
+                    <td>{{ item.first_name }}</td>
+                    <td>{{ item.last_name }}</td>
+                    <td>{{ item.email }}</td>
+                    {% if admin %}
+                    <td>
+                        {% if item.userprofileinfo.adminStatus %}
+                            <form method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" value="{{ item.id }}" name="admin_status">
+                                <button class="confirm_action" type="Submit">Remove admin status</button>
+                            </form>
+                        {% else %}
+                            <form method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" value="{{ item.id }}" name="admin_status">
+                                <button class="confirm_action" type="Submit">Make admin</button>
+                            </form>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" value="{{ item.id }}" name="user_id">
+                            <button class="confirm_action" type="Submit">Delete</button>
+                        </form>
+                    </td>
+                {% endif %}
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+{% endblock %}

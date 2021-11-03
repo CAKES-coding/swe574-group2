@@ -1,0 +1,38 @@
+{% extends 'wikodeApp/base.html' %}
+
+
+{% block body_block %}
+<h3>Registration Requests</h3>
+
+
+    {% if registration_requests %}
+<div class="container">
+        <h3 class="lead">Search Results</h3>
+        <table class="table table-striped">
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Request Text</th>
+                <th>Date</th>
+                <th>Action</th>
+
+            </tr>
+{% for item in registration_requests %}
+    <tr>
+        <td>{{ item.id }}</td>
+        <td>{{ item.name }} {{ item.surname }}</td>
+        <td>{{ item.applicationText }}</td>
+        <td>{{ item.applicationDate }}</td>
+        <td>
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" value="{{item.id}}" name="request_id">
+                <button type="Submit">Approve</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+        </table>
+    </div>
+    {% endif %}
+{% endblock %}

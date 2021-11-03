@@ -14,8 +14,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from wikodeApp.views import homePage, userLogout
 
 urlpatterns = [
+    path('', homePage, name='home'),
+    path('wikode/', include('wikodeApp.urls')),
     path('admin/', admin.site.urls),
+    path('logout/', userLogout, name='logout'),
 ]
