@@ -1,14 +1,16 @@
+from django.contrib.auth.models import User
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-from wikodeApp.forms import ApplicationRegistrationForm, TagForm
+from wikodeApp.forms import ApplicationRegistrationForm
 from wikodeApp.models import RegistrationApplication
 
 
+@login_required
 def homePage(request):
-    return render(request, 'wikodeApp/index.html')
+    return render(request, 'wikodeApp/homePage.html')
 
 
 def registration(request):
@@ -43,8 +45,6 @@ def registrationRequests(request):
                     password='TestPwd123')
         user.set_password(user.password)
         user.save()
-        user_profile = UserProfileInfo(registrationApplication_id=approved_request.id, user_id=user.id)
-        user_profile.save()
 
     requests_list = RegistrationApplication.objects.filter(applicationStatus='1').order_by('applicationDate')
     requests_dict = {"registration_requests": requests_list}
@@ -62,7 +62,7 @@ def userLogin(request):
         if user:
             if user.is_active:
                 login(request, user)
-                return HttpResponseRedirect(reverse('wikodeApp:index'))
+                return HttpResponseRedirect(reverse('wikodeApp:homePage'))
             else:
                 return HttpResponse("Your account is not active.")
         else:

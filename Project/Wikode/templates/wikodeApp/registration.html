@@ -1,0 +1,24 @@
+{% extends 'wikodeApp/base.html' %}
+{% load static %}
+
+{% block body_block %}
+    {% load crispy_forms_tags %}
+
+    <div class="container text-center">
+    <h3>Fill-out the form to register</h3>
+  <div class="row">
+    <div class="col-md"></div>
+    <div class="col-md form-div">
+        <form class="form_div" method="post">
+            {% csrf_token %}
+          {{ registration_form|crispy }}
+          <input class="register-button" type="submit" name="" value="Register">
+    </form>
+    </div>
+    <div class="col-md"></div>
+  </div>
+</div>
+
+
+
+{% endblock %}
