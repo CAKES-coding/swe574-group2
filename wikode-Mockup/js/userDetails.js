@@ -98,3 +98,16 @@ recentActivitiesTab.addEventListener('click', () => {
     recentActivitiesTab.className += " active";
     recentActivities.style.display = "block";
 })
+
+const followButton = document.getElementById("follow-button");
+
+followButton.addEventListener('click', () => {
+
+    if (followButton.innerText === "Follow") {
+        followButton.innerText = "Unfollow"
+        followButton.classList.replace("btn-primary", "btn-danger")
+    } else {
+        followButton.innerText = "Follow"
+        followButton.classList.replace("btn-danger", "btn-primary")
+    }
+})
