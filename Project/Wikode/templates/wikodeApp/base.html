@@ -40,7 +40,7 @@
 <body>
 <nav class="navbar navbar-expand-md navbar-dark bg-dark" aria-label="Fourth navbar example">
     <div class="container-fluid">
-        <a class="navbar-brand" href="{% url 'wikodeApp:homePage' %}">TagPub</a>
+        <a class="navbar-brand" href="{% url 'wikodeApp:homePage' %}">Wikode</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample04"
                 aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -58,6 +58,7 @@
                     <li>
                         <a class="nav-link" href="{% url 'wikodeApp:userList' %}">Users</a>
                     </li>
+{#  Placeholder for upcoming page links                    #}
 {#                    <li>#}
 {#                        <a class="nav-link" href="{% url 'wikodeApp:userProfile' %}">Profile</a>#}
 {#                    </li>#}
@@ -73,9 +74,6 @@
                     </li>
                 {% endif %}
             </ul>
-            <!--            <form>-->
-            <!--                <input class="form-control" type="text" placeholder="Search" aria-label="Search">-->
-            <!--            </form>-->
         </div>
     </div>
 </nav>
@@ -89,7 +87,7 @@
     </div>
 </footer>
 
-
+{#  scipts to be used for tagging and grids#}
 {#<script src="{% static 'wikodeApp/js/bootstrap-tagsinput.js' %}"></script>#}
 {#<script src="{% static 'wikodeApp/js/index.js' %}"></script>#}
 </body>

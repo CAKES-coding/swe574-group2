@@ -33,26 +33,24 @@ class Test(TestCase):
         control_registration = RegistrationApplication.objects.filter(email="test@ss.com").values()
         self.assertEqual(control_registration[0].get('applicationText'), registration.applicationText)
 
-# view tests
-def test_registration_view(self):
-    url = reverse("wikodeApp:registration")
-    resp = self.client.get(url)
+    # view tests
+    def test_registration_view(self):
+        url = reverse("wikodeApp:registration")
+        resp = self.client.get(url)
 
-    self.assertEqual(resp.status_code, 200)
-    # self.assertIn(w.title, resp.content)
+        self.assertEqual(resp.status_code, 200)
+        # self.assertIn(w.title, resp.content)
 
+    def test_registrationRequests_view(self):
+        reg_request = self.create_registration()
+        url = reverse("wikodeApp:registrationRequests")
+        resp = self.client.get(url)
 
-def test_registrationRequests_view(self):
-    reg_request = self.create_registration()
-    url = reverse("wikodeApp:registrationRequests")
-    resp = self.client.get(url)
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn(reg_request.name, resp.content.decode('utf-8'))
 
-    self.assertEqual(resp.status_code, 200)
-    self.assertIn(reg_request.name, resp.content.decode('utf-8'))
+    def test_login_view(self):
+        url = reverse("wikodeApp:userLogin")
+        resp = self.client.get(url)
 
-
-def test_login_view(self):
-    url = reverse("wikodeApp:userLogin")
-    resp = self.client.get(url)
-
-    self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.status_code, 200)
