@@ -6,13 +6,62 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from wikodeApp.forms import ApplicationRegistrationForm
 from wikodeApp.models import RegistrationApplication
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 import string
 import random
+from wikodeApp.utils.textSearch import Search
 
 
 @login_required
 def homePage(request):
-    return render(request, 'wikodeApp/homePage.html')
+    if request.method == 'POST':
+        search_terms = request.POST.get('searchTerms').split(",")
+
+        search = Search(search_terms)
+        results_list = search.getSearchResults()
+
+        page = request.POST.get('page', 1)
+        paginator = Paginator(results_list, 25)
+        search_str = request.POST.get('searchTerms')
+        try:
+            results = paginator.page(page)
+        except PageNotAnInteger:
+            results = paginator.page(1)
+        except EmptyPage:
+            results = paginator.page(paginator.num_pages)
+
+        if results_list:
+            date_data = search.getYearlyArticleCounts()
+        else:
+            date_data = {}
+        results_dict = {"results_list": results,
+                        "search_term": search_str,
+                        "date_labels": date_data.keys(),
+                        "data_values": date_data.values()
+                        }
+        return render(request, 'wikodeApp/searchResults.html', context=results_dict)
+    else:
+        # todo: Look for a pagination without rerunning search query
+        if request.GET.get('page', False):
+            page = request.GET.get('page')
+            search_terms = request.GET.get('term').split(",")
+
+            results_list = Search(search_terms).getSearchResults()
+
+            paginator = Paginator(results_list, 25)
+            search_str = request.GET.get('term')
+            try:
+                results = paginator.page(page)
+            except PageNotAnInteger:
+                results = paginator.page(1)
+            except EmptyPage:
+                results = paginator.page(paginator.num_pages)
+            results_dict = {"results_list": results,
+                            "search_term": search_str
+                            }
+            return render(request, 'wikodeApp/searchResults.html', context=results_dict)
+        else:
+            return render(request, 'wikodeApp/homePage.html')
 
 
 def registration(request):
