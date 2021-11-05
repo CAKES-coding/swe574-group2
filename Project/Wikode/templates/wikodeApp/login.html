@@ -1,0 +1,24 @@
+{% extends 'wikodeApp/base.html' %}
+
+{% block body_block %}
+
+    <div class="container text-center">
+        <div class="row">
+            <div class="col-md"></div>
+            <div class="col-md">
+                <form class="form-div" method="post" action="{% url 'wikodeApp:userLogin' %}">
+                    {% csrf_token %}
+                    <label for="username">Email:</label>
+                    <input type="text" name="username" placeholder="Username">
+                    <p></p>
+                    <label for="password">Password:</label>
+                    <input type="password" name="password">
+                    <div id="searchHelp" class="form-text">Login using email and password</div>
+                    <input type="submit" name="" value="Login">
+                </form>
+            </div>
+            <div class="col-md"></div>
+        </div>
+    </div>
+
+{% endblock %}
