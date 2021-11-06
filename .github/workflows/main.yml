@@ -5,6 +5,7 @@ name: CI
 # Controls when the action will run. 
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
+  workflow_dispatch:
   push:
     branches: [ main ]
 
@@ -35,7 +36,7 @@ jobs:
         id: docker_build
         uses: docker/build-push-action@v2
         with:
-          context: ./
+          context: ./Project/Wikode
           file: ./Project/Wikode/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/574:latest

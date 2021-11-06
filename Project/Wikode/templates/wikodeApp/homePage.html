@@ -1,0 +1,18 @@
+{% extends 'wikodeApp/base.html' %}
+
+{% block body_block %}
+    <div class="container py-4">
+      <div class="p-5 mb-4 bg-light border rounded-3 ">
+        <div class="container-fluid py-2 text-center">
+            <form class="searchForm noEnter" method="post">
+                {% csrf_token %}
+              <label for="searchField" class="form-label"><span class="fw-bold">Search: </span></label>
+              <input id="searchField" class="form-control form-control-lg" type="text" value="" data-role="tagsinput" placeholder="Enter keywords" name="searchTerms"/>
+              <div id="searchHelp" class="form-text">Search articles with multiple keywords.</div>
+              <input id="basicSearchButton" type="submit" class="btn btn-primary" value="Search">
+            </form>
+        </div>
+      </div>
+    </div>
+
+{% endblock %}

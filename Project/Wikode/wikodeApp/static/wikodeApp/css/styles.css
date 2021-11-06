@@ -1,0 +1,27 @@
+.div-inline {
+    display: inline-block;
+}
+
+.searchContainer {
+    display: none;
+}
+
+.register-button {
+    margin: 10px;
+}
+
+.form_div {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    flex-direction: column;
+}
+
+#tagInput {
+    width: 300px;
+}
+
+#searchField {
+    width: 400px;
+}
+
