@@ -14,7 +14,7 @@ The name of the team comes from the initials of the team members.
 
 To reach our team;
 
-- Communicator: 🍰 Semih Solmaz
+- Communicator: 🍰 Kenan Kural
 - Project Manager: 🍰 Can Dayan
 
 Our members together, form a strong and high potential team, while remembering the beauty of teamwork to accomplish high-quality deliverables.
