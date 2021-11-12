@@ -9,4 +9,5 @@ urlpatterns = [
     path('registrationRequests/', views.registrationRequests, name='registrationRequests'),
     path('userLogin/', views.userLogin, name='userLogin'),
     path('userList/', views.userList, name='userList'),
+    path('getArticles/', views.getArticles, name='getArticles')
 ]

@@ -10,6 +10,7 @@ env = environ.Env()
 environ.Env.read_env()
 
 
+# we might want to make it a background job
 # @background(schedule=60)
 def createArticles(term, max_article):
     Entrez.api_key = env('ENTREZ_API_KEY')
@@ -41,7 +42,7 @@ def createArticles(term, max_article):
         for item in articles_list:
 
             article_info = ArticleInfo(item)
-            if article_info.getPMID() and article_info.getAuthors() and article_info.getTitle() and article_info.getAbstract() and article_info.getPublicationDate():
+            if (article_info.getPMID() is not None) and (article_info.getAuthors() is not None) and (article_info.getTitle() is not None) and (article_info.getAbstract() is not None) and (article_info.getPublicationDate() is not None):
                 if article_info.getJournal():
                     journal = Journal.objects.get_or_create(**article_info.getJournal())[0]
                 else:
