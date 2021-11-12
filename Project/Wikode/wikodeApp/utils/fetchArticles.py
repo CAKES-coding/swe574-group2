@@ -20,7 +20,6 @@ def createArticles(term, max_article):
     search_handle.close()
     id_list = record["IdList"]
 
-    # Compare with current list
     # Todo: check for updates
     existing_articles = list(Article.objects.values_list('PMID', flat=True))
     articles_to_save = list(set(id_list) - set(existing_articles))
