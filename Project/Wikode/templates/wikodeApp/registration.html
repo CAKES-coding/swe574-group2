@@ -1,22 +1,35 @@
 {% extends 'wikodeApp/base.html' %}
 {% load static %}
-
 {% block body_block %}
-    {% load crispy_forms_tags %}
+{% load crispy_forms_tags %}
 
-    <div class="container text-center">
-    <h3>Fill-out the form to register</h3>
-  <div class="row">
-    <div class="col-md"></div>
-    <div class="col-md form-div">
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5">
+        <h2>Sign Up</h2>
+        <div id="searchHelp" class="form-text">Please fill the form below carefully. Your application will be accepted after review. </div>
+    </div>
+</div>
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5">
+        {% if same_email %}
+            <div class="alert alert-danger" role="alert">
+                {{ same_email }}
+            </div>
+        {% endif %}
+        
         <form class="form_div" method="post">
             {% csrf_token %}
-          {{ registration_form|crispy }}
-          <input class="register-button" type="submit" name="" value="Register">
-    </form>
+            {{ registration_form|crispy }}
+            
+            <button type="submit" class="btn btn-primary">Sign Up</button>
+        </form>
+        
+        <hr>
+        <div class="text-center">
+            Do you already have an account? <a href="{% url 'wikodeApp:userLogin' %}">Login here</a>
+        </div>
     </div>
-    <div class="col-md"></div>
-  </div>
 </div>
 
 
