@@ -23,8 +23,9 @@ def registration(request):
         if registration_form.is_valid():
             if RegistrationApplication.objects.filter(email=request.POST['email']).filter(
                     applicationStatus='1').exists():
-                return render(request, 'wikodeApp/login.html', {'form': UserCreationForm(),
-                                                                'under_review': 'Your application is currrently under review. Please check again later.'})
+                return render(request, 'wikodeApp/registration.html', {'form': registration_form,
+                                                                       'under_review': 'An application with this email is currrently under review. Please try again with another email.',
+                                                                       'registration_form': registration_form})
             elif User.objects.filter(email=request.POST['email']).filter(is_active='True').exists():
                 return render(request, 'wikodeApp/registration.html', {'form': UserCreationForm(),
                                                                        'same_email': 'This email is used before. Please use another email.',

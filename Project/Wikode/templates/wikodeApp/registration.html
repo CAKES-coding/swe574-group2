@@ -16,6 +16,10 @@
             <div class="alert alert-danger" role="alert">
                 {{ same_email }}
             </div>
+        {% elif under_review %}
+            <div class="alert alert-warning" role="alert">
+                {{ under_review }}
+            </div>
         {% endif %}
         
         <form class="form_div" method="post">

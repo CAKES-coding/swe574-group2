@@ -19,10 +19,6 @@
                     <div class="alert alert-success" role="alert">
                         {{ success }}
                     </div>
-                {% elif under_review %}
-                    <div class="alert alert-warning" role="alert">
-                        {{ under_review }}
-                    </div>
                 {% endif %}
                 
                 <form class="form-div" method="post" action="{% url 'wikodeApp:userLogin' %}">
