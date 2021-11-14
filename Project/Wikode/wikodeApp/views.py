@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
@@ -20,19 +21,23 @@ def registration(request):
     if request.method == 'POST':
         registration_form = ApplicationRegistrationForm(data=request.POST)
         if registration_form.is_valid():
-            if RegistrationApplication.objects.filter(email=request.POST['email']).filter(applicationStatus='1').exists():
-                return HttpResponse('application under review')
-
+            if RegistrationApplication.objects.filter(email=request.POST['email']).filter(
+                    applicationStatus='1').exists():
+                return render(request, 'wikodeApp/login.html', {'form': UserCreationForm(),
+                                                                'under_review': 'Your application is currrently under review. Please check again later.'})
+            elif User.objects.filter(email=request.POST['email']).filter(is_active='True').exists():
+                return render(request, 'wikodeApp/registration.html', {'form': UserCreationForm(),
+                                                                       'same_email': 'This email is used before. Please use another email.',
+                                                                       'registration_form': registration_form})
             else:
                 registration_form.save()
-                return HttpResponse('applications received')
+                return render(request, 'wikodeApp/login.html', {'form': UserCreationForm(), 'success': 'Thank you for your application. Your account will be activated after reviewed carefully.'})
         else:
-            print(registration_form.errors)
+            return render(request, 'wikodeApp/registration.html', {'registration_form': registration_form})
     else:
         registration_form = ApplicationRegistrationForm()
 
-    return render(request, 'wikodeApp/registration.html',
-                  {'registration_form': registration_form})
+    return render(request, 'wikodeApp/registration.html', {'registration_form': registration_form})
 
 
 @login_required
@@ -60,7 +65,6 @@ def registrationRequests(request):
 
 
 def userLogin(request):
-
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -74,8 +78,8 @@ def userLogin(request):
             else:
                 return HttpResponse("Your account is not active.")
         else:
-            print("login failed username: {} and password: {}".format(username, password))
-            return HttpResponse("Invalid login details")
+            return render(request, 'wikodeApp/login.html',
+                          {'form': AuthenticationForm(), 'error': 'Username or password did not match.'})
 
     else:
         return render(request, 'wikodeApp/login.html', {})
