@@ -10,6 +10,8 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 import string
 import random
 from wikodeApp.utils.textSearch import Search
+from dal import autocomplete
+from wikodeApp.utils.wikiManager import getLabelSuggestion
 
 
 @login_required
@@ -84,6 +86,13 @@ def articleDetail(request, pk):
     article_dict.update(wiki_info)
 
     return render(request, 'wikodeApp/articleDetail.html', context=article_dict)
+
+
+class TagAutocomplete(autocomplete.Select2ListView):
+
+    def get_list(self):
+        taglist = getLabelSuggestion(self.q)
+        return taglist
 
 
 def registration(request):

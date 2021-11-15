@@ -1,0 +1,135 @@
+{% extends 'wikodeApp/base.html' %}
+{% load static %}
+
+{% block body_block %}
+    {% load crispy_forms_tags %}
+    <div class="container py-4">
+
+        <div class="p-5 mb-4 bg-light border rounded-3 ">
+            <h3>{{ title }}</h3>
+            <p><span class="fw-bold">Authors: </span>
+                {% for item in authors %}
+                    {% if forloop.last %}
+                        {{ item.ForeName }} {{ item.LastName }}
+                    {% else %}
+                        {{ item.ForeName }} {{ item.LastName }},
+                    {% endif %}
+                {% endfor %}
+            </p>
+            <div class="container">
+                <div class="row">
+                    <div class="col">PMID: <a href="https://pubmed.ncbi.nlm.nih.gov/{{ pmid }}">{{ pmid }}</a></div>
+                </div>
+            </div>
+            <hr>
+            <p class="fw-bold">Abstract</p>
+            <p>{{ abstract }}</p>
+            <p class="fw-bold">Keywords</p>
+            <p>{{ keywords }}</p>
+            <hr>
+            <p class="fw-bold">Tags</p>
+            <table class="table table-striped">
+                <tr>
+                    <th>ID</th>
+                    <th>Q code</th>
+                    <th>System Name</th>
+                    <th>Label</th>
+                    <th>Description</th>
+                    <th>Remove</th>
+
+                </tr>
+                {% for item in tags %}
+                    <tr>
+                        <td><a href="{% url 'wikodeApp:articleDetail' item.id %}">{{ item.id }}</a></td>
+                        <td><a href="https://www.wikidata.org/wiki/{{ item.WikiID }}">{{ item.WikiID }}</a></td>
+                        <td>{{ item.TagName }}</td>
+                        <td>{{ item.Label }}</td>
+                        <td>{{ item.Description }}</td>
+                        <td>
+                            <form method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" value="{{ item.id }}" name="tag_id">
+                                <button class="confirm_action" type="Submit">X</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+            <hr>
+            <div class="container-fluid py-4">
+                <form class="tagForm" method="post">
+                    {% csrf_token %}
+                    {{ tag_form|crispy }}
+                    <div id="searchHelp" class="form-text">Search for wikidata entry using labels or Q codes</div>
+                    <input class="register-button" type="submit" name="get_tag" value="Get Tag">
+
+                </form>
+            <hr>
+                {% if qid %}
+{#                    Placeholder for Existing tags list#}
+{#                    {% if existing_tags %}#}
+{#                    <p>Click on an existing tag to use it.</p>#}
+{#                    <table class="table table-striped">#}
+{#                        <tr>#}
+{#                            <th>Existing Tags</th>#}
+{#                        </tr>#}
+{#                        {% for item in existing_tags %}#}
+{#                            <tr>#}
+{#                                <td class="tag_name">{{ item.TagName }}</td>#}
+{#                            </tr>#}
+{#                        {% endfor %}#}
+{#                    </table>#}
+{#                        {% endif %}#}
+                    <div class="container-fluid">
+                        <form method="post">
+                            {% csrf_token %}
+                            <label for="tag_name">Tag Name:</label>
+                            <input id="tag_name" type="text" name="tag_name" required>
+                            <p></p>
+                            <label for="qid">Entry ID:</label>
+                            <input type="text" name="qid" value="{{ qid }}" readonly>
+                            <p></p>
+                            <label for="label">Label:</label>
+                            <textarea type="text" name="label" cols="80" rows="1" readonly>{{ label }}</textarea>
+                            <p></p>
+                            <label for="description">Description:</label>
+                            <textarea type="text" name="description" cols="80" rows="5"
+                                      readonly>{{ description }}</textarea>
+                            <p></p>
+                            <div id="searchHelp" class="form-text">Save and add tag</div>
+                            <input class="register-button" type="submit" name="add_tag" value="Add Tag">
+
+                        </form>
+                    </div>
+
+                {% endif %}
+            </div>
+
+            <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
+
+            {{ tag_form.media }}
+
+            <script>
+                (function ($) {
+                    $('#add-form').click(function () {
+                        var index = $('#id_inline_test_models-TOTAL_FORMS').val()
+                        var newTable = $('#id_inline_test_models-__prefix__-DELETE').parents('table').clone()
+                        newTable.find(':input').each(function () {
+                            for (attr of ['name', 'id'])
+                                $(this).attr(
+                                    attr,
+                                    $(this).attr(attr).replace('__prefix__', index)
+                                )
+                        })
+                        newTable.insertBefore($(this))
+                        $('#id_inline_test_models-TOTAL_FORMS').val(
+                            parseInt($('#id_inline_test_models-TOTAL_FORMS').val()) + 1
+                        )
+                        newTable.slideDown()
+                    })
+                })($)
+            </script>
+        </div>
+    </div>
+
+{% endblock %}
