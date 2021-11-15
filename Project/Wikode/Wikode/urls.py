@@ -15,12 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from wikodeApp.views import homePage, userLogout, TagAutocomplete
+from wikodeApp.views import homePage, userLogout
 
 urlpatterns = [
     path('', homePage, name='home'),
     path('wikode/', include('wikodeApp.urls')),
     path('admin/', admin.site.urls),
     path('logout/', userLogout, name='logout'),
-    path('tag-autocomplete/', TagAutocomplete.as_view(), name='tag-autocomplete'),
 ]
