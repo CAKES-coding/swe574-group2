@@ -18,6 +18,11 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
             crossorigin="anonymous"></script>
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+
 
     <!-- JQuery-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -55,9 +60,14 @@
                     <li>
                         <a class="nav-link" href="{% url 'logout' %}">Logout</a>
                     </li>
-                    <li>
-                        <a class="nav-link" href="{% url 'wikodeApp:userList' %}">Users</a>
-                    </li>
+                        {% if user.is_superuser %}
+                            <li>
+                                <a class="nav-link" href="{% url 'wikodeApp:userList' %}">Users</a>
+                            </li>
+                            <li>
+                                <a class="nav-link" href="{% url 'wikodeApp:getArticles' %}">Get Articles</a>
+                            </li>
+                        {% endif %}
 {#  Placeholder for upcoming page links                    #}
 {#                    <li>#}
 {#                        <a class="nav-link" href="{% url 'wikodeApp:userProfile' %}">Profile</a>#}
@@ -88,7 +98,7 @@
 </footer>
 
 {#  scipts to be used for tagging and grids#}
-{#<script src="{% static 'wikodeApp/js/bootstrap-tagsinput.js' %}"></script>#}
-{#<script src="{% static 'wikodeApp/js/index.js' %}"></script>#}
+<script src="{% static 'wikodeApp/js/bootstrap-tagsinput.js' %}"></script>
+<script src="{% static 'wikodeApp/js/index.js' %}"></script>
 </body>
 </html>

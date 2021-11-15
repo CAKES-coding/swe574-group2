@@ -1,11 +1,13 @@
 from django.contrib.auth.models import User
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-from wikodeApp.forms import ApplicationRegistrationForm
-from wikodeApp.models import RegistrationApplication
+from wikodeApp.forms import ApplicationRegistrationForm, GetArticleForm
+from wikodeApp.models import RegistrationApplication, Article
+from wikodeApp.utils.fetchArticles import createArticles
 import string
 import random
 
@@ -19,19 +21,24 @@ def registration(request):
     if request.method == 'POST':
         registration_form = ApplicationRegistrationForm(data=request.POST)
         if registration_form.is_valid():
-            if RegistrationApplication.objects.filter(email=request.POST['email']).filter(applicationStatus='1').exists():
-                return HttpResponse('application under review')
-
+            if RegistrationApplication.objects.filter(email=request.POST['email']).filter(
+                    applicationStatus='1').exists():
+                return render(request, 'wikodeApp/registration.html', {'form': registration_form,
+                                                                       'under_review': 'An application with this email is currrently under review. Please try again with another email.',
+                                                                       'registration_form': registration_form})
+            elif User.objects.filter(email=request.POST['email']).filter(is_active='True').exists():
+                return render(request, 'wikodeApp/registration.html', {'form': UserCreationForm(),
+                                                                       'same_email': 'This email is used before. Please use another email.',
+                                                                       'registration_form': registration_form})
             else:
                 registration_form.save()
-                return HttpResponse('applications received')
+                return render(request, 'wikodeApp/login.html', {'form': UserCreationForm(), 'success': 'Thank you for your application. Your account will be activated after reviewed carefully.'})
         else:
-            print(registration_form.errors)
+            return render(request, 'wikodeApp/registration.html', {'registration_form': registration_form})
     else:
         registration_form = ApplicationRegistrationForm()
 
-    return render(request, 'wikodeApp/registration.html',
-                  {'registration_form': registration_form})
+    return render(request, 'wikodeApp/registration.html', {'registration_form': registration_form})
 
 
 @login_required
@@ -59,7 +66,6 @@ def registrationRequests(request):
 
 
 def userLogin(request):
-
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -73,8 +79,8 @@ def userLogin(request):
             else:
                 return HttpResponse("Your account is not active.")
         else:
-            print("login failed username: {} and password: {}".format(username, password))
-            return HttpResponse("Invalid login details")
+            return render(request, 'wikodeApp/login.html',
+                          {'form': AuthenticationForm(), 'error': 'Username or password did not match.'})
 
     else:
         return render(request, 'wikodeApp/login.html', {})
@@ -95,7 +101,6 @@ def userList(request):
     users = User.objects.filter(is_active=True)
     cur_username = request.user.username
     admin_status = User.objects.filter(username=cur_username).values_list('is_superuser')
-    print(admin_status[0][0])
     return render(request, 'wikodeApp/userList.html', {'user_list': users, 'admin': admin_status[0][0]})
 
 
@@ -103,3 +108,18 @@ def userList(request):
 def userLogout(request):
     logout(request)
     return HttpResponseRedirect(reverse('wikodeApp:userLogin'))
+
+
+@login_required
+def getArticles(request):
+    if request.method == 'POST':
+        form = GetArticleForm(request.POST)
+
+        if form.is_valid():
+            createArticles(form.cleaned_data['article_topic'], form.cleaned_data['volume'])
+            saved_count = Article.objects.all().count()
+            return render(request, 'wikodeApp/articlesSaved.html', {'saved_count': saved_count})
+    else:
+        form = GetArticleForm()
+
+    return render(request, 'wikodeApp/fetchArticles.html', {'form': form})
