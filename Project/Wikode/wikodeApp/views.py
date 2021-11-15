@@ -4,8 +4,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-from wikodeApp.forms import ApplicationRegistrationForm
-from wikodeApp.models import RegistrationApplication
+from wikodeApp.forms import ApplicationRegistrationForm, TagForm
+from wikodeApp.models import RegistrationApplication, Author, Keyword, Article
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 import string
 import random
@@ -62,6 +62,28 @@ def homePage(request):
             return render(request, 'wikodeApp/searchResults.html', context=results_dict)
         else:
             return render(request, 'wikodeApp/homePage.html')
+
+
+@login_required
+def articleDetail(request, pk):
+    article = Article.objects.get(pk=pk)
+    wiki_info = {}
+
+    tag_form = TagForm()
+    authors = Author.objects.filter(article=article)
+    keywords = Keyword.objects.filter(article=article)
+    keywords_list = ', '.join([item.KeywordText for item in keywords])
+    article_dict = {"authors": authors,
+                    "title": article.Title,
+                    "abstract": article.Abstract,
+                    "pmid": article.PMID,
+                    "tag_form": tag_form,
+                    "keywords": keywords_list
+                    }
+
+    article_dict.update(wiki_info)
+
+    return render(request, 'wikodeApp/articleDetail.html', context=article_dict)
 
 
 def registration(request):

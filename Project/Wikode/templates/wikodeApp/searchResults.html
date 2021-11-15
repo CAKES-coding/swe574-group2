@@ -18,7 +18,7 @@
             </tr>
             {% for item in results_list %}
                 <tr>
-                    <td><a href="{% url 'tagpubDev:articleDetail' item.id %}">{{ item.id }}</a></td>
+                    <td><a href="{% url 'wikodeApp:articleDetail' item.id %}">{{ item.id }}</a></td>
                     <td>{{ item.Title }}</td>
                     <td>{{ item.PublicationDate }}</td>
                 </tr>
