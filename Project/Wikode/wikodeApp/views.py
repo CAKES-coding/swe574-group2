@@ -7,8 +7,7 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from wikodeApp.models import Author, Keyword, RegistrationApplication, Article
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from wikodeApp.forms import ApplicationRegistrationForm, GetArticleForm
-from wikodeApp.models import RegistrationApplication, Article
+from wikodeApp.forms import ApplicationRegistrationForm, GetArticleForm, TagForm
 from wikodeApp.utils.fetchArticles import createArticles
 import string
 import random
