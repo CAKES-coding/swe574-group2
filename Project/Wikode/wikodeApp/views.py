@@ -181,7 +181,6 @@ def userList(request):
     users = User.objects.filter(is_active=True)
     cur_username = request.user.username
     admin_status = User.objects.filter(username=cur_username).values_list('is_superuser')
-    print(admin_status[0][0])
     return render(request, 'wikodeApp/userList.html', {'user_list': users, 'admin': admin_status[0][0]})
 
 
