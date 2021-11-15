@@ -1,12 +1,15 @@
 from django.contrib.auth.models import User
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-from wikodeApp.forms import ApplicationRegistrationForm, TagForm
-from wikodeApp.models import RegistrationApplication, Author, Keyword, Article
+from wikodeApp.models import Author, Keyword, RegistrationApplication, Article
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from wikodeApp.forms import ApplicationRegistrationForm, GetArticleForm
+from wikodeApp.models import RegistrationApplication, Article
+from wikodeApp.utils.fetchArticles import createArticles
 import string
 import random
 from wikodeApp.utils.textSearch import Search
@@ -139,7 +142,6 @@ def registrationRequests(request):
 
 
 def userLogin(request):
-
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -153,8 +155,8 @@ def userLogin(request):
             else:
                 return HttpResponse("Your account is not active.")
         else:
-            print("login failed username: {} and password: {}".format(username, password))
-            return HttpResponse("Invalid login details")
+            return render(request, 'wikodeApp/login.html',
+                          {'form': AuthenticationForm(), 'error': 'Username or password did not match.'})
 
     else:
         return render(request, 'wikodeApp/login.html', {})
@@ -183,3 +185,18 @@ def userList(request):
 def userLogout(request):
     logout(request)
     return HttpResponseRedirect(reverse('wikodeApp:userLogin'))
+
+
+@login_required
+def getArticles(request):
+    if request.method == 'POST':
+        form = GetArticleForm(request.POST)
+
+        if form.is_valid():
+            createArticles(form.cleaned_data['article_topic'], form.cleaned_data['volume'])
+            saved_count = Article.objects.all().count()
+            return render(request, 'wikodeApp/articlesSaved.html', {'saved_count': saved_count})
+    else:
+        form = GetArticleForm()
+
+    return render(request, 'wikodeApp/fetchArticles.html', {'form': form})
