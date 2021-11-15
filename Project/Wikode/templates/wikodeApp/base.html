@@ -28,6 +28,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.css"
           integrity="sha256-aa0xaJgmK/X74WM224KMQeNQC2xYKwlAt08oZqjeF0E=" crossorigin="anonymous"/>
 
+
     <!--Font Awesome library-->
     <script src="https://kit.fontawesome.com/f405fd37c0.js" crossorigin="anonymous"></script>
 
@@ -55,16 +56,14 @@
                     <li>
                         <a class="nav-link" href="{% url 'logout' %}">Logout</a>
                     </li>
-                    <li>
-                        <a class="nav-link" href="{% url 'wikodeApp:userList' %}">Users</a>
-                    </li>
-{#  Placeholder for upcoming page links                    #}
-{#                    <li>#}
-{#                        <a class="nav-link" href="{% url 'wikodeApp:userProfile' %}">Profile</a>#}
-{#                    </li>#}
-{#                    <li>#}
-{#                        <a class="nav-link" href="{% url 'wikodeApp:tag_list' %}">Tags</a>#}
-{#                    </li>#}
+                    {% if user.is_superuser %}
+                        <li>
+                            <a class="nav-link" href="{% url 'wikodeApp:userList' %}">Users</a>
+                        </li>
+                        <li>
+                            <a class="nav-link" href="{% url 'wikodeApp:getArticles' %}">Get Articles</a>
+                        </li>
+                    {% endif %}
                 {% else %}
                     <li>
                         <a class="nav-link" href="{% url 'wikodeApp:userLogin' %}">Login</a>

@@ -101,19 +101,24 @@ def registration(request):
     if request.method == 'POST':
         registration_form = ApplicationRegistrationForm(data=request.POST)
         if registration_form.is_valid():
-            if RegistrationApplication.objects.filter(email=request.POST['email']).filter(applicationStatus='1').exists():
-                return HttpResponse('application under review')
-
+            if RegistrationApplication.objects.filter(email=request.POST['email']).filter(
+                    applicationStatus='1').exists():
+                return render(request, 'wikodeApp/registration.html', {'form': registration_form,
+                                                                       'under_review': 'An application with this email is currrently under review. Please try again with another email.',
+                                                                       'registration_form': registration_form})
+            elif User.objects.filter(email=request.POST['email']).filter(is_active='True').exists():
+                return render(request, 'wikodeApp/registration.html', {'form': UserCreationForm(),
+                                                                       'same_email': 'This email is used before. Please use another email.',
+                                                                       'registration_form': registration_form})
             else:
                 registration_form.save()
-                return HttpResponse('applications received')
+                return render(request, 'wikodeApp/login.html', {'form': UserCreationForm(), 'success': 'Thank you for your application. Your account will be activated after reviewed carefully.'})
         else:
-            print(registration_form.errors)
+            return render(request, 'wikodeApp/registration.html', {'registration_form': registration_form})
     else:
         registration_form = ApplicationRegistrationForm()
 
-    return render(request, 'wikodeApp/registration.html',
-                  {'registration_form': registration_form})
+    return render(request, 'wikodeApp/registration.html', {'registration_form': registration_form})
 
 
 @login_required
