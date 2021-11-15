@@ -22,6 +22,7 @@ if not RegistrationApplication.objects.filter(email='admin@tagpub.com').exists()
                                         )
     dummy_app.save()
     user = User.objects.create_user('admin@tagpub.com', 'admin@tagpub.com', '123456')
+    user.is_superuser = True
     user.save()
     user_profile = UserProfileInfo(registrationApplication=dummy_app, user=user)
     user_profile.save()
