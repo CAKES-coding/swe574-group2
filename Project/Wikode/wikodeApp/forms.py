@@ -10,6 +10,10 @@ class ApplicationRegistrationForm(forms.ModelForm):
         fields = ('name', 'surname', 'email', 'applicationText')
 
 
+class GetArticleForm(forms.Form):
+    article_topic = forms.CharField(label='Topic', max_length=100)
+    volume = forms.CharField(label='# of Articles', max_length=100)
+
 class TagForm(forms.Form):
     wikiLabel = autocomplete.Select2ListChoiceField(
         widget=autocomplete.ListSelect2(url='wikode/tag-autocomplete'),
