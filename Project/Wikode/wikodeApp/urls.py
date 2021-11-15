@@ -10,5 +10,4 @@ urlpatterns = [
     path('userLogin/', views.userLogin, name='userLogin'),
     path('userList/', views.userList, name='userList'),
     path('articleDetail/<int:pk>', views.articleDetail, name='articleDetail'),
-    path('tag-autocomplete/', views.TagAutocomplete.as_view(), name='tag-autocomplete'),
 ]
