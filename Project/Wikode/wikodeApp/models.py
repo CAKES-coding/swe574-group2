@@ -20,7 +20,6 @@ class RegistrationApplication(models.Model):
 
 
 class UserProfileInfo(models.Model):
-
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     registrationApplication = models.ForeignKey(RegistrationApplication, on_delete=models.CASCADE)
 
@@ -29,7 +28,6 @@ class UserProfileInfo(models.Model):
 
 
 class Journal(models.Model):
-
     ISSN = models.CharField(max_length=16)
     Title = models.CharField(max_length=256)
     ISOAbbreviation = models.CharField(max_length=256)
@@ -39,7 +37,6 @@ class Journal(models.Model):
 
 
 class Author(models.Model):
-
     LastName = models.CharField(max_length=128)
     ForeName = models.CharField(max_length=128, null=True)
     Initials = models.CharField(max_length=32)
@@ -49,7 +46,6 @@ class Author(models.Model):
 
 
 class Keyword(models.Model):
-
     KeywordText = models.TextField(max_length=64)
 
     def __str__(self):
@@ -57,7 +53,6 @@ class Keyword(models.Model):
 
 
 class Article(models.Model):
-
     PMID = models.CharField(max_length=16)
     Title = models.TextField(max_length=512)
     Abstract = models.TextField(max_length=5000, null=True)
@@ -68,7 +63,6 @@ class Article(models.Model):
     Authors = models.ManyToManyField(Author)
 
     Tokens = models.TextField(max_length=100000)
-
     SearchIndex = SearchVectorField(null=True)
 
     def createTSvector(self, *args, **kwargs):
