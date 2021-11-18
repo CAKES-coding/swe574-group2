@@ -23,7 +23,7 @@
             </div>
             <hr>
             <p class="fw-bold">Abstract</p>
-            <p>{{ abstract }}</p>
+            <p id="abstract-text">{{ abstract }}</p>
             <p class="fw-bold">Keywords</p>
             <p>{{ keywords }}</p>
             <hr>
@@ -130,6 +130,20 @@
                 })($)
             </script>
         </div>
+
     </div>
 
+    <!-- Begin: Right Click -->
+    <ul id="tagContextMenu"
+        class="dropdown-menu"
+        role="menu"
+        style="text-align:center; padding:0; min-width: 1rem"
+    >
+        <button tabindex="-1" id="tag-piece-button" class="btn btn-secondary">&nbsp Tag &nbsp</button>
+    </ul>
+    <!-- End: Right Click -->
+
 {% endblock %}
+
+
+
