@@ -10,9 +10,6 @@ from wikodeApp.utils.textSearch import Search
 
 # Create your tests here.
 
-# client = Client()
-# client.login(username="admin@tagpub.com", password="123456")
-
 
 # models tests
 class Test(TestCase):
@@ -111,9 +108,7 @@ class Test(TestCase):
     def test_registration_view(self):
         url = reverse("wikodeApp:registration")
         resp = self.client.get(url)
-
         self.assertEqual(resp.status_code, 200)
-        # self.assertIn(w.title, resp.content)
 
     def test_registrationRequests_view(self):
         reg_request = self.create_registration()
