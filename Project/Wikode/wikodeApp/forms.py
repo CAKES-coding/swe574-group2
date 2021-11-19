@@ -8,12 +8,14 @@ DateInput = partial(forms.DateInput, {'class': 'datepicker'})
 
 
 class FilterForm(forms.Form):
-    start_date = forms.DateField(widget=DateInput(), required=False)
-    end_date = forms.DateField(widget=DateInput(), required=False)
-    author_field = forms.CharField(label='Author', max_length=100, required=False)
-    journal_field = forms.CharField(label='Journal', max_length=100, required=False)
-    keywords_field = forms.CharField(label='Keywords', max_length=100, required=False)
-    order_by = forms.ChoiceField(choices=[('relevance', 'relevance'),
+    start_date = forms.DateField(label='Start date:', widget=DateInput(), required=False)
+    end_date = forms.DateField(label='End date:', widget=DateInput(), required=False)
+    author_field = forms.CharField(label='Author:', max_length=100, required=False)
+    journal_field = forms.CharField(label='Journal:', max_length=100, required=False)
+    keywords_field = forms.CharField(label='Keywords:', max_length=100, required=False,
+                                     help_text='Separate keywords with semicolon(;) for searching multiple keywords')
+    order_by = forms.ChoiceField(label='Order by:',
+                                 choices=[('relevance', 'relevance'),
                                           ('date_desc', 'date desc'),
                                           ('date_asc', 'date asc')],
                                  widget=forms.RadioSelect
