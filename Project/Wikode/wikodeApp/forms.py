@@ -1,6 +1,18 @@
 from django import forms
 from wikodeApp.models import RegistrationApplication
 from dal import autocomplete
+from functools import partial
+
+
+DateInput = partial(forms.DateInput, {'class': 'datepicker'})
+
+
+class FilterForm(forms.Form):
+    start_date = forms.DateField(widget=DateInput(), required=False)
+    end_date = forms.DateField(widget=DateInput(), required=False)
+    author_field = forms.CharField(label='Author', max_length=100, required=False)
+    journal_field = forms.CharField(label='Journal', max_length=100, required=False)
+    keywords_field = forms.CharField(label='Keywords', max_length=100, required=False)
 
 
 class ApplicationRegistrationForm(forms.ModelForm):

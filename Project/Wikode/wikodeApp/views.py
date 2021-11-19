@@ -7,7 +7,7 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from wikodeApp.models import Author, Keyword, RegistrationApplication, Article
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from wikodeApp.forms import ApplicationRegistrationForm, GetArticleForm, TagForm
+from wikodeApp.forms import ApplicationRegistrationForm, GetArticleForm, TagForm, FilterForm
 from wikodeApp.utils.fetchArticles import createArticles
 import string
 import random
@@ -20,9 +20,14 @@ from wikodeApp.utils.wikiManager import getLabelSuggestion
 def homePage(request):
     if request.method == 'POST':
         search_terms = request.POST.get('searchTerms').split(",")
-
         search = Search(search_terms)
-        results_list = search.getSearchResults()
+
+        dates = FilterForm(request.POST)
+        if dates.is_valid():
+            print(dates.cleaned_data)
+            search.filterArticles(dates.cleaned_data)
+        results_list = search.getSearchResults('relevance')
+
 
         page = request.POST.get('page', 1)
         paginator = Paginator(results_list, 25)
@@ -41,9 +46,11 @@ def homePage(request):
         results_dict = {"results_list": results,
                         "search_term": search_str,
                         "date_labels": date_data.keys(),
-                        "data_values": date_data.values()
+                        "data_values": date_data.values(),
+                        "parent_template": "wikodeApp/searchResults.html",
+                        "filter_form": FilterForm()
                         }
-        return render(request, 'wikodeApp/searchResults.html', context=results_dict)
+        return render(request, 'wikodeApp/searchAndFilterBox.html', context=results_dict)
     else:
         # todo: Look for a pagination without rerunning search query
         if request.GET.get('page', False):
@@ -61,11 +68,14 @@ def homePage(request):
             except EmptyPage:
                 results = paginator.page(paginator.num_pages)
             results_dict = {"results_list": results,
-                            "search_term": search_str
+                            "search_term": search_str,
+                            "parent_template": "wikodeApp/searchResults.html"
                             }
-            return render(request, 'wikodeApp/searchResults.html', context=results_dict)
+            return render(request, 'wikodeApp/searchAndFilterBox.html', context=results_dict)
         else:
-            return render(request, 'wikodeApp/homePage.html')
+            return render(request, 'wikodeApp/searchAndFilterBox.html',
+                          context={"parent_template": "wikodeApp/homePage.html",
+                                   "filter_form": FilterForm()})
 
 
 @login_required

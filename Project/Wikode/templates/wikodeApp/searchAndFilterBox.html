@@ -1,0 +1,48 @@
+{% extends parent_template %}
+{% load crispy_forms_tags %}
+
+{% block search_box %}
+    <script>
+        $(document).ready(function () {
+            $('.datepicker').datepicker();
+        });
+    </script>
+    <div class="container py-4">
+        <div class="p-5 mb-4 bg-light border rounded-3 ">
+            <div class="container-fluid py-2 text-center">
+                <form class="searchForm noEnter" method="post">
+                    {% csrf_token %}
+                    <label for="searchField" class="form-label"><span class="fw-bold">Search: </span></label>
+                    <input id="searchField" class="form-control form-control-lg" type="text" value=""
+                           data-role="tagsinput" placeholder="Enter keywords" name="searchTerms"/>
+                    <div id="searchHelp" class="form-text">Search articles with multiple keywords.</div>
+                    <div class="accordion" id="accordionExample">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingOne">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                    Filters
+                                </button>
+                            </h2>
+                            <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"
+                                 data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <div class="container-fluid py-2">
+                                        <div class="container">
+                                            {{ filter_form|crispy }}
+                                        </div>
+                                        <div id="advancedSearchHelp" class="form-text">
+                                            Filter articles.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <input id="basicSearchButton" type="submit" class="btn btn-primary" value="Search">
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
