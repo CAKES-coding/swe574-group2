@@ -17,10 +17,6 @@
     flex-direction: column;
 }
 
-.filter_div {
-    text-align: left;
-}
-
 #tagInput {
     width: 300px;
 }
