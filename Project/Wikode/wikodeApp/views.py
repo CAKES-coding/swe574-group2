@@ -26,8 +26,7 @@ def homePage(request):
         if dates.is_valid():
             print(dates.cleaned_data)
             search.filterArticles(dates.cleaned_data)
-        results_list = search.getSearchResults('relevance')
-
+        results_list = search.getSearchResults(dates.cleaned_data.get('order_by'))
 
         page = request.POST.get('page', 1)
         paginator = Paginator(results_list, 25)
@@ -75,7 +74,7 @@ def homePage(request):
         else:
             return render(request, 'wikodeApp/searchAndFilterBox.html',
                           context={"parent_template": "wikodeApp/homePage.html",
-                                   "filter_form": FilterForm()})
+                                   "filter_form": FilterForm(initial={'order_by': 'relevance'})})
 
 
 @login_required

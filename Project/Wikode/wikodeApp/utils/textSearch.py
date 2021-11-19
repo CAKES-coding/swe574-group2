@@ -27,9 +27,11 @@ class Search:
                 values('id', 'Title', 'PublicationDate').\
                 order_by(F('a_rank').desc(nulls_last=True))
         elif order_by == 'date_desc':
-            pass
+            ordered_list = self.result_list. \
+                values('id', 'PMID', 'Title', 'PublicationDate').order_by('-PublicationDate')
         elif order_by == 'date_asc':
-            pass
+            ordered_list = self.result_list. \
+                values('id', 'PMID', 'Title', 'PublicationDate').order_by('PublicationDate')
         else:
             raise ValueError('Cannot sort with given option', order_by + ' is not defined!!')
 

@@ -13,6 +13,11 @@ class FilterForm(forms.Form):
     author_field = forms.CharField(label='Author', max_length=100, required=False)
     journal_field = forms.CharField(label='Journal', max_length=100, required=False)
     keywords_field = forms.CharField(label='Keywords', max_length=100, required=False)
+    order_by = forms.ChoiceField(choices=[('relevance', 'relevance'),
+                                          ('date_desc', 'date desc'),
+                                          ('date_asc', 'date asc')],
+                                 widget=forms.RadioSelect
+                                 )
 
 
 class ApplicationRegistrationForm(forms.ModelForm):
