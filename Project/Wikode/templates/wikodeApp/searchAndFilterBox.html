@@ -13,7 +13,7 @@
                 <form class="searchForm noEnter" method="post">
                     {% csrf_token %}
                     <label for="searchField" class="form-label"><span class="fw-bold">Search: </span></label>
-                    <input id="searchField" class="form-control form-control-lg" type="text" value=""
+                    <input id="searchField" class="form-control form-control-lg" type="text" value="{{ search_term }}"
                            data-role="tagsinput" placeholder="Enter keywords" name="searchTerms"/>
                     <div id="searchHelp" class="form-text">Search articles using multiple phrases.</div>
                     <div class="accordion" id="accordionExample">

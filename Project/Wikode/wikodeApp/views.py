@@ -22,11 +22,11 @@ def homePage(request):
         search_terms = request.POST.get('searchTerms').split(",")
         search = Search(search_terms)
 
-        dates = FilterForm(request.POST)
-        if dates.is_valid():
-            print(dates.cleaned_data)
-            search.filterArticles(dates.cleaned_data)
-        results_list = search.getSearchResults(dates.cleaned_data.get('order_by'))
+        filter_form = FilterForm(request.POST)
+        if filter_form.is_valid():
+            print(filter_form.cleaned_data)
+            search.filterArticles(filter_form.cleaned_data)
+        results_list = search.getSearchResults(filter_form.cleaned_data.get('order_by'))
 
         page = request.POST.get('page', 1)
         paginator = Paginator(results_list, 25)
@@ -42,21 +42,27 @@ def homePage(request):
             date_data = search.getYearlyArticleCounts()
         else:
             date_data = {}
-        results_dict = {"results_list": results,
-                        "search_term": search_str,
-                        "date_labels": date_data.keys(),
-                        "data_values": date_data.values(),
-                        "parent_template": "wikodeApp/searchResults.html",
-                        "filter_form": FilterForm()
-                        }
-        return render(request, 'wikodeApp/searchAndFilterBox.html', context=results_dict)
+        context = {"results_list": results,
+                   "search_term": search_str,
+                   "date_labels": date_data.keys(),
+                   "data_values": date_data.values(),
+                   "parent_template": "wikodeApp/searchResults.html",
+                   "filter_form": filter_form
+                   }
+        # return render(request, 'wikodeApp/searchAndFilterBox.html', context=results_dict)
     else:
         # todo: Look for a pagination without rerunning search query
         if request.GET.get('page', False):
             page = request.GET.get('page')
             search_terms = request.GET.get('term').split(",")
 
-            results_list = Search(search_terms).getSearchResults()
+            search = Search(search_terms)
+
+            filter_form = FilterForm(request.POST)
+            if filter_form.is_valid():
+                print(filter_form.cleaned_data)
+                search.filterArticles(filter_form.cleaned_data)
+            results_list = search.getSearchResults(filter_form.cleaned_data.get('order_by'))
 
             paginator = Paginator(results_list, 25)
             search_str = request.GET.get('term')
@@ -66,15 +72,21 @@ def homePage(request):
                 results = paginator.page(1)
             except EmptyPage:
                 results = paginator.page(paginator.num_pages)
-            results_dict = {"results_list": results,
-                            "search_term": search_str,
-                            "parent_template": "wikodeApp/searchResults.html"
-                            }
-            return render(request, 'wikodeApp/searchAndFilterBox.html', context=results_dict)
+
+            context = {"results_list": results,
+                       "search_term": search_str,
+                       "parent_template": "wikodeApp/searchResults.html",
+                       "filter_form": filter_form
+                       }
+            # return render(request, 'wikodeApp/searchAndFilterBox.html', context=results_dict)
         else:
-            return render(request, 'wikodeApp/searchAndFilterBox.html',
-                          context={"parent_template": "wikodeApp/homePage.html",
-                                   "filter_form": FilterForm(initial={'order_by': 'relevance'})})
+            context = {"parent_template": "wikodeApp/homePage.html",
+                       "filter_form": FilterForm(initial={'order_by': 'relevance'})}
+            # return render(request, 'wikodeApp/searchAndFilterBox.html',
+            #               context={"parent_template": "wikodeApp/homePage.html",
+            #                        "filter_form": FilterForm(initial={'order_by': 'relevance'})})
+
+    return render(request, 'wikodeApp/searchAndFilterBox.html', context=context)
 
 
 @login_required
@@ -121,7 +133,8 @@ def registration(request):
                                                                        'registration_form': registration_form})
             else:
                 registration_form.save()
-                return render(request, 'wikodeApp/login.html', {'form': UserCreationForm(), 'success': 'Thank you for your application. Your account will be activated after reviewed carefully.'})
+                return render(request, 'wikodeApp/login.html', {'form': UserCreationForm(),
+                                                                'success': 'Thank you for your application. Your account will be activated after reviewed carefully.'})
         else:
             return render(request, 'wikodeApp/registration.html', {'registration_form': registration_form})
     else:
