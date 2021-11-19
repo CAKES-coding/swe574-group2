@@ -5,6 +5,7 @@ from django.db.models import F, Q, Value
 from collections import OrderedDict
 from django.db.models.functions import Concat
 
+
 class Search:
     """
     Gets search terms as a list and return search results as a query set
@@ -52,7 +53,6 @@ class Search:
             article_set = Article.objects.all()
             for keyword in [term.strip() for term in filters.get('keywords_field').split(';')]:
                 article_set = article_set.filter(Keywords__KeywordText__icontains=keyword)
-                print(keyword)
             article_is_list = article_set.values('id')
             filter_queries.append(Q(id__in=article_is_list))
 
@@ -61,8 +61,6 @@ class Search:
             authors_id_list = authors.filter(search_name__icontains=filters.get('author_field'))
             filter_queries.append(Q(Authors__id__in=authors_id_list))
 
-        print(self.search_terms)
-        print(filter_queries)
         self.result_list = self.result_list.filter(*filter_queries)
 
     def getYearlyArticleCounts(self):
