@@ -32,9 +32,10 @@
                 <tr>
                     <th>ID</th>
                     <th>Q code</th>
-                    <th>System Name</th>
+                    <th>Tag Name</th>
                     <th>Label</th>
                     <th>Description</th>
+                    <th>Total Votes</th>
                     <th>Remove</th>
 
                 </tr>
@@ -45,6 +46,23 @@
                         <td>{{ item.TagName }}</td>
                         <td>{{ item.Label }}</td>
                         <td>{{ item.Description }}</td>
+                        <td>
+                            <div class="btn-group" role="group" aria-label="Basic outlined example">
+                                <span>
+                                    <button type="button" class="btn btn-outline-success" data-bs-toggle="button" autocomplete="off" onclick="incrementValue()">
+                                        <i class="bi bi-hand-thumbs-up" id="upvote"></i>
+                                    </button>
+                                </span>
+
+                                <span id="totalVotes"></span>
+
+                                <span>
+                                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="button" autocomplete="off" onclick="decrementValue()">
+                                        <i class="bi bi-hand-thumbs-down" id="downvote"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </td>
                         <td>
                             <form method="POST">
                                 {% csrf_token %}
@@ -61,7 +79,7 @@
                     {% csrf_token %}
                     {{ tag_form|crispy }}
                     <div id="searchHelp" class="form-text">Search for wikidata entry using labels or Q codes</div>
-                    <input class="register-button" type="submit" name="get_tag" value="Get Tag">
+                    <input class="register-button btn btn-primary mb-2" type="submit" name="get_tag" value="Get Tag">
 
                 </form>
             <hr>
@@ -83,21 +101,28 @@
                     <div class="container-fluid">
                         <form method="post">
                             {% csrf_token %}
-                            <label for="tag_name">Tag Name:</label>
-                            <input id="tag_name" type="text" name="tag_name" required>
+                            <div class="form-group">
+                                <label for="tag_name">Tag Name</label>
+                                <input id="tag_name" class="form-control" type="text" name="tag_name" required>
+                            </div>
                             <p></p>
-                            <label for="qid">Entry ID:</label>
-                            <input type="text" name="qid" value="{{ qid }}" readonly>
+                            <div class="form-group">
+                                <label for="qid">Entry ID:</label>
+                                <input type="text" class="form-control" name="qid" value="{{ qid }}" readonly>
+                            </div>
                             <p></p>
-                            <label for="label">Label:</label>
-                            <textarea type="text" name="label" cols="80" rows="1" readonly>{{ label }}</textarea>
+                            <div class="form-group">
+                                <label for="label">Label:</label>
+                                <textarea type="text" class="form-control" name="label" cols="80" rows="1" readonly>{{ label }}</textarea>
+                            </div>
                             <p></p>
-                            <label for="description">Description:</label>
-                            <textarea type="text" name="description" cols="80" rows="5"
-                                      readonly>{{ description }}</textarea>
+                            <div class="form-grpup">
+                                <label for="description">Description:</label>
+                                <textarea type="text" class="form-control" name="description" cols="80" rows="5" readonly>{{ description }}</textarea>
+                            </div>
                             <p></p>
                             <div id="searchHelp" class="form-text">Save and add tag</div>
-                            <input class="register-button" type="submit" name="add_tag" value="Add Tag">
+                            <input class="register-button btn btn-primary mb-2" type="submit" name="add_tag" value="Add Tag">
 
                         </form>
                     </div>

@@ -5,7 +5,7 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-from wikodeApp.models import Author, Keyword, RegistrationApplication, Article
+from wikodeApp.models import Author, Keyword, RegistrationApplication, Article, Tag
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from wikodeApp.forms import ApplicationRegistrationForm, GetArticleForm, TagForm
 from wikodeApp.utils.fetchArticles import createArticles
@@ -13,7 +13,7 @@ import string
 import random
 from wikodeApp.utils.textSearch import Search
 from dal import autocomplete
-from wikodeApp.utils.wikiManager import getLabelSuggestion
+from wikodeApp.utils.wikiManager import getLabelSuggestion, WikiEntry
 
 
 @login_required
@@ -73,16 +73,46 @@ def articleDetail(request, pk):
     article = Article.objects.get(pk=pk)
     wiki_info = {}
 
+    # Begin: Get Tag
+    if request.method == 'POST':
+        print(request.POST)
+        if 'get_tag' in request.POST:
+            tag_form = TagForm(data=request.POST)
+            tag_data = WikiEntry(tag_form.data['wikiLabel'])
+            wiki_info['qid'] = tag_data.getID()
+            wiki_info['label'] = tag_data.getLabel()
+            wiki_info['description'] = tag_data.getDescription()
+            wiki_info['existing_tags'] = Tag.objects.filter(WikiID=tag_data.getID())
+            print(wiki_info)
+        elif 'add_tag' in request.POST:
+            tag_data = WikiEntry(request.POST['qid'])
+            tag, created = Tag.objects.get_or_create(WikiID=tag_data.getID(), Label=tag_data.getLabel(), TagName=request.POST['tag_name'])
+            if created:
+                tag.Description = tag_data.getDescription()
+                tag.save()
+                tag.createTSvector()
+                article.Tags.add(tag)
+            else:
+                article.Tags.add(tag)
+        elif 'tag_id' in request.POST:
+            tag = Tag.objects.get(pk=request.POST['tag_id'])
+            print(request.POST['tag_id'])
+            article.Tags.remove(tag)
+    # End
+
     tag_form = TagForm()
     authors = Author.objects.filter(article=article)
     keywords = Keyword.objects.filter(article=article)
     keywords_list = ', '.join([item.KeywordText for item in keywords])
+    tags = Tag.objects.filter(article=article)
+
     article_dict = {"authors": authors,
                     "title": article.Title,
                     "abstract": article.Abstract,
                     "pmid": article.PMID,
                     "tag_form": tag_form,
-                    "keywords": keywords_list
+                    "keywords": keywords_list,
+                    "tags": tags
                     }
 
     article_dict.update(wiki_info)
