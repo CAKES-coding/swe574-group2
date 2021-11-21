@@ -220,3 +220,9 @@ def getArticles(request):
         form = GetArticleForm()
 
     return render(request, 'wikodeApp/fetchArticles.html', {'form': form})
+
+
+@login_required()
+def profilePage(request):
+    user = request.user
+    return render(request, 'wikodeApp/profilePage.html', {'user': user})
