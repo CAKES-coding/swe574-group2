@@ -52,6 +52,24 @@ class Keyword(models.Model):
         return self.KeywordText
 
 
+class Tag(models.Model):
+    tagName = models.CharField(max_length=64, default='noname')
+    wikiId = models.CharField(max_length=64)
+    label = models.CharField(max_length=64)
+    description = models.TextField(max_length=1024, null=True)
+    # Maybe an array field for tokens?
+    tokens = models.TextField(max_length=1024, null=True)
+    searchIndex = SearchVectorField(null=True)
+
+    def createTSvector(self, *args, **kwargs):
+        self.searchIndex = (
+                SearchVector('Label', weight='A')
+                + SearchVector('Tokens', weight='B')
+                + SearchVector('Description', weight='C')
+        )
+        super().save(*args, **kwargs)
+
+
 class Article(models.Model):
     PMID = models.CharField(max_length=16)
     Title = models.TextField(max_length=512)
@@ -61,6 +79,7 @@ class Article(models.Model):
     Journal = models.ForeignKey(Journal, on_delete=models.PROTECT, null=True)
     Keywords = models.ManyToManyField(Keyword)
     Authors = models.ManyToManyField(Author)
+    Tags = models.ManyToManyField(Tag)
 
     Tokens = models.TextField(max_length=100000)
     SearchIndex = SearchVectorField(null=True)

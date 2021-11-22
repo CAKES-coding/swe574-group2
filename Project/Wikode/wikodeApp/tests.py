@@ -125,6 +125,18 @@ class Test(TestCase):
 
         self.assertEqual(resp.status_code, 200)
 
+    def test_articleDetail_view(self):
+        # given
+        article = self.create_article()
+        url = reverse("wikodeApp:articleDetail", args=[1])
+
+        # when
+        resp = self.client.get(url)
+
+        # then
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn(article.Title, resp.content.decode('utf-8'))
+
     # Utility test
 
     def test_article_search_and_filter(self):

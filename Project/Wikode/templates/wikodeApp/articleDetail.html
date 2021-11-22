@@ -23,33 +23,51 @@
             </div>
             <hr>
             <p class="fw-bold">Abstract</p>
-            <p>{{ abstract }}</p>
+            <p id="abstract-text">{{ abstract }}</p>
             <p class="fw-bold">Keywords</p>
             <p>{{ keywords }}</p>
             <hr>
             <p class="fw-bold">Tags</p>
             <table class="table table-striped">
                 <tr>
-                    <th>ID</th>
-                    <th>Q code</th>
-                    <th>System Name</th>
-                    <th>Label</th>
-                    <th>Description</th>
-                    <th>Remove</th>
+                    <th class="align-middle" style="text-align: center">ID</th>
+                    <th class="align-middle" style="text-align: center">Q code</th>
+                    <th class="align-middle" style="text-align: center">Tag Name</th>
+                    <th class="align-middle" style="text-align: center">Label</th>
+                    <th class="align-middle" style="text-align: center">Description</th>
+                    <th class="align-middle" style="text-align: center">Total Votes</th>
+                    <th class="align-middle" style="text-align: center">Remove</th>
 
                 </tr>
                 {% for item in tags %}
                     <tr>
-                        <td><a href="{% url 'wikodeApp:articleDetail' item.id %}">{{ item.id }}</a></td>
-                        <td><a href="https://www.wikidata.org/wiki/{{ item.WikiID }}">{{ item.WikiID }}</a></td>
-                        <td>{{ item.TagName }}</td>
-                        <td>{{ item.Label }}</td>
-                        <td>{{ item.Description }}</td>
-                        <td>
+                        <td class="align-middle" style="text-align: center"><a href="{% url 'wikodeApp:articleDetail' item.id %}">{{ item.id }}</a></td>
+                        <td class="align-middle" style="text-align: center"><a href="https://www.wikidata.org/wiki/{{ item.wikiId }}" target={"_blank"}>{{ item.wikiId }}</a></td>
+                        <td class="align-middle" style="text-align: center">{{ item.tagName }}</td>
+                        <td class="align-middle" style="text-align: center">{{ item.label }}</td>
+                        <td class="align-middle" style="text-align: center">{{ item.description }}</td>
+                        <td class="align-middle" style="text-align: center">
+                            <div class="btn-group" role="group" aria-label="Basic outlined example" style="display: table">
+                                <span style="margin-right: 5px">
+                                    <button type="button" class="btn btn-outline-success" data-bs-toggle="button" autocomplete="off" onclick="incrementValue()">
+                                        <i class="bi bi-hand-thumbs-up" id="upvote"></i>
+                                    </button>
+                                </span>
+
+                                <span id="totalVotes" style="display: table-cell; vertical-align: center">0</span>
+
+                                <span style="margin-left: 5px">
+                                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="button" autocomplete="off" onclick="decrementValue()">
+                                        <i class="bi bi-hand-thumbs-down" id="downvote"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </td>
+                        <td class="align-middle" style="text-align: center">
                             <form method="POST">
                                 {% csrf_token %}
                                 <input type="hidden" value="{{ item.id }}" name="tag_id">
-                                <button class="confirm_action" type="Submit">X</button>
+                                <button class="confirm_action btn-close" type="Submit"></button>
                             </form>
                         </td>
                     </tr>
@@ -60,9 +78,14 @@
                 <form class="tagForm" method="post">
                     {% csrf_token %}
                     {{ tag_form|crispy }}
-                    <div id="searchHelp" class="form-text">Search for wikidata entry using labels or Q codes</div>
-                    <input class="register-button" type="submit" name="get_tag" value="Get Tag">
-
+                    <input
+                        class="register-button btn btn-primary mb-2"
+                        type="submit"
+                        name="get_tag"
+                        value="Get Tag"
+                        data-bs-toggle="tooltip"
+                        title="Search for wikidata entry using labels or Q codes"
+                    >
                 </form>
             <hr>
                 {% if qid %}
@@ -83,22 +106,34 @@
                     <div class="container-fluid">
                         <form method="post">
                             {% csrf_token %}
-                            <label for="tag_name">Tag Name:</label>
-                            <input id="tag_name" type="text" name="tag_name" required>
+                            <div class="form-group">
+                                <label for="tag_name">Tag Name</label>
+                                <input id="tag_name" class="form-control" type="text" name="tag_name" required>
+                            </div>
                             <p></p>
-                            <label for="qid">Entry ID:</label>
-                            <input type="text" name="qid" value="{{ qid }}" readonly>
+                            <div class="form-group">
+                                <label for="qid">Entry ID:</label>
+                                <input type="text" class="form-control" name="qid" value="{{ qid }}" readonly>
+                            </div>
                             <p></p>
-                            <label for="label">Label:</label>
-                            <textarea type="text" name="label" cols="80" rows="1" readonly>{{ label }}</textarea>
+                            <div class="form-group">
+                                <label for="label">Label:</label>
+                                <textarea type="text" class="form-control" name="label" cols="80" rows="1" readonly>{{ label }}</textarea>
+                            </div>
                             <p></p>
-                            <label for="description">Description:</label>
-                            <textarea type="text" name="description" cols="80" rows="5"
-                                      readonly>{{ description }}</textarea>
+                            <div class="form-grpup">
+                                <label for="description">Description:</label>
+                                <textarea type="text" class="form-control" name="description" cols="80" rows="5" readonly>{{ description }}</textarea>
+                            </div>
                             <p></p>
-                            <div id="searchHelp" class="form-text">Save and add tag</div>
-                            <input class="register-button" type="submit" name="add_tag" value="Add Tag">
-
+                            <input
+                                class="register-button btn btn-primary mb-2"
+                                type="submit"
+                                name="add_tag"
+                                value="Add Tag"
+                                data-bs-toggle="tooltip"
+                                title="Save and add tag"
+                            >
                         </form>
                     </div>
 
@@ -130,6 +165,20 @@
                 })($)
             </script>
         </div>
+
     </div>
 
+    <!-- Begin: Right Click -->
+    <ul id="tagContextMenu"
+        class="dropdown-menu"
+        role="menu"
+        style="text-align:center; padding:0; min-width: 1rem"
+    >
+        <button tabindex="-1" id="tag-piece-button" class="btn btn-secondary">&nbsp Select &nbsp</button>
+    </ul>
+    <!-- End: Right Click -->
+
 {% endblock %}
+
+
+
