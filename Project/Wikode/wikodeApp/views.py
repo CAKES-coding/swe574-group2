@@ -5,16 +5,142 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-from wikodeApp.forms import ApplicationRegistrationForm, GetArticleForm
-from wikodeApp.models import RegistrationApplication, Article
+from wikodeApp.models import Author, Keyword, RegistrationApplication, Article, Tag
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from wikodeApp.forms import ApplicationRegistrationForm, GetArticleForm, TagForm, FilterForm
 from wikodeApp.utils.fetchArticles import createArticles
 import string
 import random
+from wikodeApp.utils.textSearch import Search
+from dal import autocomplete
+from wikodeApp.utils.wikiManager import getLabelSuggestion, WikiEntry
 
 
 @login_required
 def homePage(request):
-    return render(request, 'wikodeApp/homePage.html')
+    if request.method == 'POST':
+        search_terms = request.POST.get('searchTerms').split(",")
+        search = Search(search_terms)
+
+        filter_form = FilterForm(request.POST)
+        if filter_form.is_valid():
+            search.filterArticles(filter_form.cleaned_data)
+        results_list = search.getSearchResults(filter_form.cleaned_data.get('order_by'))
+
+        page = request.POST.get('page', 1)
+        paginator = Paginator(results_list, 25)
+        search_str = request.POST.get('searchTerms')
+        try:
+            results = paginator.page(page)
+        except PageNotAnInteger:
+            results = paginator.page(1)
+        except EmptyPage:
+            results = paginator.page(paginator.num_pages)
+
+        if results_list:
+            date_data = search.getYearlyArticleCounts()
+        else:
+            date_data = {}
+        context = {"results_list": results,
+                   "search_term": search_str,
+                   "date_labels": date_data.keys(),
+                   "data_values": date_data.values(),
+                   "parent_template": "wikodeApp/searchResults.html",
+                   "filter_form": filter_form
+                   }
+    else:
+        # todo: Look for a pagination without rerunning search query
+        if request.GET.get('page', False):
+            page = request.GET.get('page')
+            search_terms = request.GET.get('term').split(",")
+
+            search = Search(search_terms)
+
+            filter_form = FilterForm(request.POST)
+            if filter_form.is_valid():
+                print(filter_form.cleaned_data)
+                search.filterArticles(filter_form.cleaned_data)
+            results_list = search.getSearchResults(filter_form.cleaned_data.get('order_by'))
+
+            paginator = Paginator(results_list, 25)
+            search_str = request.GET.get('term')
+            try:
+                results = paginator.page(page)
+            except PageNotAnInteger:
+                results = paginator.page(1)
+            except EmptyPage:
+                results = paginator.page(paginator.num_pages)
+
+            context = {"results_list": results,
+                       "search_term": search_str,
+                       "parent_template": "wikodeApp/searchResults.html",
+                       "filter_form": filter_form
+                       }
+
+        else:
+            context = {"parent_template": "wikodeApp/homePage.html",
+                       "filter_form": FilterForm(initial={'order_by': 'relevance'})}
+
+    return render(request, 'wikodeApp/searchAndFilterBox.html', context=context)
+
+
+@login_required
+def articleDetail(request, pk):
+    article = Article.objects.get(pk=pk)
+    wiki_info = {}
+
+    # Begin: Get Tag
+    if request.method == 'POST':
+        print(request.POST)
+        if 'get_tag' in request.POST:
+            tag_form = TagForm(data=request.POST)
+            tag_data = WikiEntry(tag_form.data['wikiLabel'])
+            wiki_info['qid'] = tag_data.getID()
+            wiki_info['label'] = tag_data.getLabel()
+            wiki_info['description'] = tag_data.getDescription()
+            wiki_info['existing_tags'] = Tag.objects.filter(WikiID=tag_data.getID())
+            print(wiki_info)
+        elif 'add_tag' in request.POST:
+            tag_data = WikiEntry(request.POST['qid'])
+            tag, created = Tag.objects.get_or_create(WikiID=tag_data.getID(), Label=tag_data.getLabel(), TagName=request.POST['tag_name'])
+            if created:
+                tag.description = tag_data.getDescription()
+                tag.save()
+                tag.createTSvector()
+                article.Tags.add(tag)
+            else:
+                article.Tags.add(tag)
+        elif 'tag_id' in request.POST:
+            tag = Tag.objects.get(pk=request.POST['tag_id'])
+            print(request.POST['tag_id'])
+            article.Tags.remove(tag)
+    # End
+
+    tag_form = TagForm()
+    authors = Author.objects.filter(article=article)
+    keywords = Keyword.objects.filter(article=article)
+    keywords_list = ', '.join([item.KeywordText for item in keywords])
+    tags = Tag.objects.filter(article=article)
+
+    article_dict = {"authors": authors,
+                    "title": article.Title,
+                    "abstract": article.Abstract,
+                    "pmid": article.PMID,
+                    "tag_form": tag_form,
+                    "keywords": keywords_list,
+                    "tags": tags
+                    }
+
+    article_dict.update(wiki_info)
+
+    return render(request, 'wikodeApp/articleDetail.html', context=article_dict)
+
+
+class TagAutocomplete(autocomplete.Select2ListView):
+
+    def get_list(self):
+        taglist = getLabelSuggestion(self.q)
+        return taglist
 
 
 def registration(request):
@@ -32,7 +158,8 @@ def registration(request):
                                                                        'registration_form': registration_form})
             else:
                 registration_form.save()
-                return render(request, 'wikodeApp/login.html', {'form': UserCreationForm(), 'success': 'Thank you for your application. Your account will be activated after reviewed carefully.'})
+                return render(request, 'wikodeApp/login.html', {'form': UserCreationForm(),
+                                                                'success': 'Thank you for your application. Your account will be activated after reviewed carefully.'})
         else:
             return render(request, 'wikodeApp/registration.html', {'registration_form': registration_form})
     else:
@@ -123,3 +250,9 @@ def getArticles(request):
         form = GetArticleForm()
 
     return render(request, 'wikodeApp/fetchArticles.html', {'form': form})
+
+
+@login_required()
+def profilePage(request):
+    user = request.user
+    return render(request, 'wikodeApp/profilePage.html', {'user': user})

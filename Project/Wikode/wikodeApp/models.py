@@ -20,7 +20,6 @@ class RegistrationApplication(models.Model):
 
 
 class UserProfileInfo(models.Model):
-
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     registrationApplication = models.ForeignKey(RegistrationApplication, on_delete=models.CASCADE)
 
@@ -29,7 +28,6 @@ class UserProfileInfo(models.Model):
 
 
 class Journal(models.Model):
-
     ISSN = models.CharField(max_length=16)
     Title = models.CharField(max_length=256)
     ISOAbbreviation = models.CharField(max_length=256)
@@ -39,7 +37,6 @@ class Journal(models.Model):
 
 
 class Author(models.Model):
-
     LastName = models.CharField(max_length=128)
     ForeName = models.CharField(max_length=128, null=True)
     Initials = models.CharField(max_length=32)
@@ -49,15 +46,31 @@ class Author(models.Model):
 
 
 class Keyword(models.Model):
-
     KeywordText = models.TextField(max_length=64)
 
     def __str__(self):
         return self.KeywordText
 
 
-class Article(models.Model):
+class Tag(models.Model):
+    tagName = models.CharField(max_length=64, default='noname')
+    wikiId = models.CharField(max_length=64)
+    label = models.CharField(max_length=64)
+    description = models.TextField(max_length=1024, null=True)
+    # Maybe an array field for tokens?
+    tokens = models.TextField(max_length=1024, null=True)
+    searchIndex = SearchVectorField(null=True)
 
+    def createTSvector(self, *args, **kwargs):
+        self.searchIndex = (
+                SearchVector('Label', weight='A')
+                + SearchVector('Tokens', weight='B')
+                + SearchVector('Description', weight='C')
+        )
+        super().save(*args, **kwargs)
+
+
+class Article(models.Model):
     PMID = models.CharField(max_length=16)
     Title = models.TextField(max_length=512)
     Abstract = models.TextField(max_length=5000, null=True)
@@ -66,9 +79,9 @@ class Article(models.Model):
     Journal = models.ForeignKey(Journal, on_delete=models.PROTECT, null=True)
     Keywords = models.ManyToManyField(Keyword)
     Authors = models.ManyToManyField(Author)
+    Tags = models.ManyToManyField(Tag)
 
     Tokens = models.TextField(max_length=100000)
-
     SearchIndex = SearchVectorField(null=True)
 
     def createTSvector(self, *args, **kwargs):

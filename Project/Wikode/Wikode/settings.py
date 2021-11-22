@@ -46,6 +46,11 @@ INSTALLED_APPS = [
     'django.contrib.postgres',
     'wikodeApp',
     'crispy_forms',
+    'tsvector_field',
+    'django_tables2',
+    'dal',
+    'dal_select2',
+    'coverage',
 ]
 
 MIDDLEWARE = [
