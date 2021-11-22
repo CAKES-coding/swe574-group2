@@ -1,0 +1,177 @@
+{% extends 'wikodeApp/base.html' %}
+{% load static %}
+
+{% block body_block %}
+
+    <head>
+        <meta charset="UTF-8">
+        <title>Profile Page</title>
+        <link rel="stylesheet" href="{% static 'wikodeApp/css/profilePage.css' %}">
+    </head>
+        <div class="container py-4">
+            <div class="p-5 mb-4 bg-light border rounded-3">
+                <div class="row">
+                    <div class="offset-md-4">
+                        <div class="twPc-div">
+                            <img alt="profile-background" class="twPc-bg twPc-block" src="{% static 'wikodeApp/img/profile-background.jfif' %}"/>
+                            <div class="twPc-bottom-block">
+                                <div class="twPc-button">
+                                    <button type="button" class="btn btn-lg btn-primary btn-sm" id="follow-button">Follow</button>
+                                </div>
+
+                                <a title="avatar" class="twPc-avatarLink">
+                                    <img alt="Emre Çalık" src="{% static 'wikodeApp/img/profile-image.png' %}" class="twPc-avatarImg">
+                                </a>
+
+                                {% if user.is_authenticated %}
+                                <div class="twPc-divUser">
+                                    <div class="twPc-divName"> {{ user.get_full_name }} </div>
+                                    <span> {{ user.get_username }} </span>
+                                </div>
+                                {% endif %}
+
+                                <div class="twPc-divStats">
+                                    <ul class="twPc-Arrange">
+                                        <li class="twPc-ArrangeSizeFit">
+                                            <a href="#" title="tags">
+                                                <span class="twPc-StatLabel twPc-block">Tagged Articles</span>
+                                                <span class="twPc-StatValue">3</span>
+                                            </a>
+                                        </li>
+                                        <li class="twPc-ArrangeSizeFit">
+                                            <a href="#" title="userDetailsFollowLists" id="followings">
+                                                <span class="twPc-StatLabel twPc-block">Followings</span>
+                                                <span class="twPc-StatValue">2</span>
+                                            </a>
+                                        </li>
+                                        <li class="twPc-ArrangeSizeFit">
+                                            <a href="#" title="followers" id="followers">
+                                                <span class="twPc-StatLabel twPc-block">Followers</span>
+                                                <span class="twPc-StatValue">3</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" id="tagged-articles-id">Tagged Articles</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="recent-activities-id">Recent Activities</a>
+                    </li>
+                </ul>
+
+                <div class="overflow-scroll" id="tagged-articles">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Article Name</th>
+                            <th scope="col">PMID</th>
+                            <th scope="col">Keywords</th>
+                            <th scope="col">Tags</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <th scope="row">1</th>
+                            <td><a href="#">Mechanisms of SARS-CoV-2 Transmission and Pathogenesis</a></td>
+                            <td><a href="https://pubmed.ncbi.nlm.nih.gov/33132005/">33132005</a></td>
+                            <td><p>COVID-19; SARS, SARS-CoV-2; coronavirus; severe acute respiratory syndrome.</p></td>
+                            <td>
+                                <a href="#">SARS-CoV-2</a>
+                                <br>
+                                <a href="#">covid</a>
+                                <br>
+                                <a href="#">virus</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">2</th>
+                            <td><a href="#">Susceptibility and Attenuated Transmissibility of SARS-CoV-2 in Domestic Cats</a></td>
+                            <td><a href="https://pubmed.ncbi.nlm.nih.gov/33605423/">33605423</a></td>
+                            <td>COVID-19; SARS-CoV-2; cats; pathogenesis; susceptibility; transmissibility.</td>
+                            <td>
+                                <a href="#">cats and sars</a>
+                                <br>
+                                <a href="#">covid effect</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">3</th>
+                            <td><a href="#">Experimental re-infected cats do not transmit SARS-CoV-2</a></td>
+                            <td><a href="https://pubmed.ncbi.nlm.nih.gov/33704016/">33704016</a></td>
+                            <td>COVID-19; SARS-CoV-2; cats; re-infection; transmission.</td>
+                            <td>
+                                <a href="#">cat infections</a>
+                                <br>
+                                <a href="#">sars and covid</a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="overflow-scroll" id="recent-activities" style="display: none">
+                    <table class="table table-striped">
+                        <tbody>
+                        <tr>
+                            <td>
+                                <a href="#">Emre</a> tagged <a href="#">Mechanisms of SARS-CoV-2 Transmission and Pathogenesis</a>.
+                                <div style="font-style: italic; font-size: 12px">moments ago</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="#">Emre</a> voted for <a href="#">Pregnancy and Birth Outcomes during the Early Months of the COVID-19 Pandemic: The MOACC-19 Cohort</a>.
+                                <div style="font-style: italic; font-size: 12px">7 minutes ago</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="#">Emre</a> updated <a href="#">Susceptibility and Attenuated Transmissibility of SARS-CoV-2 in Domestic Cats</a>.
+                                <div style="font-style: italic; font-size: 12px">3 days ago</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="#">Emre</a> is followed by <a href="#">Can</a>.
+                                <div style="font-style: italic; font-size: 12px">1 month ago</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="#">Emre</a> followed <a href="#">Semih</a>.
+                                <div style="font-style: italic; font-size: 12px">3 months ago</div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- The Modal -->
+        <div class="container py-4">
+            <!-- The Modal -->
+            <div id="followModal" class="modal">
+                <!-- Modal content -->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 id="modal-header-text"></h2>
+                        <span class="close" id="close">&times;</span>
+                    </div>
+                    <div class="modal-body overflow-scroll" id="modalBody"></div>
+                </div>
+            </div>
+        </div>
+
+    <script type="text/javascript" src="{% static 'wikodeApp/js/profilePage.js' %}"></script>
+{% endblock %}
