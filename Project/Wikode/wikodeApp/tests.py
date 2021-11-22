@@ -1,17 +1,22 @@
+import datetime
+
+from django.contrib.auth.models import User
 from django.test import TestCase, Client
 from django.utils import timezone
 from django.contrib.postgres.search import SearchQuery
 from django.urls import reverse
 from wikodeApp.models import RegistrationApplication, Author, Journal, Keyword, Article
+from wikodeApp.utils.textSearch import Search
 
 # Create your tests here.
-
-client = Client()
-client.login(username="admin@wikode.com", password="123456")
 
 
 # models tests
 class Test(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user('bugs', 'bugs@wikode.com', '123456')
 
     def create_author(self, LastName="Testsurname", ForeName="Testname", Initials="tt"):
         return Author.objects.create(LastName=LastName, ForeName=ForeName, Initials=Initials)
@@ -76,12 +81,12 @@ class Test(TestCase):
             'PMID': '27959616',
             'Title': 'Coronary Artery Development: Progenitor Cells and Differentiation Pathways',
             'Abstract': abstract,
-            'PublicationDate': timezone.now(),
-            'Journal' : self.create_journal()
+            'PublicationDate': datetime.date.today(),
+            'Journal': self.create_journal()
         }
         article = Article.objects.create(**article_data)
         article.Authors.add(self.create_author())
-        article.Tags.add(self.create_tag())
+        # article.Tags.add(self.create_tag())
         article.Keywords.add(self.create_keyword())
 
         article.createTSvector()
@@ -94,21 +99,21 @@ class Test(TestCase):
         control_article = Article.objects.filter(PMID="27959616").values()
         self.assertEqual(control_article[0].get('Abstract'), article.Abstract)
         # check if the tsvector created correctly
-        self.assertTrue(Article.objects.filter(SearchIndex=SearchQuery('implications for organogenesis', search_type='phrase')).exists())
-        # Check tagging
-        self.assertTrue(Article.objects.filter(Tags__SearchIndex=SearchQuery('SLE', search_type='phrase')).exists())
+        self.assertTrue(Article.objects.filter(
+            SearchIndex=SearchQuery('implications for organogenesis', search_type='phrase')).exists())
+        # # Check tagging
+        # self.assertTrue(Article.objects.filter(Tags__SearchIndex=SearchQuery('SLE', search_type='phrase')).exists())
 
     # view tests
     def test_registration_view(self):
         url = reverse("wikodeApp:registration")
         resp = self.client.get(url)
-
         self.assertEqual(resp.status_code, 200)
-        # self.assertIn(w.title, resp.content)
 
     def test_registrationRequests_view(self):
         reg_request = self.create_registration()
         url = reverse("wikodeApp:registrationRequests")
+        self.client.login(username="bugs", password="123456")
         resp = self.client.get(url)
 
         self.assertEqual(resp.status_code, 200)
@@ -131,3 +136,21 @@ class Test(TestCase):
         # then
         self.assertEqual(resp.status_code, 200)
         self.assertIn(article.Title, resp.content.decode('utf-8'))
+
+    # Utility test
+
+    def test_article_search_and_filter(self):
+        article = self.create_article()
+        self.assertTrue(isinstance(article, Article))
+        control_article = Search(['Coronary'])
+        filters = {'start_date': datetime.date.today() - datetime.timedelta(days=1),
+                   'end_date': datetime.date.today() + datetime.timedelta(days=1),
+                   'journal_field': 'Aegean medical',
+                   'author_field': 'testname',
+                   'journal_field': 'Aegean medical'
+                   }
+
+        control_article.filterArticles(filters)
+        after_filter = control_article.getSearchResults('relevance')
+
+        self.assertEqual(after_filter[0].get('Title'), article.Title)
