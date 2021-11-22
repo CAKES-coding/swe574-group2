@@ -104,7 +104,7 @@ def articleDetail(request, pk):
             tag_data = WikiEntry(request.POST['qid'])
             tag, created = Tag.objects.get_or_create(WikiID=tag_data.getID(), Label=tag_data.getLabel(), TagName=request.POST['tag_name'])
             if created:
-                tag.Description = tag_data.getDescription()
+                tag.description = tag_data.getDescription()
                 tag.save()
                 tag.createTSvector()
                 article.Tags.add(tag)

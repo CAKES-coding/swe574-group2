@@ -42,10 +42,10 @@
                 {% for item in tags %}
                     <tr>
                         <td class="align-middle" style="text-align: center"><a href="{% url 'wikodeApp:articleDetail' item.id %}">{{ item.id }}</a></td>
-                        <td class="align-middle" style="text-align: center"><a href="https://www.wikidata.org/wiki/{{ item.WikiID }}" target={"_blank"}>{{ item.WikiID }}</a></td>
-                        <td class="align-middle" style="text-align: center">{{ item.TagName }}</td>
-                        <td class="align-middle" style="text-align: center">{{ item.Label }}</td>
-                        <td class="align-middle" style="text-align: center">{{ item.Description }}</td>
+                        <td class="align-middle" style="text-align: center"><a href="https://www.wikidata.org/wiki/{{ item.wikiId }}" target={"_blank"}>{{ item.wikiId }}</a></td>
+                        <td class="align-middle" style="text-align: center">{{ item.tagName }}</td>
+                        <td class="align-middle" style="text-align: center">{{ item.label }}</td>
+                        <td class="align-middle" style="text-align: center">{{ item.description }}</td>
                         <td class="align-middle" style="text-align: center">
                             <div class="btn-group" role="group" aria-label="Basic outlined example" style="display: table">
                                 <span style="margin-right: 5px">
