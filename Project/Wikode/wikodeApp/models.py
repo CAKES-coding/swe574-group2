@@ -40,6 +40,7 @@ class Author(models.Model):
     LastName = models.CharField(max_length=128)
     ForeName = models.CharField(max_length=128, null=True)
     Initials = models.CharField(max_length=32)
+    Identifier = models.CharField(max_length=256, null=True)
 
     def __str__(self):
         return self.ForeName + ' ' + self.LastName

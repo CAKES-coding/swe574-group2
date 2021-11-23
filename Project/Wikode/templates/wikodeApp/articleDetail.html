@@ -10,9 +10,17 @@
             <p><span class="fw-bold">Authors: </span>
                 {% for item in authors %}
                     {% if forloop.last %}
-                        {{ item.ForeName }} {{ item.LastName }}
+                        {% if item.Identifier %}
+                            <a href="{{ item.Identifier }}" target="_blank">{{ item.ForeName }} {{ item.LastName }}</a>
+                        {% else %}
+                            {{ item.ForeName }} {{ item.LastName }}
+                        {% endif %}
                     {% else %}
-                        {{ item.ForeName }} {{ item.LastName }},
+                        {% if item.Identifier %}
+                            <a href="{{ item.Identifier }}" target="_blank">{{ item.ForeName }} {{ item.LastName }},</a>
+                        {% else %}
+                            {{ item.ForeName }} {{ item.LastName }},
+                        {% endif %}
                     {% endif %}
                 {% endfor %}
             </p>
