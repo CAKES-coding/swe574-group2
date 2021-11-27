@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.contrib.postgres.search import SearchVectorField, SearchVector
+from django.contrib.postgres.fields import JSONField
 
 
 class RegistrationApplication(models.Model):
@@ -95,3 +96,17 @@ class Article(models.Model):
 
     def __str__(self):
         return self.Title
+
+
+class Activity(models.Model):
+    activity_types = (('1', 'Follow'),
+                      ('2', 'Unfollow'))
+
+    target_types =()
+
+    user_id = models.ForeignKey(User, on_delete=models.PROTECT, null=True)
+    activity_type = models.CharField(max_length=8, choices=activity_types)
+    target_type = models.CharField(max_length=8, choices=target_types)
+    target_id = models.IntegerField()
+    activity_JSON = JSONField()
+
