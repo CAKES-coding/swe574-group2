@@ -98,11 +98,11 @@ def articleDetail(request, pk):
             wiki_info['qid'] = tag_data.getID()
             wiki_info['label'] = tag_data.getLabel()
             wiki_info['description'] = tag_data.getDescription()
-            wiki_info['existing_tags'] = Tag.objects.filter(WikiID=tag_data.getID())
+            wiki_info['existing_tags'] = Tag.objects.filter(wikiId=tag_data.getID())
             print(wiki_info)
         elif 'add_tag' in request.POST:
             tag_data = WikiEntry(request.POST['qid'])
-            tag, created = Tag.objects.get_or_create(WikiID=tag_data.getID(), Label=tag_data.getLabel(), TagName=request.POST['tag_name'])
+            tag, created = Tag.objects.get_or_create(wikiId=tag_data.getID(), label=tag_data.getLabel(), tagName=request.POST['tag_name'])
             if created:
                 tag.description = tag_data.getDescription()
                 tag.save()

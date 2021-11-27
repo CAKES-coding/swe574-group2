@@ -63,9 +63,9 @@ class Tag(models.Model):
 
     def createTSvector(self, *args, **kwargs):
         self.searchIndex = (
-                SearchVector('Label', weight='A')
-                + SearchVector('Tokens', weight='B')
-                + SearchVector('Description', weight='C')
+                SearchVector('label', weight='A')
+                + SearchVector('tokens', weight='B')
+                + SearchVector('description', weight='C')
         )
         super().save(*args, **kwargs)
 
