@@ -32,7 +32,7 @@
             <ul class="pagination">
                 {% if results_list.has_previous %}
                     <li class="page-item"><a class="page-link"
-                                             href="?page={{ results_list.previous_page_number }}&term={{ search_term }}">&laquo;</a>
+                                             href="?page={{ results_list.previous_page_number }}&term={{ search_term }}&sort={{ sort }}">&laquo;</a>
                     </li>
                 {% else %}
                     <li class="disabled page-item"><span class="page-link">&laquo;</span></li>
@@ -43,12 +43,12 @@
                                 class="sr-only">(current)</span></span></li>
                     {% else %}
                         <li class="page-item"><a class="page-link"
-                                                 href="?page={{ i }}&term={{ search_term }}">{{ i }}</a></li>
+                                                 href="?page={{ i }}&term={{ search_term }}&sort={{ sort }}">{{ i }}</a></li>
                     {% endif %}
                 {% endfor %}
                 {% if results_list.has_next %}
                     <li class="page-item"><a class="page-link"
-                                             href="?page={{ results_list.next_page_number }}&term={{ search_term }}">&raquo;</a>
+                                             href="?page={{ results_list.next_page_number }}&term={{ search_term }}&sort={{ sort }}">&raquo;</a>
                     </li>
                 {% else %}
                     <li class="disabled page-item"><span class="page-link">&raquo;</span></li>

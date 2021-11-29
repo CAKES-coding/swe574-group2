@@ -25,6 +25,7 @@ def homePage(request):
         filter_form = FilterForm(request.POST)
         if filter_form.is_valid():
             search.filterArticles(filter_form.cleaned_data)
+            sort = filter_form.cleaned_data.get("order_by")
         results_list = search.getSearchResults(filter_form.cleaned_data.get('order_by'))
 
         page = request.POST.get('page', 1)
@@ -46,13 +47,15 @@ def homePage(request):
                    "date_labels": date_data.keys(),
                    "data_values": date_data.values(),
                    "parent_template": "wikodeApp/searchResults.html",
-                   "filter_form": filter_form
+                   "filter_form": filter_form,
+                   "sort": sort
                    }
     else:
         # todo: Look for a pagination without rerunning search query
         if request.GET.get('page', False):
             page = request.GET.get('page')
             search_terms = request.GET.get('term').split(",")
+            sort = request.GET.get('sort')
 
             search = Search(search_terms)
 
@@ -60,7 +63,7 @@ def homePage(request):
             if filter_form.is_valid():
                 print(filter_form.cleaned_data)
                 search.filterArticles(filter_form.cleaned_data)
-            results_list = search.getSearchResults(filter_form.cleaned_data.get('order_by'))
+            results_list = search.getSearchResults(sort)
 
             paginator = Paginator(results_list, 25)
             search_str = request.GET.get('term')
@@ -74,7 +77,8 @@ def homePage(request):
             context = {"results_list": results,
                        "search_term": search_str,
                        "parent_template": "wikodeApp/searchResults.html",
-                       "filter_form": filter_form
+                       "filter_form": filter_form,
+                       "sort": sort
                        }
 
         else:
