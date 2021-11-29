@@ -223,7 +223,7 @@ def userList(request):
         elif 'admin_status' in request.POST:
             admin_user = User.objects.get(pk=request.POST['admin_status'])
             admin_user.is_superuser = not admin_user.is_superuser
-            admin_user.userprofileinfo.save()
+            admin_user.save()
 
     users = User.objects.filter(is_active=True)
     cur_username = request.user.username
