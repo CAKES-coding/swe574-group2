@@ -5,7 +5,9 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-from wikodeApp.models import Author, Keyword, RegistrationApplication, Article, Tag
+
+import wikodeApp.models
+from wikodeApp.models import Author, Keyword, RegistrationApplication, Article, Tag, TagRelations
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from wikodeApp.forms import ApplicationRegistrationForm, GetArticleForm, TagForm, FilterForm
 from wikodeApp.utils.fetchArticles import createArticles
@@ -89,7 +91,6 @@ def articleDetail(request, pk):
     article = Article.objects.get(pk=pk)
     wiki_info = {}
 
-    # Begin: Get Tag
     if request.method == 'POST':
         print(request.POST)
         if 'get_tag' in request.POST:
@@ -102,19 +103,20 @@ def articleDetail(request, pk):
             print(wiki_info)
         elif 'add_tag' in request.POST:
             tag_data = WikiEntry(request.POST['qid'])
-            tag, created = Tag.objects.get_or_create(wikiId=tag_data.getID(), label=tag_data.getLabel(), tagName=request.POST['tag_name'])
+            tag, created = Tag.objects.get_or_create(wikiId=tag_data.getID(), label=tag_data.getLabel(),
+                                                     tagName=request.POST['tag_name'])
             if created:
                 tag.description = tag_data.getDescription()
                 tag.save()
                 tag.createTSvector()
                 article.Tags.add(tag)
+                saveRelatedWikiItems(tag_data)
             else:
                 article.Tags.add(tag)
         elif 'tag_id' in request.POST:
             tag = Tag.objects.get(pk=request.POST['tag_id'])
             print(request.POST['tag_id'])
             article.Tags.remove(tag)
-    # End
 
     tag_form = TagForm()
     authors = Author.objects.filter(article=article)
@@ -134,6 +136,30 @@ def articleDetail(request, pk):
     article_dict.update(wiki_info)
 
     return render(request, 'wikodeApp/articleDetail.html', context=article_dict)
+
+
+def saveRelatedWikiItems(tag_data):
+    parent_qid = tag_data.entry_data['id']
+    related_qid_list = getRelatedQidListRelatedToTheSelectedOne(tag_data)
+    for related_qid in related_qid_list:
+        if Tag.objects.filter(wikiId=related_qid).count() == 0:
+            tag_data = WikiEntry(related_qid)
+            Tag.objects.create(wikiId=tag_data.getID(), label=tag_data.getLabel(), description=tag_data.getDescription())
+            TagRelations.objects.create(parentId=parent_qid, childId=related_qid)
+
+
+def getRelatedQidListRelatedToTheSelectedOne(tag_data):
+    related_qid_list = []
+
+    wiki_property_list = ['P31', 'P279']
+    for wiki_property in wiki_property_list:
+        entry_data_claims = tag_data.entry_data['claims']
+        if wiki_property in entry_data_claims:
+            for entry_data_claim in entry_data_claims[wiki_property]:
+                qid = entry_data_claim['mainsnak']['datavalue']['value']['id']
+                related_qid_list.append(qid)
+
+    return related_qid_list
 
 
 class TagAutocomplete(autocomplete.Select2ListView):

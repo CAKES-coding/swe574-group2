@@ -71,6 +71,11 @@ class Tag(models.Model):
         super().save(*args, **kwargs)
 
 
+class TagRelations(models.Model):
+    parentId = models.CharField(max_length=64)
+    childId = models.CharField(max_length=64)
+
+
 class Article(models.Model):
     PMID = models.CharField(max_length=16)
     Title = models.TextField(max_length=512)
