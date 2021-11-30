@@ -45,7 +45,6 @@
                     <th class="align-middle" style="text-align: center">Description</th>
                     <th class="align-middle" style="text-align: center">Total Votes</th>
                     <th class="align-middle" style="text-align: center">Remove</th>
-
                 </tr>
                 {% for item in tags %}
                     <tr>
@@ -74,8 +73,8 @@
                         <td class="align-middle" style="text-align: center">
                             <form method="POST">
                                 {% csrf_token %}
-                                <input type="hidden" value="{{ item.id }}" name="tag_id">
-                                <button class="confirm_action btn-close" type="Submit"></button>
+                                <input type="hidden" value="{{ item.id }}" name="tag_id"/>
+                                <button class="btn-close" type="Submit" onclick="return confirm('Are you sure?')"></button>
                             </form>
                         </td>
                     </tr>
@@ -129,7 +128,7 @@
                                 <textarea type="text" class="form-control" name="label" cols="80" rows="1" readonly>{{ label }}</textarea>
                             </div>
                             <p></p>
-                            <div class="form-grpup">
+                            <div class="form-group">
                                 <label for="description">Description:</label>
                                 <textarea type="text" class="form-control" name="description" cols="80" rows="5" readonly>{{ description }}</textarea>
                             </div>

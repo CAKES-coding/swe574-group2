@@ -54,7 +54,7 @@ class Keyword(models.Model):
 
 
 class Tag(models.Model):
-    tagName = models.CharField(max_length=64, default='noname')
+    tagName = models.CharField(max_length=64, null=True)
     wikiId = models.CharField(max_length=64)
     label = models.CharField(max_length=64)
     description = models.TextField(max_length=1024, null=True)
@@ -71,7 +71,7 @@ class Tag(models.Model):
         super().save(*args, **kwargs)
 
 
-class TagRelations(models.Model):
+class TagInheritance(models.Model):
     parentId = models.CharField(max_length=64)
     childId = models.CharField(max_length=64)
 

@@ -7,7 +7,7 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 
 import wikodeApp.models
-from wikodeApp.models import Author, Keyword, RegistrationApplication, Article, Tag, TagRelations
+from wikodeApp.models import Author, Keyword, RegistrationApplication, Article, Tag, TagInheritance
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from wikodeApp.forms import ApplicationRegistrationForm, GetArticleForm, TagForm, FilterForm
 from wikodeApp.utils.fetchArticles import createArticles
@@ -140,15 +140,16 @@ def articleDetail(request, pk):
 
 def saveRelatedWikiItems(tag_data):
     parent_qid = tag_data.entry_data['id']
-    related_qid_list = getRelatedQidListRelatedToTheSelectedOne(tag_data)
+    related_qid_list = getRelatedWikiQidList(tag_data)
     for related_qid in related_qid_list:
         if Tag.objects.filter(wikiId=related_qid).count() == 0:
             tag_data = WikiEntry(related_qid)
-            Tag.objects.create(wikiId=tag_data.getID(), label=tag_data.getLabel(), description=tag_data.getDescription())
-            TagRelations.objects.create(parentId=parent_qid, childId=related_qid)
+            Tag.objects.create(wikiId=tag_data.getID(), label=tag_data.getLabel(),
+                               description=tag_data.getDescription())
+            TagInheritance.objects.create(parentId=parent_qid, childId=related_qid)
 
 
-def getRelatedQidListRelatedToTheSelectedOne(tag_data):
+def getRelatedWikiQidList(tag_data):
     related_qid_list = []
 
     wiki_property_list = ['P31', 'P279']
