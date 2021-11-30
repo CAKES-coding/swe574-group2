@@ -72,8 +72,8 @@ class Tag(models.Model):
 
 
 class TagInheritance(models.Model):
-    parentId = models.CharField(max_length=64)
-    childId = models.CharField(max_length=64)
+    parentQid = models.CharField(max_length=64)
+    childQid = models.CharField(max_length=64)
 
 
 class Article(models.Model):

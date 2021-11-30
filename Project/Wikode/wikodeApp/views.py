@@ -146,7 +146,7 @@ def saveRelatedWikiItems(tag_data):
             tag_data = WikiEntry(related_qid)
             Tag.objects.create(wikiId=tag_data.getID(), label=tag_data.getLabel(),
                                description=tag_data.getDescription())
-            TagInheritance.objects.create(parentId=parent_qid, childId=related_qid)
+            TagInheritance.objects.create(parentQid=parent_qid, childQid=related_qid)
 
 
 def getRelatedWikiQidList(tag_data):
