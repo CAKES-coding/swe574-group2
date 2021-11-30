@@ -138,29 +138,29 @@ def articleDetail(request, pk):
     return render(request, 'wikodeApp/articleDetail.html', context=article_dict)
 
 
-def saveRelatedWikiItems(tag_data):
-    parent_qid = tag_data.entry_data['id']
-    related_qid_list = getRelatedWikiQidList(tag_data)
-    for related_qid in related_qid_list:
-        if Tag.objects.filter(wikiId=related_qid).count() == 0:
-            tag_data = WikiEntry(related_qid)
-            Tag.objects.create(wikiId=tag_data.getID(), label=tag_data.getLabel(),
-                               description=tag_data.getDescription())
-            TagInheritance.objects.create(parentQid=parent_qid, childQid=related_qid)
+def saveRelatedWikiItems(tagData):
+    parentWikiId = tagData.entry_data['id']
+    relatedWikiIdList = getRelatedWikiQidList(tagData)
+    for relatedWikiId in relatedWikiIdList:
+        if Tag.objects.filter(wikiId=relatedWikiId).count() == 0:
+            tagData = WikiEntry(relatedWikiId)
+            Tag.objects.create(wikiId=tagData.getID(), label=tagData.getLabel(),
+                               description=tagData.getDescription())
+            TagInheritance.objects.create(parentWikiId=parentWikiId, childWikiId=relatedWikiId)
 
 
-def getRelatedWikiQidList(tag_data):
-    related_qid_list = []
+def getRelatedWikiQidList(tagData):
+    relatedWikiIdList = []
 
-    wiki_property_list = ['P31', 'P279']
-    for wiki_property in wiki_property_list:
-        entry_data_claims = tag_data.entry_data['claims']
-        if wiki_property in entry_data_claims:
-            for entry_data_claim in entry_data_claims[wiki_property]:
-                qid = entry_data_claim['mainsnak']['datavalue']['value']['id']
-                related_qid_list.append(qid)
+    wikiPropertyList = ['P31', 'P279']
+    for wikiProperty in wikiPropertyList:
+        entryDataClaims = tagData.entry_data['claims']
+        if wikiProperty in entryDataClaims:
+            for entryDataClaim in entryDataClaims[wikiProperty]:
+                wikiId = entryDataClaim['mainsnak']['datavalue']['value']['id']
+                relatedWikiIdList.append(wikiId)
 
-    return related_qid_list
+    return relatedWikiIdList
 
 
 class TagAutocomplete(autocomplete.Select2ListView):
