@@ -1,7 +1,7 @@
 import datetime
 
 # the manager that will handle all the activity stream savings to database
-from wikodeApp.models import Activity
+from wikodeApp.models import Activity, Article, RegistrationApplication
 
 
 # Activity Manager will handle all savings to database
@@ -20,24 +20,28 @@ class ActivityManager:
     # target_id: the id of the target, correlated with target_type
     def saveViewActivity(self, target_type, target_id):
 
-        # TODO: get username from db
-        owner_name = 'Owner'
+        owner = RegistrationApplication.objects.get(id=self.user_id)
+        if isinstance(owner, RegistrationApplication):
+            owner_name = owner.name
 
-        current_time = datetime.datetime.now()
-
+        current_time=str(datetime.datetime.now().isoformat())
         if target_type == '1':
-            activity_target_type = 'Person'
-            activity_target_url = "http://www.wikode.com/wikode/profile/{}".format(target_id)
-            activity_target_name = 'PersonName'
+            target = RegistrationApplication.objects.get(id=target_id)
+            if isinstance(target, RegistrationApplication):
+                activity_target_type = 'Person'
+                activity_target_url = "http://www.wikode.com/wikode/profile/{}".format(target_id)
+                activity_target_name = target.name
         # elif target_type=='2':
         # TODO: when view tags finished, implement the correct tag url:
         #  activity_target_type = 'Tag'
         #  activity_target_url = "http://www.wikode.com/wikode/articleDetail/{}".format(target_id)
         #   activity_target_type='TagLabel'
         elif target_type == '3':
-            activity_target_type = 'Article'
-            activity_target_url = "http://www.wikode.com/wikode/articleDetail/{}".format(target_id)
-            activity_target_name = 'ArticleTitle'
+            target = Article.objects.get(id=target_id)
+            if isinstance(target, Article):
+                activity_target_type = 'Article'
+                activity_target_url = "http://www.wikode.com/wikode/articleDetail/{}".format(target_id)
+                activity_target_name = target.Title
 
         json = {
             "@context": "https://www.w3.org/ns/activitystreams",
@@ -59,9 +63,11 @@ class ActivityManager:
         }
 
         activity = Activity(
-            user_id=user_id,
+            user_id=self.user_id,
             activity_type=1,
             target_type=target_type,
             target_id=target_id,
             activity_JSON=json
         )
+        activity.save()
+        print('activity saved')
