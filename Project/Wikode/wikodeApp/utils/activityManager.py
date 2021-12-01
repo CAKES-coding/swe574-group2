@@ -68,7 +68,6 @@ class ActivityManager:
             activity_JSON=json
         )
         activity.save()
-        print('activity saved')
 
     def saveFollowActivity(self, target_id):
         target=self.getTargetAsUser(target_id)
@@ -94,6 +93,15 @@ class ActivityManager:
                 "name": activity_target_name
             }
         }
+
+        activity = Activity(
+            user_id=self.user_id,
+            activity_type=1,
+            target_type=1,
+            target_id=target_id,
+            activity_JSON=json
+        )
+        activity.save()
 
     def getOwnerName(self):
         return self.owner.name
