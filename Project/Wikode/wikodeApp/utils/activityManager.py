@@ -25,7 +25,6 @@ class ActivityManager:
 
         current_time=str(datetime.datetime.now().isoformat())
 
-        # target: the object that is being used in the activity by owner
         if target_type == '1':
             target = self.getTargetAsUser(target_id=target_id)
             if isinstance(target, RegistrationApplication):
@@ -79,11 +78,13 @@ class ActivityManager:
     def getOwnerURL(self):
         return "http://www.wikode.com/wikode/profile/{}".format(self.user_id)
 
+    # returns target as user
     def getTargetAsUser(self, target_id):
         target = RegistrationApplication.objects.get(id=target_id)
         if isinstance(target, RegistrationApplication):
             return target
 
+    # returns target as article
     def getTargetAsArticle(self, target_id):
         target = Article.objects.get(id=target_id)
         if isinstance(target, Article):
