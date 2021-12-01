@@ -19,25 +19,25 @@ class ActivityManager:
         # TODO: get username from db
         owner_name='Owner'
 
-        # TODO: get targetName from db
-        target_name='Target'
-
         current_time = datetime.datetime.now()
 
         if target_type=='1':
-            acitivity_target_name='Person'
+            acitivity_target_type='Person'
             activity_target_url="http://www.wikode.com/wikode/profile/{}".format(target_id)
+            acitivity_target_name='PersonName'
         # elif target_type=='2':
         # TODO: when view tags finished, implement the correct tag url:
-            #  acitivity_target_name = 'Tag'
+            #  acitivity_target_type = 'Tag'
             #  activity_target_url = "http://www.wikode.com/wikode/articleDetail/{}".format(target_id)
+            #   acitivity_target_type='TagLabel'
         elif target_type=='3':
-            acitivity_target_name='Article'
+            acitivity_target_type='Article'
             activity_target_url="http://www.wikode.com/wikode/articleDetail/{}".format(target_id)
+            acitivity_target_name = 'ArticleTitle'
 
         json={
                  "@context": "https://www.w3.org/ns/activitystreams",
-                  "summary": "{} viewed {}".format(owner_name, target_name),
+                  "summary": "{} viewed {}".format(owner_name, acitivity_target_name),
                   "type": "View",
                   "published": current_time,
                  "actor": {
@@ -48,9 +48,9 @@ class ActivityManager:
                  },
                  "object" : {
                       "id": activity_target_url,
-                     "type": acitivity_target_name,
+                     "type": acitivity_target_type,
                      "url": activity_target_url,
-                     "name": target_name
+                     "name": acitivity_target_name
                 }
         }
 
