@@ -97,16 +97,33 @@ class Article(models.Model):
     def __str__(self):
         return self.Title
 
-
+# Activity Stream 2.0 model
+# user_id: the id of the user who makes the activity
+# activity_type: activity type form one of the activity_types defined
+# target_type: indicates the target type from one of the target_types defined
+# target_id: the id of the target object, that is used in the activity
+# activity_JSON: the json-ld model regarding the Activity Stream 2.0
 class Activity(models.Model):
-    activity_types = (('1', 'Follow'),
-                      ('2', 'Unfollow'))
+    activity_types = (('1', 'View'),
+                      ('2', 'Follow'),
+                      ('3', 'Unfollow'),
+                      ('4', 'Like'),
+                      ('5', 'Dislike'),
+                      ('6', 'Add'))
 
-    target_types =()
+    target_types = (('1', 'User'),
+                    ('2', 'Tag'),
+                    ('3', 'Article'))
 
     user_id = models.ForeignKey(User, on_delete=models.PROTECT, null=True)
     activity_type = models.CharField(max_length=8, choices=activity_types)
     target_type = models.CharField(max_length=8, choices=target_types)
-    target_id = models.IntegerField()
+
+    if target_type == '1':
+        target_id = models.ForeignKey(User, on_delete=models.PROTECT, null=True)
+    elif target_type == '2':
+        target_id = models.ForeignKey(Tag, on_delete=models.PROTECT, null=True)
+    elif target_type == '3':
+        target_id = models.ForeignKey(Article, on_delete=models.PROTECT, null=True)
     activity_JSON = JSONField()
 
