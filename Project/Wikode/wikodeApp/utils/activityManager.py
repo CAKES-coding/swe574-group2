@@ -209,6 +209,41 @@ class ActivityManager:
         )
         activity.save()
 
+    def saveTaggingActivityForArticle(self, target_id):
+        target = self.getTargetAsArticle(target_id)
+        if isinstance(target, Article):
+            activity_target_type = 'Article'
+            activity_target_url = self.getTagURL(id=target_id)
+            activity_target_name = target.tagName
+
+        json = {
+            "@context": "https://www.w3.org/ns/activitystreams",
+            "summary": "{} tagged {}".format(self.getOwnerName(), activity_target_name),
+            "type": "Add",
+            "published": self.getCurrentTimeAsISO(),
+            "actor": {
+                "type": "Person",
+                "id": self.getOwnerURL(),
+                "name": self.getOwnerName(),
+                "url": self.getOwnerURL()
+            },
+            "object": {
+                "id": activity_target_url,
+                "type": activity_target_type,
+                "url": activity_target_url,
+                "name": activity_target_name
+            }
+        }
+
+        activity = Activity(
+            user_id=self.user_id,
+            activity_type=6,
+            target_type=3,
+            target_id=target_id,
+            activity_JSON=json
+        )
+        activity.save()
+
     def getOwnerName(self):
         return self.owner.name
 
