@@ -17,25 +17,25 @@ class ActivityManager:
     def saveViewActivity(user_id, target_type, target_id):
 
         # TODO: get username from db
-        owner_name = 'Owner'
+        owner_name='Owner'
 
         # TODO: get targetName from db
-        target_name = 'Target'
-        
+        target_name='Target'
+
         current_time = datetime.datetime.now()
 
-        if target_type == '1':
-            acitivity_target_name = 'Person'
-            activity_target_url = "http://www.wikode.com/wikode/profile/{}".format(target_id)
-        elif target_type == '2':
-          #  TODO: when view tagis finished, implement the correct tag url
-          #  acitivity_target_name = 'Tag'
-          #  activity_target_url = "http://www.wikode.com/wikode/articleDetail/{}".format(target_id)
-        elif target_type == '3':
-            acitivity_target_name = 'Article'
-            activity_target_url = "http://www.wikode.com/wikode/articleDetail/{}".format(target_id)
+        if target_type=='1':
+            acitivity_target_name='Person'
+            activity_target_url="http://www.wikode.com/wikode/profile/{}".format(target_id)
+        # elif target_type=='2':
+        # TODO: when view tags finished, implement the correct tag url:
+            #  acitivity_target_name = 'Tag'
+            #  activity_target_url = "http://www.wikode.com/wikode/articleDetail/{}".format(target_id)
+        elif target_type=='3':
+            acitivity_target_name='Article'
+            activity_target_url="http://www.wikode.com/wikode/articleDetail/{}".format(target_id)
 
-        json = {
+        json={
                  "@context": "https://www.w3.org/ns/activitystreams",
                   "summary": "{} viewed {}".format(owner_name, target_name),
                   "type": "View",
@@ -54,7 +54,7 @@ class ActivityManager:
                 }
         }
 
-        activity = Activity(
+        activity=Activity(
             user_id = user_id,
             activity_type = 1,
             target_type = target_type,
