@@ -11,7 +11,10 @@ from wikodeApp.models import Activity, Article, RegistrationApplication
 class ActivityManager:
 
     def __init__(self, user_id):
+        owner = RegistrationApplication.objects.get(id=user_id)
         self.user_id = user_id
+        if isinstance(owner, RegistrationApplication):
+            self.owner=owner
 
     # This method saves the 'View' activity to the database.
     # user_id: the id of the user who makes the activity
@@ -20,16 +23,11 @@ class ActivityManager:
     # target_id: the id of the target, correlated with target_type
     def saveViewActivity(self, target_type, target_id):
 
-        # owner: user who is making the activity
-        owner = RegistrationApplication.objects.get(id=self.user_id)
-        if isinstance(owner, RegistrationApplication):
-            owner_name = owner.name
-
         current_time=str(datetime.datetime.now().isoformat())
 
         # target: the object that is being used in the activity by owner
         if target_type == '1':
-            target = RegistrationApplication.objects.get(id=target_id)
+            target = self.getTargetAsUser(target_id=target_id)
             if isinstance(target, RegistrationApplication):
                 activity_target_type = 'Person'
                 activity_target_url = "http://www.wikode.com/wikode/profile/{}".format(target_id)
@@ -40,7 +38,7 @@ class ActivityManager:
         #  activity_target_url = "http://www.wikode.com/wikode/articleDetail/{}".format(target_id)
         #   activity_target_type='TagLabel'
         elif target_type == '3':
-            target = Article.objects.get(id=target_id)
+            target = self.getTargetAsArticle(target_id=target_id)
             if isinstance(target, Article):
                 activity_target_type = 'Article'
                 activity_target_url = "http://www.wikode.com/wikode/articleDetail/{}".format(target_id)
@@ -48,14 +46,14 @@ class ActivityManager:
 
         json = {
             "@context": "https://www.w3.org/ns/activitystreams",
-            "summary": "{} viewed {}".format(owner_name, activity_target_name),
+            "summary": "{} viewed {}".format(self.getOwnerName(), activity_target_name),
             "type": "View",
             "published": current_time,
             "actor": {
                 "type": "Person",
-                "id": "http://www.wikode.com/wikode/profile/{}".format(self.user_id),
-                "name": owner_name,
-                "url": "http://www.wikode.com/wikode/profile/{}".format(self.user_id)
+                "id": self.getOwnerURL(),
+                "name": self.getOwnerName(),
+                "url": self.getOwnerURL()
             },
             "object": {
                 "id": activity_target_url,
@@ -74,3 +72,19 @@ class ActivityManager:
         )
         activity.save()
         print('activity saved')
+
+    def getOwnerName(self):
+        return self.owner.name
+
+    def getOwnerURL(self):
+        return "http://www.wikode.com/wikode/profile/{}".format(self.user_id)
+
+    def getTargetAsUser(self, target_id):
+        target = RegistrationApplication.objects.get(id=target_id)
+        if isinstance(target, RegistrationApplication):
+            return target
+
+    def getTargetAsArticle(self, target_id):
+        target = Article.objects.get(id=target_id)
+        if isinstance(target, Article):
+            return target
