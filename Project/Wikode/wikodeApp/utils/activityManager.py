@@ -23,8 +23,6 @@ class ActivityManager:
     # target_id: the id of the target, correlated with target_type
     def saveViewActivity(self, target_type, target_id):
 
-        current_time=str(datetime.datetime.now().isoformat())
-
         if target_type == '1':
             target = self.getTargetAsUser(target_id=target_id)
             if isinstance(target, RegistrationApplication):
@@ -47,7 +45,7 @@ class ActivityManager:
             "@context": "https://www.w3.org/ns/activitystreams",
             "summary": "{} viewed {}".format(self.getOwnerName(), activity_target_name),
             "type": "View",
-            "published": current_time,
+            "published": self.getCurrentTimeAsISO(),
             "actor": {
                 "type": "Person",
                 "id": self.getOwnerURL(),
@@ -72,6 +70,31 @@ class ActivityManager:
         activity.save()
         print('activity saved')
 
+    def saveFollowActivity(self, target_id):
+        target=self.getTargetAsUser(target_id)
+        activity_target_type = 'Person'
+        activity_target_url = "http://www.wikode.com/wikode/profile/{}".format(target_id)
+        activity_target_name = target.name
+
+        json = {
+            "@context": "https://www.w3.org/ns/activitystreams",
+            "summary": "{} followed {}".format(self.getOwnerName(), activity_target_name),
+            "type": "Follow",
+            "published": self.getCurrentTimeAsISO(),
+            "actor": {
+                "type": "Person",
+                "id": self.getOwnerURL(),
+                "name": self.getOwnerName(),
+                "url": self.getOwnerURL()
+            },
+            "object": {
+                "id": activity_target_url,
+                "type": activity_target_type,
+                "url": activity_target_url,
+                "name": activity_target_name
+            }
+        }
+
     def getOwnerName(self):
         return self.owner.name
 
@@ -83,6 +106,9 @@ class ActivityManager:
         target = RegistrationApplication.objects.get(id=target_id)
         if isinstance(target, RegistrationApplication):
             return target
+
+    def getCurrentTimeAsISO(self):
+       return str(datetime.datetime.now().isoformat())
 
     # returns target as article
     def getTargetAsArticle(self, target_id):
