@@ -1,7 +1,7 @@
 import datetime
 
 # the manager that will handle all the activity stream savings to database
-from wikodeApp.models import Activity, Article, RegistrationApplication, Tag
+from wikodeApp.models import Activity, Article, RegistrationApplication, Tag, Annotation
 
 
 # Activity Manager will handle all savings to database
@@ -243,6 +243,36 @@ class ActivityManager:
             activity_JSON=json
         )
         activity.save()
+
+    def saveAnnotationActivity(self, target_article_id, tag_id, start_index, end_index):
+        tag_object = self.getTargetAsTag(target_id=tag_id)
+        json = {
+                 "@context": "http://www.w3.org/ns/anno.jsonld",
+                 "id": self.getTagURL(id=tag_id),
+                 "type": "Annotation",
+                "body": [
+                     {
+                      "type": "TextualBody",
+                      "purpose": "tagging",
+                      "value": tag_object.tagName
+                     }
+                ],
+                "target": {
+                   "source": self.getArticleURL(id=target_article_id),
+                   "selector": {
+                        "type": "TextPositionSelector",
+                        "start": start_index,
+                        "end": end_index
+                    }
+                }
+        }
+
+        annotation = Annotation(
+            activity_JSON=json
+        )
+
+        annotation.save()
+
 
     def getOwnerName(self):
         return self.owner.name
