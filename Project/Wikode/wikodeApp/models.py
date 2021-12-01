@@ -121,11 +121,8 @@ class Activity(models.Model):
 
     target_id = models.IntegerField(max_length=8)
 
- #   if target_type == '1':
-  #      target_id = models.IntegerField(max_length=8)
-  #  elif target_type == '2':
-  #      target_id = models.IntegerField(max_length=8)
-  #  elif target_type == '3':
-  #      target_id = models.IntegerField(max_length=8)
     activity_JSON = JSONField()
+
+class Annotation(models.Model):
+    annotation_JSON = JSONField()
 
