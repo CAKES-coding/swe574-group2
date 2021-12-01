@@ -96,7 +96,41 @@ class ActivityManager:
 
         activity = Activity(
             user_id=self.user_id,
-            activity_type=1,
+            activity_type=2,
+            target_type=1,
+            target_id=target_id,
+            activity_JSON=json
+        )
+        activity.save()
+
+    def saveUnfollowActivity(self, target_id):
+        target = self.getTargetAsUser(target_id)
+        activity_target_type = 'Person'
+        activity_target_url = "http://www.wikode.com/wikode/profile/{}".format(target_id)
+        activity_target_name = target.name
+
+        json = {
+            "@context": "https://www.w3.org/ns/activitystreams",
+            "summary": "{} unfollowed {}".format(self.getOwnerName(), activity_target_name),
+            "type": "Unfollow",
+            "published": self.getCurrentTimeAsISO(),
+            "actor": {
+                "type": "Person",
+                "id": self.getOwnerURL(),
+                "name": self.getOwnerName(),
+                "url": self.getOwnerURL()
+            },
+            "object": {
+                "id": activity_target_url,
+                "type": activity_target_type,
+                "url": activity_target_url,
+                "name": activity_target_name
+            }
+        }
+
+        activity = Activity(
+            user_id=self.user_id,
+            activity_type=3,
             target_type=1,
             target_id=target_id,
             activity_JSON=json
