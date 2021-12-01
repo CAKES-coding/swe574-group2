@@ -143,12 +143,12 @@ class ActivityManager:
         target = self.getTargetAsTag(target_id)
         if isinstance(target, Tag):
             activity_target_type = 'Note'
-            activity_target_url = "http://www.wikode.com/wikode/tag/{}".format(target_id)
+            activity_target_url = self.getTagURL(id=target_id)
             activity_target_name = target.tagName
 
         json = {
             "@context": "https://www.w3.org/ns/activitystreams",
-            "summary": "{} added tag {}".format(self.getOwnerName(), activity_target_name),
+            "summary": "{} upvoted {}".format(self.getOwnerName(), activity_target_name),
             "type": "Unfollow",
             "published": self.getCurrentTimeAsISO(),
             "actor": {
@@ -167,7 +167,42 @@ class ActivityManager:
 
         activity = Activity(
             user_id=self.user_id,
-            activity_type=6,
+            activity_type=4,
+            target_type=2,
+            target_id=target_id,
+            activity_JSON=json
+        )
+        activity.save()
+
+    def saveDownvoteActivity(self, target_id):
+        target = self.getTargetAsTag(target_id)
+        if isinstance(target, Tag):
+            activity_target_type = 'Note'
+            activity_target_url = self.getTagURL(id=target_id)
+            activity_target_name = target.tagName
+
+        json = {
+            "@context": "https://www.w3.org/ns/activitystreams",
+            "summary": "{} downvoted {}".format(self.getOwnerName(), activity_target_name),
+            "type": "Unfollow",
+            "published": self.getCurrentTimeAsISO(),
+            "actor": {
+                "type": "Person",
+                "id": self.getOwnerURL(),
+                "name": self.getOwnerName(),
+                "url": self.getOwnerURL()
+            },
+            "object": {
+                "id": activity_target_url,
+                "type": activity_target_type,
+                "url": activity_target_url,
+                "name": activity_target_name
+            }
+        }
+
+        activity = Activity(
+            user_id=self.user_id,
+            activity_type=5,
             target_type=2,
             target_id=target_id,
             activity_JSON=json
@@ -195,6 +230,7 @@ class ActivityManager:
         if isinstance(target, Article):
             return target
 
+    # returns target as tag
     def getTargetAsTag(self, target_id):
         target = Tag.objects.get(id=target_id)
         if isinstance(target, Tag):
@@ -208,3 +244,6 @@ class ActivityManager:
 
     def getArticleURL(self, id):
         return self.getBaseURL() + "articleDetail/{}".format(id)
+
+    def getTagURL(self, id):
+        return self.getBaseURL() + "tag/{}".format(id)
