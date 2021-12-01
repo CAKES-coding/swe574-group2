@@ -20,11 +20,14 @@ class ActivityManager:
     # target_id: the id of the target, correlated with target_type
     def saveViewActivity(self, target_type, target_id):
 
+        # owner: user who is making the activity
         owner = RegistrationApplication.objects.get(id=self.user_id)
         if isinstance(owner, RegistrationApplication):
             owner_name = owner.name
 
         current_time=str(datetime.datetime.now().isoformat())
+
+        # target: the object that is being used in the activity by owner
         if target_type == '1':
             target = RegistrationApplication.objects.get(id=target_id)
             if isinstance(target, RegistrationApplication):
