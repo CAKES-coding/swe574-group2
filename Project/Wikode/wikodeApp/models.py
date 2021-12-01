@@ -115,15 +115,17 @@ class Activity(models.Model):
                     ('2', 'Tag'),
                     ('3', 'Article'))
 
-    user_id = models.ForeignKey(User, on_delete=models.PROTECT, null=True)
+    user_id = models.IntegerField(max_length=8)
     activity_type = models.CharField(max_length=8, choices=activity_types)
     target_type = models.CharField(max_length=8, choices=target_types)
 
-    if target_type == '1':
-        target_id = models.ForeignKey(User, on_delete=models.PROTECT, null=True)
-    elif target_type == '2':
-        target_id = models.ForeignKey(Tag, on_delete=models.PROTECT, null=True)
-    elif target_type == '3':
-        target_id = models.ForeignKey(Article, on_delete=models.PROTECT, null=True)
+    target_id = models.IntegerField(max_length=8)
+
+ #   if target_type == '1':
+  #      target_id = models.IntegerField(max_length=8)
+  #  elif target_type == '2':
+  #      target_id = models.IntegerField(max_length=8)
+  #  elif target_type == '3':
+  #      target_id = models.IntegerField(max_length=8)
     activity_JSON = JSONField()
 
