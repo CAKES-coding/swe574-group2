@@ -204,7 +204,7 @@ class ActivityManager:
         return "http://www.wikode.com/wikode/"
 
     def getProfileURL(self, id):
-        return self.getBaseURL() + "/profile/{}".format(id)
+        return self.getBaseURL() + "profile/{}".format(id)
 
     def getArticleURL(self, id):
-        return self.getBaseURL() + "/articleDetail/{}".format(id)
+        return self.getBaseURL() + "articleDetail/{}".format(id)
