@@ -68,6 +68,9 @@ class ActivityManager:
         )
         activity.save()
 
+    # This method saves a follow activity user -> user
+    # follower is the owner of the activity manager
+    # target_id: the id of the user who is being followed
     def saveFollowActivity(self, target_id):
         target=self.getTargetAsUser(target_id)
         if isinstance(target, RegistrationApplication):
@@ -103,6 +106,9 @@ class ActivityManager:
         )
         activity.save()
 
+    # This method saves an unfollow activity user -> user
+    # unfollower is the owner of the activity manager
+    # target_id: the id of the user who is being unfollowed
     def saveUnfollowActivity(self, target_id):
         target = self.getTargetAsUser(target_id)
         if isinstance(target, RegistrationApplication):
@@ -138,6 +144,8 @@ class ActivityManager:
         )
         activity.save()
 
+    # This method saves an upvote activity
+    # target_id: the id of the tag which is being upvoted
     def saveUpvoteActivity(self, target_id):
         target = self.getTargetAsTag(target_id)
         if isinstance(target, Tag):
@@ -173,6 +181,8 @@ class ActivityManager:
         )
         activity.save()
 
+    # This method saves a downvote activity
+    # target_id: the id of the tag which is being downvoted
     def saveDownvoteActivity(self, target_id):
         target = self.getTargetAsTag(target_id)
         if isinstance(target, Tag):
@@ -208,6 +218,9 @@ class ActivityManager:
         )
         activity.save()
 
+    # This method saves a tag activity for a whole article
+    # target_id: the id of the article which is being tagged
+    # tag_id: the id of the tag which is being used for tagging
     def saveTaggingActivityForArticle(self, target_id, tag_id):
         target = self.getTargetAsArticle(target_id)
         if isinstance(target, Article):
@@ -246,6 +259,11 @@ class ActivityManager:
         )
         activity.save()
 
+    # This method saves an annotation activity
+    # target_article_id: The id of the article, which has the fragment
+    # tag_id: the id of the tag, which is being used for tagging
+    # start_index: the beginning index of fragment inside the text
+    # end_index: the finishing index of fragment inside the text
     def saveAnnotationActivity(self, target_article_id, tag_id, start_index, end_index):
         tag_object = self.getTargetAsTag(target_id=tag_id)
         json = {
