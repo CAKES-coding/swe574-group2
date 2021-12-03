@@ -40,7 +40,6 @@ class ActivityManager:
                 activity_target_type = 'Article'
                 activity_target_url = self.getArticleURL(id=target_id)
                 activity_target_name = target.Title
-
         json = {
             "@context": "https://www.w3.org/ns/activitystreams",
             "summary": "{} viewed {}".format(self.getOwnerName(), activity_target_name),
@@ -209,12 +208,12 @@ class ActivityManager:
         )
         activity.save()
 
-    def saveTaggingActivityForArticle(self, target_id):
+    def saveTaggingActivityForArticle(self, target_id, tag_id):
         target = self.getTargetAsArticle(target_id)
         if isinstance(target, Article):
             activity_target_type = 'Article'
             activity_target_url = self.getTagURL(id=target_id)
-            activity_target_name = target.tagName
+            activity_target_name = target.Title
 
         json = {
             "@context": "https://www.w3.org/ns/activitystreams",
@@ -227,6 +226,9 @@ class ActivityManager:
                 "name": self.getOwnerName(),
                 "url": self.getOwnerURL()
             },
+            "tag": {
+                 "id": self.getTagURL(tag_id)
+             },
             "object": {
                 "id": activity_target_url,
                 "type": activity_target_type,
@@ -268,7 +270,7 @@ class ActivityManager:
         }
 
         annotation = Annotation(
-            activity_JSON=json
+            annotation_JSON=json
         )
 
         annotation.save()
