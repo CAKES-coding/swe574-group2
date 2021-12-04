@@ -41,6 +41,7 @@ class WikiEntry:
 
         if created:
             tag.description = self.getDescription()
+            tag.aliases = ';'.join(self.getAsKnownAs())
             tag.save()
             tag.createTSvector()
 
@@ -48,10 +49,14 @@ class WikiEntry:
         parent_wiki_id = self.entry_data['id']
         related_wiki_id_list = self.getRelatedWikiQidList()
         for relatedWikiId in related_wiki_id_list:
-            if Tag.objects.filter(wikiId=relatedWikiId).count() == 0:
-                tag_data = WikiEntry(relatedWikiId)
-                Tag.objects.create(wikiId=tag_data.getID(), label=tag_data.getLabel(),
-                                   description=tag_data.getDescription())
+            if not Tag.objects.filter(wikiId=relatedWikiId).exists():
+                child_wiki = WikiEntry(relatedWikiId)
+                child_tag = Tag.objects.create(wikiId=child_wiki.getID(),
+                                               label=child_wiki.getLabel(),
+                                               description=child_wiki.getDescription(),
+                                               aliases=';'.join(child_wiki.getAsKnownAs())
+                                               )
+
                 TagInheritance.objects.create(parentWikiId=parent_wiki_id, childWikiId=relatedWikiId)
 
     def getRelatedWikiQidList(self):
