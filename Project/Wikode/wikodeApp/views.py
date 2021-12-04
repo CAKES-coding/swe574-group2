@@ -52,7 +52,8 @@ def homePage(request):
                    "date_labels": date_data.keys(),
                    "data_values": date_data.values(),
                    "parent_template": "wikodeApp/searchResults.html",
-                   "filter_form": filter_form
+                   "filter_form": filter_form,
+                   "result_size": len(results_list)
                    }
     else:
         # todo: Look for a pagination without rerunning search query
@@ -91,7 +92,8 @@ def homePage(request):
                        "search_term": search_str,
                        "filter_params": filter_params_str,
                        "parent_template": "wikodeApp/searchResults.html",
-                       "filter_form": FilterForm(initial=filter_params)
+                       "filter_form": FilterForm(initial=filter_params),
+                       "result_size": len(results_list)
                        }
 
         else:
