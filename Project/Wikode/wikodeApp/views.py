@@ -104,7 +104,6 @@ def articleDetail(request, pk):
         elif 'add_tag' in request.POST:
             tag_data = WikiEntry(request.POST['qid'], tag_name=request.POST['tag_name'])
             tag_data.saveTag()
-            tag_data.saveRelatedWikiItems()
 
             article.Tags.add(tag_data)
 

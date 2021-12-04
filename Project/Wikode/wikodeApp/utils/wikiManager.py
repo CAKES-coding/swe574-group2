@@ -8,8 +8,10 @@ class WikiEntry:
     WikiEntry class to generate Tag model data from wikidata JSON reponse
     Uses wiki id with Q prefix to fetch entry data
     """
+
     def __init__(self, wikiQID, tag_name=None):
-        tag = requests.get('https://www.wikidata.org/w/api.php?action=wbgetentities&ids=' + wikiID + '&languages=en&format=json')
+        tag = requests.get(
+            'https://www.wikidata.org/w/api.php?action=wbgetentities&ids=' + wikiID + '&languages=en&format=json')
         tag_dict = tag.json().get('entities').get(wikiQID)
         self.entry_data = tag_dict
         self.tag_name = tag_name
@@ -45,21 +47,22 @@ class WikiEntry:
             tag.aliases = ';'.join(self.getAsKnownAs())
             tag.save()
             tag.createTSvector()
+            self.saveRelatedWikiItems()
+
+        return tag
 
     def saveRelatedWikiItems(self):
         parent_wiki = Tag.objects.get(wikiId=self.wikiQID)
         related_wiki_id_list = self.getRelatedWikiQidList()
         for relatedWikiId in related_wiki_id_list:
-            if not Tag.objects.filter(wikiId=relatedWikiId).exists():
-                child_wiki = WikiEntry(relatedWikiId)
-                child_tag = Tag.objects.create(wikiId=child_wiki.getID(),
-                                               label=child_wiki.getLabel(),
-                                               description=child_wiki.getDescription(),
-                                               aliases=';'.join(child_wiki.getAsKnownAs())
-                                               )
+            child_wiki = WikiEntry(relatedWikiId)
+            child_tag = Tag.objects.get_or_create(wikiId=child_wiki.getID(),
+                                                  label=child_wiki.getLabel(),
+                                                  description=child_wiki.getDescription(),
+                                                  aliases=';'.join(child_wiki.getAsKnownAs())
+                                                  )[0]
 
-                relation = TagInheritance(parentTag=parent_wiki, childTag=child_tag)
-                relation.save()
+            parent_wiki.childTags.add(child_tag)
 
     def getRelatedWikiQidList(self):
         related_wiki_id_list = []
