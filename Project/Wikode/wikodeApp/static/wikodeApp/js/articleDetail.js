@@ -4,12 +4,16 @@ let tagPieceButton = document.getElementById("tag-piece-button")
 let startIndex = 0;
 let endIndex = 0;
 
+
 abstractText.addEventListener("mouseup", () => {
     if (window.getSelection) {
-        let selectedText = window.getSelection().toString();
-        let wholeText = abstractText.textContent;
-        startIndex = wholeText.indexOf(selectedText);
-        endIndex = startIndex + selectedText.length
+        let selection = window.getSelection()
+        let selectedText = selection.toString();
+        startIndex = selection.anchorOffset;
+        endIndex = selection.focusOffset;
+        let selectionNode = selection.anchorNode;
+        console.log(selectedText);
+        console.log(selectionNode);
     }
 })
 
