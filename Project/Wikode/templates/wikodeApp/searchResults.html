@@ -13,7 +13,7 @@
     {% endblock %}
 
     <div class="container">
-        <h3 class="lead">Search Results</h3>
+        <h3 class="lead">Search Results ({{ result_size }} articles)</h3>
         <table class="table table-striped">
             <tr>
                 <th>PMID</th>
@@ -43,7 +43,13 @@
                                 class="sr-only">(current)</span></span></li>
                     {% else %}
                         <li class="page-item"><a class="page-link"
-                                                 href="?page={{ i }}&term={{ search_term }}">{{ i }}</a></li>
+
+                                {% if filter_params %}
+                                                 href="?page={{ i }}&term={{ search_term }}&{{ filter_params }}">
+                                {% else %}
+                                    href="?page={{ i }}&term={{ search_term }}">
+                                {% endif %}
+                        {{ i }}</a></li>
                     {% endif %}
                 {% endfor %}
                 {% if results_list.has_next %}

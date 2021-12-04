@@ -137,6 +137,15 @@ class Test(TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertIn(article.Title, resp.content.decode('utf-8'))
 
+    def test_paginator(self):
+        self.create_article()
+        self.client.login(username='bugs', password='123456')
+        url = reverse("wikodeApp:homePage")
+
+        resp = self.client.get(url + '?page=1&term=&start_date=2021-10-01&end_date=2022-12-31&order_by=date_desc')
+
+        self.assertEqual(resp.status_code, 200)
+
     # Utility test
 
     def test_article_search_and_filter(self):

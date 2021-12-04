@@ -40,7 +40,7 @@ class TagForm(forms.Form):
             url='tag-autocomplete',
             attrs={
                 'style': 'width:100%',
-        }),
+            }),
         label="Search Wikidata Entry",
     )
 
