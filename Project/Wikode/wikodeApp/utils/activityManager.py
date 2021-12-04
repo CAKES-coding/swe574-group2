@@ -156,7 +156,7 @@ class ActivityManager:
         json = {
             "@context": "https://www.w3.org/ns/activitystreams",
             "summary": "{} upvoted {}".format(self.getOwnerName(), activity_target_name),
-            "type": "Unfollow",
+            "type": "Like",
             "published": self.getCurrentTimeAsISO(),
             "actor": {
                 "type": "Person",
@@ -193,7 +193,7 @@ class ActivityManager:
         json = {
             "@context": "https://www.w3.org/ns/activitystreams",
             "summary": "{} downvoted {}".format(self.getOwnerName(), activity_target_name),
-            "type": "Unfollow",
+            "type": "Dislike",
             "published": self.getCurrentTimeAsISO(),
             "actor": {
                 "type": "Person",
