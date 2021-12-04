@@ -8,11 +8,12 @@ class WikiEntry:
     WikiEntry class to generate Tag model data from wikidata JSON reponse
     Uses wiki id with Q prefix to fetch entry data
     """
-    def __init__(self, wikiID, tag_name=None):
+    def __init__(self, wikiQID, tag_name=None):
         tag = requests.get('https://www.wikidata.org/w/api.php?action=wbgetentities&ids=' + wikiID + '&languages=en&format=json')
-        tag_dict = tag.json().get('entities').get(wikiID)
+        tag_dict = tag.json().get('entities').get(wikiQID)
         self.entry_data = tag_dict
         self.tag_name = tag_name
+        self.wikiQID = wikiQID
 
     def getID(self):
         return self.entry_data.get('id')
@@ -46,7 +47,7 @@ class WikiEntry:
             tag.createTSvector()
 
     def saveRelatedWikiItems(self):
-        parent_wiki_id = self.entry_data['id']
+        parent_wiki = Tag.objects.get(wikiId=self.wikiQID)
         related_wiki_id_list = self.getRelatedWikiQidList()
         for relatedWikiId in related_wiki_id_list:
             if not Tag.objects.filter(wikiId=relatedWikiId).exists():
@@ -57,7 +58,8 @@ class WikiEntry:
                                                aliases=';'.join(child_wiki.getAsKnownAs())
                                                )
 
-                TagInheritance.objects.create(parentWikiId=parent_wiki_id, childWikiId=relatedWikiId)
+                relation = TagInheritance(parentTag=parent_wiki, childTag=child_tag)
+                relation.save()
 
     def getRelatedWikiQidList(self):
         related_wiki_id_list = []

@@ -70,8 +70,8 @@ class Tag(models.Model):
 
 
 class TagInheritance(models.Model):
-    parentWikiId = models.CharField(max_length=64)
-    childWikiId = models.CharField(max_length=64)
+    parentTag = models.ForeignKey(Tag, on_delete=models.CASCADE)
+    childTag = models.ForeignKey(Tag, on_delete=models.CASCADE)
 
 
 class Article(models.Model):
