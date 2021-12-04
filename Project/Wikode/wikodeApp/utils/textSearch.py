@@ -34,7 +34,7 @@ class Search:
             ordered_list = self.result_list. \
                 values('id', 'PMID', 'Title', 'PublicationDate').order_by('PublicationDate')
         else:
-            raise ValueError('Cannot sort with given option', order_by + ' is not defined!!')
+            raise ValueError('Cannot sort with given option', str(order_by) + ' is not defined!!')
 
         return ordered_list
 
