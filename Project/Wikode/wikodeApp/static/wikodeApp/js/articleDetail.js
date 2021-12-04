@@ -9,8 +9,13 @@ abstractText.addEventListener("mouseup", () => {
     if (window.getSelection) {
         let selection = window.getSelection()
         selectedText = selection.toString();
-        startIndex = selection.anchorOffset;
-        endIndex = selection.focusOffset;
+        if (selection.anchorOffset < selection.focusOffset) {
+            startIndex = selection.anchorOffset;
+            endIndex = selection.focusOffset;
+        } else {
+            startIndex = selection.focusOffset;
+            endIndex = selection.anchorOffset;
+        }
     }
 })
 
@@ -50,10 +55,10 @@ tagPieceButton.addEventListener("click", () => {
 })
 
 function highlightAbstract(startInd, endInd) {
-  let abstract = document.getElementById("abstract-text");
-  let abstractInnerHTML = abstract.innerHTML;
-  if (startInd >= 0) {
-   abstractInnerHTML = abstractInnerHTML.substring(0,startInd) + "<span class='abstract_highlight'>" + abstractInnerHTML.substring(startInd,endInd) + "</span>" + abstractInnerHTML.substring(endInd);
-   abstract.innerHTML = abstractInnerHTML;
-  }
+    let abstract = document.getElementById("abstract-text");
+    let abstractInnerHTML = abstract.innerHTML;
+    if (startInd >= 0) {
+        abstractInnerHTML = abstractInnerHTML.substring(0, startInd) + "<span class='abstract_highlight'>" + abstractInnerHTML.substring(startInd, endInd) + "</span>" + abstractInnerHTML.substring(endInd);
+        abstract.innerHTML = abstractInnerHTML;
+    }
 }
