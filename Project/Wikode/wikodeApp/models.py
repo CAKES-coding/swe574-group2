@@ -79,7 +79,7 @@ class Article(models.Model):
     Journal = models.ForeignKey(Journal, on_delete=models.PROTECT, null=True)
     Keywords = models.ManyToManyField(Keyword)
     Authors = models.ManyToManyField(Author)
-    Tags = models.ManyToManyField(Tag)
+    Tags = models.ManyToManyField(Tag, through='TagRelation')
 
     Tokens = models.TextField(max_length=100000)
     SearchIndex = SearchVectorField(null=True)
@@ -95,3 +95,11 @@ class Article(models.Model):
 
     def __str__(self):
         return self.Title
+
+
+class TagRelation(models.Model):
+    article = models.ForeignKey(Article, on_delete=models.CASCADE)
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
+    fragment = models.TextField(max_length=1024)
+    start_index = models.IntegerField(null=True)
+    end_index = models.IntegerField(null=True)
