@@ -1,6 +1,6 @@
 import requests
 
-from wikodeApp.models import TagInheritance
+from wikodeApp.models import TagInheritance, Tag
 
 
 class WikiEntry:
@@ -8,10 +8,11 @@ class WikiEntry:
     WikiEntry class to generate Tag model data from wikidata JSON reponse
     Uses wiki id with Q prefix to fetch entry data
     """
-    def __init__(self, wikiID):
+    def __init__(self, wikiID, tag_name=None):
         tag = requests.get('https://www.wikidata.org/w/api.php?action=wbgetentities&ids=' + wikiID + '&languages=en&format=json')
         tag_dict = tag.json().get('entities').get(wikiID)
         self.entry_data = tag_dict
+        self.tag_name = tag_name
 
     def getID(self):
         return self.entry_data.get('id')
@@ -25,14 +26,32 @@ class WikiEntry:
         else:
             return None
 
+    def getAsKnownAs(self):
+        if self.entry_data.get('aliases').get('en'):
+            alias_list = []
+            for alias in self.entry_data.get('aliases').get('en'):
+                alias_list.append(alias.get('value'))
+            return alias_list
+        else:
+            return None
+
+    def save(self):
+        tag, created = Tag.objects.get_or_create(wikiId=self.getID(), label=self.getLabel(),
+                                                 tagName=self.tag_name)
+
+        if created:
+            tag.description = self.getDescription()
+            tag.save()
+            tag.createTSvector()
+
     def saveRelatedWikiItems(self):
         parent_wiki_id = self.entry_data['id']
-        relatedWikiIdList = self.getRelatedWikiQidList()
-        for relatedWikiId in relatedWikiIdList:
+        related_wiki_id_list = self.getRelatedWikiQidList()
+        for relatedWikiId in related_wiki_id_list:
             if Tag.objects.filter(wikiId=relatedWikiId).count() == 0:
-                tagData = WikiEntry(relatedWikiId)
-                Tag.objects.create(wikiId=tagData.getID(), label=tagData.getLabel(),
-                                   description=tagData.getDescription())
+                tag_data = WikiEntry(relatedWikiId)
+                Tag.objects.create(wikiId=tag_data.getID(), label=tag_data.getLabel(),
+                                   description=tag_data.getDescription())
                 TagInheritance.objects.create(parentWikiId=parent_wiki_id, childWikiId=relatedWikiId)
 
     def getRelatedWikiQidList(self):
@@ -41,7 +60,7 @@ class WikiEntry:
         wiki_property_list = ['P31', 'P279']
         for wikiProperty in wiki_property_list:
             if entry_data_claims.get(wikiProperty, None):
-                for entryDataClaim in entry_data_claims[wikiProperty]:
+                for entryDataClaim in entry_data_claims.get(wikiProperty, None):
                     wiki_id = entryDataClaim['mainsnak']['datavalue']['value']['id']
                     related_wiki_id_list.append(wiki_id)
 
