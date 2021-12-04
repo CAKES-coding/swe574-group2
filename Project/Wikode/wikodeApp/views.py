@@ -5,9 +5,7 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-
-import wikodeApp.models
-from wikodeApp.models import Author, Keyword, RegistrationApplication, Article, Tag
+from wikodeApp.models import Author, Keyword, RegistrationApplication, Article, Tag, TagRelation
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from wikodeApp.forms import ApplicationRegistrationForm, GetArticleForm, TagForm, FilterForm
 from wikodeApp.utils.fetchArticles import createArticles
@@ -103,10 +101,19 @@ def articleDetail(request, pk):
             print(wiki_info)
         elif 'add_tag' in request.POST:
             tag_data = WikiEntry(request.POST['qid'], tag_name=request.POST['tag_name'])
+            fragment_text = request.POST['fragment_text']
+            fragment_start_index = request.POST['fragment_start_index']
+            fragment_end_index = request.POST['fragment_end_index']
             tag = tag_data.saveTag()
             tag_data.saveRelatedWikiItems()
 
-            article.Tags.add(tag)
+            tag_relation = TagRelation(article=article,
+                                       tag=tag,
+                                       fragment=fragment_text,
+                                       start_index=fragment_start_index,
+                                       end_index=fragment_end_index
+                                       )
+            tag_relation.save()
 
         elif 'tag_id' in request.POST:
             tag = Tag.objects.get(pk=request.POST['tag_id'])
