@@ -48,15 +48,20 @@
                 </tr>
                 {% for item in tags %}
                     <tr>
-                        <td class="align-middle" style="text-align: center"><a href="{% url 'wikodeApp:articleDetail' item.id %}">{{ item.id }}</a></td>
-                        <td class="align-middle" style="text-align: center"><a href="https://www.wikidata.org/wiki/{{ item.wikiId }}" target={"_blank"}>{{ item.wikiId }}</a></td>
+                        <td class="align-middle" style="text-align: center"><a
+                                href="{% url 'wikodeApp:articleDetail' item.id %}">{{ item.id }}</a></td>
+                        <td class="align-middle" style="text-align: center"><a
+                                href="https://www.wikidata.org/wiki/{{ item.wikiId }}"
+                                target={"_blank"}>{{ item.wikiId }}</a></td>
                         <td class="align-middle" style="text-align: center">{{ item.tagName }}</td>
                         <td class="align-middle" style="text-align: center">{{ item.label }}</td>
                         <td class="align-middle" style="text-align: center">{{ item.description }}</td>
                         <td class="align-middle" style="text-align: center">
-                            <div class="btn-group" role="group" aria-label="Basic outlined example" style="display: table">
+                            <div class="btn-group" role="group" aria-label="Basic outlined example"
+                                 style="display: table">
                                 <span style="margin-right: 5px">
-                                    <button type="button" class="btn btn-outline-success" data-bs-toggle="button" autocomplete="off" onclick="incrementValue()">
+                                    <button type="button" class="btn btn-outline-success" data-bs-toggle="button"
+                                            autocomplete="off" onclick="incrementValue()">
                                         <i class="bi bi-hand-thumbs-up" id="upvote"></i>
                                     </button>
                                 </span>
@@ -64,7 +69,8 @@
                                 <span id="totalVotes" style="display: table-cell; vertical-align: center">0</span>
 
                                 <span style="margin-left: 5px">
-                                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="button" autocomplete="off" onclick="decrementValue()">
+                                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="button"
+                                            autocomplete="off" onclick="decrementValue()">
                                         <i class="bi bi-hand-thumbs-down" id="downvote"></i>
                                     </button>
                                 </span>
@@ -74,7 +80,8 @@
                             <form method="POST">
                                 {% csrf_token %}
                                 <input type="hidden" value="{{ item.id }}" name="tag_id"/>
-                                <button class="btn-close" type="Submit" onclick="return confirm('Are you sure?')"></button>
+                                <button class="btn-close" type="Submit"
+                                        onclick="return confirm('Are you sure?')"></button>
                             </form>
                         </td>
                     </tr>
@@ -86,36 +93,43 @@
                     {% csrf_token %}
                     {{ tag_form|crispy }}
                     <input
-                        class="register-button btn btn-primary mb-2"
-                        type="submit"
-                        name="get_tag"
-                        value="Get Tag"
-                        data-bs-toggle="tooltip"
-                        title="Search for wikidata entry using labels or Q codes"
+                            class="register-button btn btn-primary mb-2"
+                            type="submit"
+                            name="get_tag"
+                            value="Get Wikidata Entry"
+                            data-bs-toggle="tooltip"
+                            title="Search for wikidata entry using labels or Q codes"
                     >
                 </form>
-            <hr>
+                <hr>
                 {% if qid %}
-{#                    Placeholder for Existing tags list#}
-{#                    {% if existing_tags %}#}
-{#                    <p>Click on an existing tag to use it.</p>#}
-{#                    <table class="table table-striped">#}
-{#                        <tr>#}
-{#                            <th>Existing Tags</th>#}
-{#                        </tr>#}
-{#                        {% for item in existing_tags %}#}
-{#                            <tr>#}
-{#                                <td class="tag_name">{{ item.TagName }}</td>#}
-{#                            </tr>#}
-{#                        {% endfor %}#}
-{#                    </table>#}
-{#                        {% endif %}#}
+                    {#                    Placeholder for Existing tags list#}
+                    {#                    {% if existing_tags %}#}
+                    {#                    <p>Click on an existing tag to use it.</p>#}
+                    {#                    <table class="table table-striped">#}
+                    {#                        <tr>#}
+                    {#                            <th>Existing Tags</th>#}
+                    {#                        </tr>#}
+                    {#                        {% for item in existing_tags %}#}
+                    {#                            <tr>#}
+                    {#                                <td class="tag_name">{{ item.TagName }}</td>#}
+                    {#                            </tr>#}
+                    {#                        {% endfor %}#}
+                    {#                    </table>#}
+                    {#                        {% endif %}#}
                     <div class="container-fluid">
                         <form method="post">
                             {% csrf_token %}
                             <div class="form-group">
                                 <label for="tag_name">Tag Name</label>
                                 <input id="tag_name" class="form-control" type="text" name="tag_name" required>
+                            </div>
+                            <p></p>
+                            <div id="fragment_info" class="form-group">
+                                <label for="fragment_text">Fragment Text:</label>
+                                <input id="fragment_text" class="form-control" type="text" value="" name="fragment_text" readonly>
+                                <input id="fragment_start_index" class="form-control" type="hidden" name="fragment_start_index">
+                                <input id="fragment_end_index" class="form-control" type="hidden" name="fragment_end_index">
                             </div>
                             <p></p>
                             <div class="form-group">
@@ -125,21 +139,23 @@
                             <p></p>
                             <div class="form-group">
                                 <label for="label">Label:</label>
-                                <textarea type="text" class="form-control" name="label" cols="80" rows="1" readonly>{{ label }}</textarea>
+                                <textarea type="text" class="form-control" name="label" cols="80" rows="1"
+                                          readonly>{{ label }}</textarea>
                             </div>
                             <p></p>
                             <div class="form-group">
                                 <label for="description">Description:</label>
-                                <textarea type="text" class="form-control" name="description" cols="80" rows="5" readonly>{{ description }}</textarea>
+                                <textarea type="text" class="form-control" name="description" cols="80" rows="5"
+                                          readonly>{{ description }}</textarea>
                             </div>
                             <p></p>
                             <input
-                                class="register-button btn btn-primary mb-2"
-                                type="submit"
-                                name="add_tag"
-                                value="Add Tag"
-                                data-bs-toggle="tooltip"
-                                title="Save and add tag"
+                                    class="register-button btn btn-primary mb-2"
+                                    type="submit"
+                                    name="add_tag"
+                                    value="Tag Article"
+                                    data-bs-toggle="tooltip"
+                                    title="Save and add tag"
                             >
                         </form>
                     </div>
