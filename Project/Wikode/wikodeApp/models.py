@@ -2,7 +2,6 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.contrib.postgres.search import SearchVectorField, SearchVector
-from wikodeApp.models import TagInheritance
 
 
 class RegistrationApplication(models.Model):
@@ -60,7 +59,7 @@ class Tag(models.Model):
     label = models.CharField(max_length=64)
     description = models.TextField(max_length=1024, null=True)
     aliases = models.TextField(max_length=1024, null=True)
-    childTags = models.ManyToManyField("self")
+    childTags = models.ManyToManyField("self", related_name='parentTags', symmetrical=False)
     searchIndex = SearchVectorField(null=True)
 
     def createTSvector(self, *args, **kwargs):

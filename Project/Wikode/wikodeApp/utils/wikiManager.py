@@ -1,6 +1,6 @@
 import requests
 
-from wikodeApp.models import TagInheritance, Tag
+from wikodeApp.models import Tag
 
 
 class WikiEntry:
@@ -11,7 +11,7 @@ class WikiEntry:
 
     def __init__(self, wikiQID, tag_name=None):
         tag = requests.get(
-            'https://www.wikidata.org/w/api.php?action=wbgetentities&ids=' + wikiID + '&languages=en&format=json')
+            'https://www.wikidata.org/w/api.php?action=wbgetentities&ids=' + wikiQID + '&languages=en&format=json')
         tag_dict = tag.json().get('entities').get(wikiQID)
         self.entry_data = tag_dict
         self.tag_name = tag_name
@@ -36,7 +36,7 @@ class WikiEntry:
                 alias_list.append(alias.get('value'))
             return alias_list
         else:
-            return None
+            return []
 
     def saveTag(self):
         tag, created = Tag.objects.get_or_create(wikiId=self.getID(),
@@ -48,7 +48,6 @@ class WikiEntry:
             tag.aliases = ';'.join(self.getAsKnownAs())
             tag.save()
             tag.createTSvector()
-            self.saveRelatedWikiItems()
 
         return tag
 
@@ -58,11 +57,7 @@ class WikiEntry:
         for relatedWikiId in related_wiki_id_list:
             if relatedWikiId:
                 child_wiki = WikiEntry(relatedWikiId)
-                child_tag = Tag.objects.get_or_create(wikiId=child_wiki.getID(),
-                                                      label=child_wiki.getLabel(),
-                                                      description=child_wiki.getDescription(),
-                                                      aliases=';'.join(child_wiki.getAsKnownAs())
-                                                      )[0]
+                child_tag = child_wiki.saveTag()
 
                 parent_wiki.childTags.add(child_tag)
 

@@ -7,7 +7,7 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 
 import wikodeApp.models
-from wikodeApp.models import Author, Keyword, RegistrationApplication, Article, Tag, TagInheritance
+from wikodeApp.models import Author, Keyword, RegistrationApplication, Article, Tag
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from wikodeApp.forms import ApplicationRegistrationForm, GetArticleForm, TagForm, FilterForm
 from wikodeApp.utils.fetchArticles import createArticles
@@ -103,9 +103,10 @@ def articleDetail(request, pk):
             print(wiki_info)
         elif 'add_tag' in request.POST:
             tag_data = WikiEntry(request.POST['qid'], tag_name=request.POST['tag_name'])
-            tag_data.saveTag()
+            tag = tag_data.saveTag()
+            tag_data.saveRelatedWikiItems()
 
-            article.Tags.add(tag_data)
+            article.Tags.add(tag)
 
         elif 'tag_id' in request.POST:
             tag = Tag.objects.get(pk=request.POST['tag_id'])
