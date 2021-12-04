@@ -61,15 +61,21 @@ def homePage(request):
             search_terms = request.GET.get('term').split(",")
 
             search = Search(search_terms)
+            filter_params = {
+                "start_date": request.GET.get('start_date', None),
+                "end_date": request.GET.get('end_date', None),
+                "author_field": request.GET.get('author_field', None),
+                "journal_field": request.GET.get(('journal_field', None)),
+                "keywords_field": request.GET.get('keywords_field', None),
+                "order_by": request.GET.get('order_by', None)
+            }
 
-            filter_form = FilterForm(request.POST)
-            if filter_form.is_valid():
-                search.filterArticles(filter_form.cleaned_data)
-            results_list = search.getSearchResults(filter_form.cleaned_data.get('order_by'))
+            search.filterArticles(filter_params)
+            results_list = search.getSearchResults(filter_params.get('order_by'))
 
             paginator = Paginator(results_list, 25)
             search_str = request.GET.get('term')
-            filter_params = filter_form.cleaned_data
+
             filter_params_str = '&'.join([filter_key + '=' + str(filter_params.get(filter_key))
                                           for filter_key in filter_params
                                           if filter_params.get(filter_key)]
@@ -83,9 +89,9 @@ def homePage(request):
 
             context = {"results_list": results,
                        "search_term": search_str,
-                       "filter_params": filter_params,
+                       "filter_params": filter_params_str,
                        "parent_template": "wikodeApp/searchResults.html",
-                       "filter_form": filter_form
+                       "filter_form": FilterForm(initial=filter_params)
                        }
 
         else:
