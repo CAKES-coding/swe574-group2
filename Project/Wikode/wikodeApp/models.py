@@ -58,15 +58,13 @@ class Tag(models.Model):
     wikiId = models.CharField(max_length=64)
     label = models.CharField(max_length=64)
     description = models.TextField(max_length=1024, null=True)
-    # Maybe an array field for tokens?
-    tokens = models.TextField(max_length=1024, null=True)
+    aliases = models.TextField(max_length=1024, null=True)
     searchIndex = SearchVectorField(null=True)
 
     def createTSvector(self, *args, **kwargs):
         self.searchIndex = (
                 SearchVector('label', weight='A')
-                + SearchVector('tokens', weight='B')
-                + SearchVector('description', weight='C')
+                + SearchVector('aliases', weight='B')
         )
         super().save(*args, **kwargs)
 
