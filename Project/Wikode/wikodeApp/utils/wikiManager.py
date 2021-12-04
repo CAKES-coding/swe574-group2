@@ -1,5 +1,7 @@
 import requests
 
+from wikodeApp.models import TagInheritance
+
 
 class WikiEntry:
     """
@@ -22,6 +24,28 @@ class WikiEntry:
             return self.entry_data.get('descriptions').get('en').get('value')
         else:
             return None
+
+    def saveRelatedWikiItems(self):
+        parent_wiki_id = self.entry_data['id']
+        relatedWikiIdList = self.getRelatedWikiQidList()
+        for relatedWikiId in relatedWikiIdList:
+            if Tag.objects.filter(wikiId=relatedWikiId).count() == 0:
+                tagData = WikiEntry(relatedWikiId)
+                Tag.objects.create(wikiId=tagData.getID(), label=tagData.getLabel(),
+                                   description=tagData.getDescription())
+                TagInheritance.objects.create(parentWikiId=parent_wiki_id, childWikiId=relatedWikiId)
+
+    def getRelatedWikiQidList(self):
+        related_wiki_id_list = []
+        entry_data_claims = self.entry_data['claims']
+        wiki_property_list = ['P31', 'P279']
+        for wikiProperty in wiki_property_list:
+            if entry_data_claims.get(wikiProperty, None):
+                for entryDataClaim in entry_data_claims[wikiProperty]:
+                    wiki_id = entryDataClaim['mainsnak']['datavalue']['value']['id']
+                    related_wiki_id_list.append(wiki_id)
+
+        return related_wiki_id_list
 
 
 def getLabelSuggestion(term):

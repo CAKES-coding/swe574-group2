@@ -138,31 +138,6 @@ def articleDetail(request, pk):
     return render(request, 'wikodeApp/articleDetail.html', context=article_dict)
 
 
-def saveRelatedWikiItems(tagData):
-    parentWikiId = tagData.entry_data['id']
-    relatedWikiIdList = getRelatedWikiQidList(tagData)
-    for relatedWikiId in relatedWikiIdList:
-        if Tag.objects.filter(wikiId=relatedWikiId).count() == 0:
-            tagData = WikiEntry(relatedWikiId)
-            Tag.objects.create(wikiId=tagData.getID(), label=tagData.getLabel(),
-                               description=tagData.getDescription())
-            TagInheritance.objects.create(parentWikiId=parentWikiId, childWikiId=relatedWikiId)
-
-
-def getRelatedWikiQidList(tagData):
-    relatedWikiIdList = []
-
-    wikiPropertyList = ['P31', 'P279']
-    for wikiProperty in wikiPropertyList:
-        entryDataClaims = tagData.entry_data['claims']
-        if wikiProperty in entryDataClaims:
-            for entryDataClaim in entryDataClaims[wikiProperty]:
-                wikiId = entryDataClaim['mainsnak']['datavalue']['value']['id']
-                relatedWikiIdList.append(wikiId)
-
-    return relatedWikiIdList
-
-
 class TagAutocomplete(autocomplete.Select2ListView):
 
     def get_list(self):
