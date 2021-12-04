@@ -98,7 +98,7 @@ class ArticleInfo:
                         }
 
                         identifier = author.get('Identifier')
-                        if identifier is not None:
+                        if identifier:
                             identifierText = identifier.get('#text')
                             if not identifierText.startswith('https'):
                                 identifierText = "https://orcid.org/" + identifierText
