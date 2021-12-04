@@ -39,7 +39,8 @@ class WikiEntry:
             return None
 
     def saveTag(self):
-        tag, created = Tag.objects.get_or_create(wikiId=self.getID(), label=self.getLabel(),
+        tag, created = Tag.objects.get_or_create(wikiId=self.getID(),
+                                                 label=self.getLabel(),
                                                  tagName=self.tag_name)
 
         if created:
@@ -55,14 +56,15 @@ class WikiEntry:
         parent_wiki = Tag.objects.get(wikiId=self.wikiQID)
         related_wiki_id_list = self.getRelatedWikiQidList()
         for relatedWikiId in related_wiki_id_list:
-            child_wiki = WikiEntry(relatedWikiId)
-            child_tag = Tag.objects.get_or_create(wikiId=child_wiki.getID(),
-                                                  label=child_wiki.getLabel(),
-                                                  description=child_wiki.getDescription(),
-                                                  aliases=';'.join(child_wiki.getAsKnownAs())
-                                                  )[0]
+            if relatedWikiId:
+                child_wiki = WikiEntry(relatedWikiId)
+                child_tag = Tag.objects.get_or_create(wikiId=child_wiki.getID(),
+                                                      label=child_wiki.getLabel(),
+                                                      description=child_wiki.getDescription(),
+                                                      aliases=';'.join(child_wiki.getAsKnownAs())
+                                                      )[0]
 
-            parent_wiki.childTags.add(child_tag)
+                parent_wiki.childTags.add(child_tag)
 
     def getRelatedWikiQidList(self):
         related_wiki_id_list = []
@@ -71,7 +73,7 @@ class WikiEntry:
         for wikiProperty in wiki_property_list:
             if entry_data_claims.get(wikiProperty, None):
                 for entryDataClaim in entry_data_claims.get(wikiProperty, None):
-                    wiki_id = entryDataClaim['mainsnak']['datavalue']['value']['id']
+                    wiki_id = entryDataClaim.get('mainsnak').get('datavalue').get('value').get('id')
                     related_wiki_id_list.append(wiki_id)
 
         return related_wiki_id_list
