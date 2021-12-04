@@ -102,17 +102,12 @@ def articleDetail(request, pk):
             wiki_info['existing_tags'] = Tag.objects.filter(wikiId=tag_data.getID())
             print(wiki_info)
         elif 'add_tag' in request.POST:
-            tag_data = WikiEntry(request.POST['qid'])
-            tag, created = Tag.objects.get_or_create(wikiId=tag_data.getID(), label=tag_data.getLabel(),
-                                                     tagName=request.POST['tag_name'])
-            if created:
-                tag.description = tag_data.getDescription()
-                tag.save()
-                tag.createTSvector()
-                article.Tags.add(tag)
-                saveRelatedWikiItems(tag_data)
-            else:
-                article.Tags.add(tag)
+            tag_data = WikiEntry(request.POST['qid'], tag_name=request.POST['tag_name'])
+            tag_data.saveTag()
+            tag_data.saveRelatedWikiItems()
+
+            article.Tags.add(tag_data)
+
         elif 'tag_id' in request.POST:
             tag = Tag.objects.get(pk=request.POST['tag_id'])
             print(request.POST['tag_id'])

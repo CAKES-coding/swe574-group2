@@ -36,7 +36,7 @@ class WikiEntry:
         else:
             return None
 
-    def save(self):
+    def saveTag(self):
         tag, created = Tag.objects.get_or_create(wikiId=self.getID(), label=self.getLabel(),
                                                  tagName=self.tag_name)
 
