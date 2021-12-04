@@ -89,8 +89,9 @@ def homePage(request):
 def articleDetail(request, pk):
     article = Article.objects.get(pk=pk)
     wiki_info = {}
-    activity_manager = ActivityManager(user_id=request.user.id)
-    activity_manager.saveViewActivity('3', article.id)
+    if request.method == 'GET':
+        activity_manager = ActivityManager(user_id=request.user.id)
+        activity_manager.saveViewActivity('3', article.id)
     # Begin: Get Tag
     if request.method == 'POST':
         print(request.POST)
