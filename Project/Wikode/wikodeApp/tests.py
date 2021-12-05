@@ -5,8 +5,10 @@ from django.test import TestCase, Client
 from django.utils import timezone
 from django.contrib.postgres.search import SearchQuery
 from django.urls import reverse
-from wikodeApp.models import RegistrationApplication, Author, Journal, Keyword, Article
+from wikodeApp.models import RegistrationApplication, Author, Journal, Keyword, Article, Tag, Activity, Annotation
 from wikodeApp.utils.textSearch import Search
+from wikodeApp.utils.activityManager import ActivityManager
+
 
 # Create your tests here.
 
@@ -125,8 +127,21 @@ class Test(TestCase):
 
         self.assertEqual(resp.status_code, 200)
 
-    def test_articleDetail_view(self):
+    def test_articleDetail_view_anonymous(self):
         # given
+        article = self.create_article()
+        url = reverse("wikodeApp:articleDetail", args=[1])
+
+        # when
+        resp = self.client.get(url)
+
+        # then
+        self.assertEqual(resp.status_code, 302)
+        self.assertEqual(resp.url, '/wikode/userLogin/?next=/wikode/articleDetail/' + str(article.id))
+
+    def test_articleDetail_view_loggedIn(self):
+        # given
+        self.client.login(username="bugs", password="123456")
         article = self.create_article()
         url = reverse("wikodeApp:articleDetail", args=[1])
 
@@ -136,6 +151,15 @@ class Test(TestCase):
         # then
         self.assertEqual(resp.status_code, 200)
         self.assertIn(article.Title, resp.content.decode('utf-8'))
+
+    def test_paginator(self):
+        self.create_article()
+        self.client.login(username='bugs', password='123456')
+        url = reverse("wikodeApp:homePage")
+
+        resp = self.client.get(url + '?page=1&term=&start_date=2021-10-01&end_date=2022-12-31&order_by=date_desc')
+
+        self.assertEqual(resp.status_code, 200)
 
     # Utility test
 
@@ -154,3 +178,92 @@ class Test(TestCase):
         after_filter = control_article.getSearchResults('relevance')
 
         self.assertEqual(after_filter[0].get('Title'), article.Title)
+
+    def create_user(self):
+        RegistrationApplication.objects.create(id=1, name='test_user')
+
+    def test_article_manager_get_target_as_user(self):
+        self.create_user()
+        activity_manager = ActivityManager(user_id=1)
+        target_user = activity_manager.getTargetAsUser(target_id=1)
+        self.assertTrue(isinstance(target_user, RegistrationApplication))
+
+    def test_article_manager_get_target_as_article(self):
+        self.create_user()
+        Article.objects.create(id=3)
+        activity_manager = ActivityManager(user_id=1)
+        target_article = activity_manager.getTargetAsArticle(target_id=3)
+        self.assertTrue(isinstance(target_article, Article))
+
+    def test_article_manager_get_target_as_tag(self):
+        self.create_user()
+        Tag.objects.create(id=4)
+        activity_manager = ActivityManager(user_id=1)
+        target_tag = activity_manager.getTargetAsTag(target_id=4)
+        self.assertTrue(isinstance(target_tag, Tag))
+
+    def test_save_view_activity_for_user(self):
+        self.create_user()
+        activity_manager = ActivityManager(user_id=1)
+        activity_manager.saveViewActivity(target_type='1', target_id=1)
+        test_activity = Activity.objects.get(target_id=1)
+        self.assertTrue(isinstance(test_activity, Activity))
+
+    def test_save_view_activity_for_article(self):
+        self.create_user()
+        activity_manager = ActivityManager(user_id=1)
+        Article.objects.create(id=7, Title='test title')
+        activity_manager.saveViewActivity(target_type='3', target_id=7)
+        test_activity = Activity.objects.get(target_id=7)
+        self.assertTrue(isinstance(test_activity, Activity))
+
+    def test_get_owner_name(self):
+        self.create_user()
+        activity_manager = ActivityManager(user_id=1)
+        name = activity_manager.getOwnerName()
+        owner = RegistrationApplication.objects.get(id=1)
+        self.assertTrue(isinstance(owner, RegistrationApplication))
+        self.assertEqual(owner.name, name)
+
+    def test_save_annotation_activity(self):
+        self.create_user()
+        activity_manager = ActivityManager(user_id=1)
+        Tag.objects.create(id=17)
+        Article.objects.create(id=123, Title='test title')
+        activity_manager.saveAnnotationActivity(target_article_id=123, tag_id=17, start_index=32, end_index=56)
+        self.assertTrue(isinstance(Annotation.objects.get(), Annotation))
+
+    def test_save_tagging_activity_for_article(self):
+        self.create_user()
+        activity_manager = ActivityManager(user_id=1)
+        Tag.objects.create(id=12)
+        Article.objects.create(id=134, Title='test title')
+        activity_manager.saveTaggingActivityForArticle(target_id=134, tag_id=12)
+        self.assertTrue(isinstance(Activity.objects.get(target_id=134), Activity))
+
+    def test_save_follow_activity(self):
+        self.create_user()
+        activity_manager = ActivityManager(user_id=1)
+        activity_manager.saveFollowActivity(target_id=1)
+        self.assertTrue(isinstance(Activity.objects.get(target_id=1), Activity))
+
+    def test_save_unfollow_activity(self):
+        self.create_user()
+        activity_manager = ActivityManager(user_id=1)
+        activity_manager.saveUnfollowActivity(target_id=1)
+        self.assertTrue(isinstance(Activity.objects.get(target_id=1), Activity))
+
+    def test_save_upvote_activity(self):
+        self.create_user()
+        activity_manager = ActivityManager(user_id=1)
+        Tag.objects.create(id=55)
+        activity_manager.saveUpvoteActivity(target_id=55)
+        self.assertTrue(isinstance(Activity.objects.get(target_id=55), Activity))
+
+    def test_save_downvote_activity(self):
+        self.create_user()
+        activity_manager = ActivityManager(user_id=1)
+        Tag.objects.create(id=88)
+        activity_manager.saveDownvoteActivity(target_id=88)
+        self.assertTrue(isinstance(Activity.objects.get(target_id=88), Activity))
+
