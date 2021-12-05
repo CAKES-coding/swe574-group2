@@ -5,9 +5,10 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-from wikodeApp.models import Author, Keyword, RegistrationApplication, Article, Tag
+from wikodeApp.models import Author, Keyword, RegistrationApplication, Article, Tag, TagRelation
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from wikodeApp.forms import ApplicationRegistrationForm, GetArticleForm, TagForm, FilterForm
+from wikodeApp.utils.activityManager import ActivityManager
 from wikodeApp.utils.fetchArticles import createArticles
 import string
 import random
@@ -30,6 +31,11 @@ def homePage(request):
         page = request.POST.get('page', 1)
         paginator = Paginator(results_list, 25)
         search_str = request.POST.get('searchTerms')
+        filter_params = filter_form.cleaned_data
+        filter_params_str = '&'.join([filter_key + '=' + str(filter_params.get(filter_key))
+                                     for filter_key in filter_params
+                                     if filter_params.get(filter_key)]
+                                    )
         try:
             results = paginator.page(page)
         except PageNotAnInteger:
@@ -43,10 +49,12 @@ def homePage(request):
             date_data = {}
         context = {"results_list": results,
                    "search_term": search_str,
+                   "filter_params": filter_params_str,
                    "date_labels": date_data.keys(),
                    "data_values": date_data.values(),
                    "parent_template": "wikodeApp/searchResults.html",
-                   "filter_form": filter_form
+                   "filter_form": filter_form,
+                   "result_size": len(results_list)
                    }
     else:
         # todo: Look for a pagination without rerunning search query
@@ -55,15 +63,25 @@ def homePage(request):
             search_terms = request.GET.get('term').split(",")
 
             search = Search(search_terms)
+            filter_params = {
+                "start_date": request.GET.get('start_date', None),
+                "end_date": request.GET.get('end_date', None),
+                "author_field": request.GET.get('author_field', None),
+                "journal_field": request.GET.get(('journal_field', None)),
+                "keywords_field": request.GET.get('keywords_field', None),
+                "order_by": request.GET.get('order_by', None)
+            }
 
-            filter_form = FilterForm(request.POST)
-            if filter_form.is_valid():
-                print(filter_form.cleaned_data)
-                search.filterArticles(filter_form.cleaned_data)
-            results_list = search.getSearchResults(filter_form.cleaned_data.get('order_by'))
+            search.filterArticles(filter_params)
+            results_list = search.getSearchResults(filter_params.get('order_by'))
 
             paginator = Paginator(results_list, 25)
             search_str = request.GET.get('term')
+
+            filter_params_str = '&'.join([filter_key + '=' + str(filter_params.get(filter_key))
+                                          for filter_key in filter_params
+                                          if filter_params.get(filter_key)]
+                                         )
             try:
                 results = paginator.page(page)
             except PageNotAnInteger:
@@ -73,8 +91,10 @@ def homePage(request):
 
             context = {"results_list": results,
                        "search_term": search_str,
+                       "filter_params": filter_params_str,
                        "parent_template": "wikodeApp/searchResults.html",
-                       "filter_form": filter_form
+                       "filter_form": FilterForm(initial=filter_params),
+                       "result_size": len(results_list)
                        }
 
         else:
@@ -88,7 +108,9 @@ def homePage(request):
 def articleDetail(request, pk):
     article = Article.objects.get(pk=pk)
     wiki_info = {}
-
+    if request.method == 'GET':
+        activity_manager = ActivityManager(user_id=request.user.id)
+        activity_manager.saveViewActivity('3', article.id)
     # Begin: Get Tag
     if request.method == 'POST':
         print(request.POST)
@@ -98,29 +120,31 @@ def articleDetail(request, pk):
             wiki_info['qid'] = tag_data.getID()
             wiki_info['label'] = tag_data.getLabel()
             wiki_info['description'] = tag_data.getDescription()
-            wiki_info['existing_tags'] = Tag.objects.filter(wikiId=tag_data.getID())
-            print(wiki_info)
+
         elif 'add_tag' in request.POST:
             tag_data = WikiEntry(request.POST['qid'])
-            tag, created = Tag.objects.get_or_create(wikiId=tag_data.getID(), label=tag_data.getLabel(), tagName=request.POST['tag_name'])
-            if created:
-                tag.description = tag_data.getDescription()
-                tag.save()
-                tag.createTSvector()
-                article.Tags.add(tag)
-            else:
-                article.Tags.add(tag)
-        elif 'tag_id' in request.POST:
-            tag = Tag.objects.get(pk=request.POST['tag_id'])
-            print(request.POST['tag_id'])
-            article.Tags.remove(tag)
-    # End
+            fragment_text = request.POST['fragment_text']
+            fragment_start_index = request.POST['fragment_start_index']
+            fragment_end_index = request.POST['fragment_end_index']
+            tag = tag_data.saveTag()
+            tag_data.saveRelatedWikiItems()
+
+            TagRelation.objects.get_or_create(article=article,
+                                              tag=tag,
+                                              fragment=fragment_text,
+                                              start_index=fragment_start_index,
+                                              end_index=fragment_end_index
+                                              )
+
+        elif 'tag_relation_id' in request.POST:
+            tag = TagRelation.objects.get(id=request.POST['tag_relation_id'])
+            tag.delete()
 
     tag_form = TagForm()
     authors = Author.objects.filter(article=article)
     keywords = Keyword.objects.filter(article=article)
     keywords_list = ', '.join([item.KeywordText for item in keywords])
-    tags = Tag.objects.filter(article=article)
+    tags = TagRelation.objects.filter(article=article).select_related('tag')
 
     article_dict = {"authors": authors,
                     "title": article.Title,
@@ -223,7 +247,7 @@ def userList(request):
         elif 'admin_status' in request.POST:
             admin_user = User.objects.get(pk=request.POST['admin_status'])
             admin_user.is_superuser = not admin_user.is_superuser
-            admin_user.userprofileinfo.save()
+            admin_user.save()
 
     users = User.objects.filter(is_active=True)
     cur_username = request.user.username

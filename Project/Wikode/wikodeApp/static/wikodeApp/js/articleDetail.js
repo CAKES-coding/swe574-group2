@@ -3,13 +3,19 @@ let tagPieceButton = document.getElementById("tag-piece-button")
 
 let startIndex = 0;
 let endIndex = 0;
+let selectedText = "";
 
 abstractText.addEventListener("mouseup", () => {
     if (window.getSelection) {
-        let selectedText = window.getSelection().toString();
-        let wholeText = abstractText.textContent;
-        startIndex = wholeText.indexOf(selectedText);
-        endIndex = startIndex + selectedText.length
+        let selection = window.getSelection()
+        selectedText = selection.toString();
+        if (selection.anchorOffset < selection.focusOffset) {
+            startIndex = selection.anchorOffset;
+            endIndex = selection.focusOffset;
+        } else {
+            startIndex = selection.focusOffset;
+            endIndex = selection.anchorOffset;
+        }
     }
 })
 
@@ -36,10 +42,39 @@ rightClick = (e) => {
 }
 
 tagPieceButton.addEventListener("click", () => {
-    console.log(startIndex)
+    console.log(startIndex);
     console.log(endIndex);
     document.getElementById("tagContextMenu").style.display = "none";
+    document.getElementById("fragment_info").style.display = "block";
+    document.getElementById("fragment_text").value = selectedText;
+    document.getElementById("fragment_start_index").value = startIndex;
+    document.getElementById("fragment_end_index").value = endIndex;
+    highlightAbstract(startIndex, endIndex);
     startIndex = 0;
     endIndex = 0;
 })
 
+function highlightAbstract(startInd, endInd) {
+    let abstract = document.getElementById("abstract-text");
+    let abstractInnerHTML = abstract.innerText;
+    if (startInd >= 0) {
+        abstractInnerHTML = abstractInnerHTML.substring(0, startInd) + "<span class='abstract_highlight'>" + abstractInnerHTML.substring(startInd, endInd) + "</span>" + abstractInnerHTML.substring(endInd);
+        abstract.innerHTML = abstractInnerHTML;
+    }
+}
+
+function unHighlightAbstract() {
+    let abstract = document.getElementById("abstract-text");
+    abstract.innerHTML = abstract.innerText;
+}
+
+let tagRows = document.getElementsByClassName('tag_row');
+
+for (let i = 0; i < tagRows.length; i++) {
+    tagRows[i].addEventListener("mouseover", function (event) {
+        highlightAbstract(tagRows[i].dataset.start, tagRows[i].dataset.end);
+    });
+    tagRows[i].addEventListener("mouseout", function () {
+        unHighlightAbstract();
+    })
+}
