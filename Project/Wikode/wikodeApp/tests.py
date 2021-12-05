@@ -127,8 +127,21 @@ class Test(TestCase):
 
         self.assertEqual(resp.status_code, 200)
 
-    def test_articleDetail_view(self):
+    def test_articleDetail_view_anonymous(self):
         # given
+        article = self.create_article()
+        url = reverse("wikodeApp:articleDetail", args=[1])
+
+        # when
+        resp = self.client.get(url)
+
+        # then
+        self.assertEqual(resp.status_code, 302)
+        self.assertEqual(resp.url, '/wikode/userLogin/?next=/wikode/articleDetail/' + str(article.id))
+
+    def test_articleDetail_view_loggedIn(self):
+        # given
+        self.client.login(username="bugs", password="123456")
         article = self.create_article()
         url = reverse("wikodeApp:articleDetail", args=[1])
 

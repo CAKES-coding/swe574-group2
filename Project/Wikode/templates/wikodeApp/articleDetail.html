@@ -37,11 +37,10 @@
                     <th class="align-middle" style="text-align: center">Description</th>
                     <th class="align-middle" style="text-align: center">Total Votes</th>
                     <th class="align-middle" style="text-align: center">Remove</th>
-
                 </tr>
                 {% for item in tags %}
                     <tr>
-                        <td class="align-middle" style="text-align: center"><a href="{% url 'wikodeApp:articleDetail' item.id %}">{{ item.id }}</a></td>
+                        <td class="align-middle" style="text-align: center">{{ item.id }}</td>
                         <td class="align-middle" style="text-align: center"><a href="https://www.wikidata.org/wiki/{{ item.wikiId }}" target={"_blank"}>{{ item.wikiId }}</a></td>
                         <td class="align-middle" style="text-align: center">{{ item.tagName }}</td>
                         <td class="align-middle" style="text-align: center">{{ item.label }}</td>
@@ -67,7 +66,7 @@
                             <form method="POST">
                                 {% csrf_token %}
                                 <input type="hidden" value="{{ item.id }}" name="tag_id">
-                                <button class="confirm_action btn-close" type="Submit"></button>
+                                <button class="btn-close" type="Submit" onclick="return confirm('Are you sure?')"></button>
                             </form>
                         </td>
                     </tr>
