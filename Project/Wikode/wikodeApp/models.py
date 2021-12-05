@@ -55,7 +55,7 @@ class Keyword(models.Model):
 
 class Tag(models.Model):
     wikiId = models.CharField(max_length=64)
-    label = models.CharField(max_length=64)
+    label = models.CharField(max_length=512)
     description = models.TextField(max_length=1024, null=True)
     aliases = models.TextField(max_length=1024, null=True)
     childTags = models.ManyToManyField("self", related_name='parentTags', symmetrical=False)

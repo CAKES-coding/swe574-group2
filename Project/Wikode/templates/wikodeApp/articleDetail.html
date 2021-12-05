@@ -103,20 +103,6 @@
                 </form>
                 <hr>
                 {% if qid %}
-                    {#                    Placeholder for Existing tags list#}
-                    {#                    {% if existing_tags %}#}
-                    {#                    <p>Click on an existing tag to use it.</p>#}
-                    {#                    <table class="table table-striped">#}
-                    {#                        <tr>#}
-                    {#                            <th>Existing Tags</th>#}
-                    {#                        </tr>#}
-                    {#                        {% for item in existing_tags %}#}
-                    {#                            <tr>#}
-                    {#                                <td class="tag_name">{{ item.TagName }}</td>#}
-                    {#                            </tr>#}
-                    {#                        {% endfor %}#}
-                    {#                    </table>#}
-                    {#                        {% endif %}#}
                     <div class="container-fluid">
                         <form method="post">
                             {% csrf_token %}
