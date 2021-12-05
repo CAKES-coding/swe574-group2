@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from wikodeApp.models import Author, Keyword, RegistrationApplication, Article, Tag
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from wikodeApp.forms import ApplicationRegistrationForm, GetArticleForm, TagForm, FilterForm
+from wikodeApp.utils.activityManager import ActivityManager
 from wikodeApp.utils.fetchArticles import createArticles
 import string
 import random
@@ -107,7 +108,9 @@ def homePage(request):
 def articleDetail(request, pk):
     article = Article.objects.get(pk=pk)
     wiki_info = {}
-
+    if request.method == 'GET':
+        activity_manager = ActivityManager(user_id=request.user.id)
+        activity_manager.saveViewActivity('3', article.id)
     # Begin: Get Tag
     if request.method == 'POST':
         print(request.POST)
@@ -134,13 +137,11 @@ def articleDetail(request, pk):
             print(request.POST['tag_id'])
             article.Tags.remove(tag)
     # End
-
     tag_form = TagForm()
     authors = Author.objects.filter(article=article)
     keywords = Keyword.objects.filter(article=article)
     keywords_list = ', '.join([item.KeywordText for item in keywords])
     tags = Tag.objects.filter(article=article)
-
     article_dict = {"authors": authors,
                     "title": article.Title,
                     "abstract": article.Abstract,
