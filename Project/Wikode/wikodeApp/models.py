@@ -41,6 +41,7 @@ class Author(models.Model):
     LastName = models.CharField(max_length=128)
     ForeName = models.CharField(max_length=128, null=True)
     Initials = models.CharField(max_length=32)
+    Identifier = models.CharField(max_length=256, null=True)
 
     def __str__(self):
         return self.ForeName + ' ' + self.LastName
@@ -56,17 +57,16 @@ class Keyword(models.Model):
 class Tag(models.Model):
     tagName = models.CharField(max_length=64, default='noname')
     wikiId = models.CharField(max_length=64)
-    label = models.CharField(max_length=64)
+    label = models.CharField(max_length=512)
     description = models.TextField(max_length=1024, null=True)
-    # Maybe an array field for tokens?
-    tokens = models.TextField(max_length=1024, null=True)
+    aliases = models.TextField(max_length=1024, null=True)
+    childTags = models.ManyToManyField("self", related_name='parentTags', symmetrical=False)
     searchIndex = SearchVectorField(null=True)
 
     def createTSvector(self, *args, **kwargs):
         self.searchIndex = (
                 SearchVector('label', weight='A')
-                + SearchVector('tokens', weight='B')
-                + SearchVector('description', weight='C')
+                + SearchVector('aliases', weight='B')
         )
         super().save(*args, **kwargs)
 
@@ -80,7 +80,7 @@ class Article(models.Model):
     Journal = models.ForeignKey(Journal, on_delete=models.PROTECT, null=True)
     Keywords = models.ManyToManyField(Keyword)
     Authors = models.ManyToManyField(Author)
-    Tags = models.ManyToManyField(Tag)
+    Tags = models.ManyToManyField(Tag, through='TagRelation')
 
     Tokens = models.TextField(max_length=100000)
     SearchIndex = SearchVectorField(null=True)
@@ -126,3 +126,11 @@ class Activity(models.Model):
 class Annotation(models.Model):
     annotation_JSON = JSONField()
 
+
+
+class TagRelation(models.Model):
+    article = models.ForeignKey(Article, on_delete=models.CASCADE)
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
+    fragment = models.TextField(max_length=1024)
+    start_index = models.IntegerField(null=True)
+    end_index = models.IntegerField(null=True)

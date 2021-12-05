@@ -96,6 +96,14 @@ class ArticleInfo:
                             'ForeName': author.get('ForeName'),
                             'Initials': author.get('Initials')
                         }
+
+                        identifier = author.get('Identifier')
+                        if identifier:
+                            identifierText = identifier.get('#text')
+                            if not identifierText.startswith('https'):
+                                identifierText = "https://orcid.org/" + identifierText
+                            author_dict['Identifier'] = identifierText
+
                         authors_dict_list.append(author_dict)
                 except AttributeError:
                     pass

@@ -5,7 +5,7 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-from wikodeApp.models import Author, Keyword, RegistrationApplication, Article, Tag
+from wikodeApp.models import Author, Keyword, RegistrationApplication, Article, Tag, TagRelation
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from wikodeApp.forms import ApplicationRegistrationForm, GetArticleForm, TagForm, FilterForm
 from wikodeApp.utils.activityManager import ActivityManager
@@ -120,28 +120,32 @@ def articleDetail(request, pk):
             wiki_info['qid'] = tag_data.getID()
             wiki_info['label'] = tag_data.getLabel()
             wiki_info['description'] = tag_data.getDescription()
-            wiki_info['existing_tags'] = Tag.objects.filter(wikiId=tag_data.getID())
-            print(wiki_info)
+
         elif 'add_tag' in request.POST:
             tag_data = WikiEntry(request.POST['qid'])
-            tag, created = Tag.objects.get_or_create(wikiId=tag_data.getID(), label=tag_data.getLabel(), tagName=request.POST['tag_name'])
-            if created:
-                tag.description = tag_data.getDescription()
-                tag.save()
-                tag.createTSvector()
-                article.Tags.add(tag)
-            else:
-                article.Tags.add(tag)
-        elif 'tag_id' in request.POST:
-            tag = Tag.objects.get(pk=request.POST['tag_id'])
-            print(request.POST['tag_id'])
-            article.Tags.remove(tag)
-    # End
+            fragment_text = request.POST['fragment_text']
+            fragment_start_index = request.POST['fragment_start_index']
+            fragment_end_index = request.POST['fragment_end_index']
+            tag = tag_data.saveTag()
+            tag_data.saveRelatedWikiItems()
+
+            TagRelation.objects.get_or_create(article=article,
+                                              tag=tag,
+                                              fragment=fragment_text,
+                                              start_index=fragment_start_index,
+                                              end_index=fragment_end_index
+                                              )
+
+        elif 'tag_relation_id' in request.POST:
+            tag = TagRelation.objects.get(id=request.POST['tag_relation_id'])
+            tag.delete()
+
     tag_form = TagForm()
     authors = Author.objects.filter(article=article)
     keywords = Keyword.objects.filter(article=article)
     keywords_list = ', '.join([item.KeywordText for item in keywords])
-    tags = Tag.objects.filter(article=article)
+    tags = TagRelation.objects.filter(article=article).select_related('tag')
+
     article_dict = {"authors": authors,
                     "title": article.Title,
                     "abstract": article.Abstract,

@@ -57,7 +57,12 @@ def createArticles(term, max_article):
                 author_list = []
 
                 for record in article_info.getAuthors():
-                    author = Author.objects.get_or_create(**record)
+                    author = Author.objects.get_or_create(LastName=record.get('LastName'),
+                                                          ForeName=record.get('ForeName'),
+                                                          Initials=record.get('Initials')
+                                                          )
+                    author[0].Identifier = record.get('Identifier')
+                    author[0].save()
                     author_list.append(author[0])
 
                 article = Article(
@@ -82,7 +87,7 @@ def createArticles(term, max_article):
                     print('article ' + article.PMID + ' saved.')
                     save_counter = save_counter + 1
                 except IntegrityError:
-                    print('Article cant be saved')
+                    print('Article ' + article.PMID + ' cant be saved')
                     pass
             else:
                 print('Article cant be saved')

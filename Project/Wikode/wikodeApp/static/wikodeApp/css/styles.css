@@ -17,6 +17,10 @@
     flex-direction: column;
 }
 
+.abstract_highlight {
+    background-color: yellow;
+}
+
 #tagInput {
     width: 300px;
 }
@@ -25,3 +29,6 @@
     width: 400px;
 }
 
+#fragment_info {
+    display: none;
+}
