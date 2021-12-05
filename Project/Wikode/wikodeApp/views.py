@@ -97,10 +97,9 @@ def articleDetail(request, pk):
             wiki_info['qid'] = tag_data.getID()
             wiki_info['label'] = tag_data.getLabel()
             wiki_info['description'] = tag_data.getDescription()
-            wiki_info['existing_tags'] = Tag.objects.filter(wikiId=tag_data.getID())
-            print(wiki_info)
+
         elif 'add_tag' in request.POST:
-            tag_data = WikiEntry(request.POST['qid'], tag_name=request.POST['tag_name'])
+            tag_data = WikiEntry(request.POST['qid'])
             fragment_text = request.POST['fragment_text']
             fragment_start_index = request.POST['fragment_start_index']
             fragment_end_index = request.POST['fragment_end_index']
@@ -114,10 +113,9 @@ def articleDetail(request, pk):
                                               end_index=fragment_end_index
                                               )
 
-        elif 'tag_id' in request.POST:
-            tag = Tag.objects.get(pk=request.POST['tag_id'])
-            print(request.POST['tag_id'])
-            article.Tags.remove(tag)
+        elif 'tag_relation_id' in request.POST:
+            tag = TagRelation.objects.get(id=request.POST['tag_relation_id'])
+            tag.delete()
 
     tag_form = TagForm()
     authors = Author.objects.filter(article=article)

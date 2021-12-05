@@ -9,12 +9,11 @@ class WikiEntry:
     Uses wiki id with Q prefix to fetch entry data
     """
 
-    def __init__(self, wikiQID, tag_name=None):
+    def __init__(self, wikiQID):
         tag = requests.get(
             'https://www.wikidata.org/w/api.php?action=wbgetentities&ids=' + wikiQID + '&languages=en&format=json')
         tag_dict = tag.json().get('entities').get(wikiQID)
         self.entry_data = tag_dict
-        self.tag_name = tag_name
         self.wikiQID = wikiQID
 
     def getID(self):
@@ -39,11 +38,10 @@ class WikiEntry:
             return []
 
     def saveTag(self):
-        tag, created = Tag.objects.get_or_create(wikiId=self.getID(),
-                                                 label=self.getLabel(),
-                                                 tagName=self.tag_name)
+        tag, created = Tag.objects.get_or_create(wikiId=self.getID())
 
         if created:
+            tag.label = self.getLabel()
             tag.description = self.getDescription()
             tag.aliases = ';'.join(self.getAsKnownAs())
             tag.save()
