@@ -15,8 +15,8 @@ class ActivityManager:
     def __init__(self, user_id):
         owner = RegistrationApplication.objects.get(id=user_id)
         self.user_id = user_id
-        if isinstance(owner, RegistrationApplication):
-            self.owner=owner
+        if owner:
+            self.owner = owner
 
     # This method saves the 'View' activity to the database.
     # user_id: the id of the user who makes the activity
@@ -27,7 +27,7 @@ class ActivityManager:
 
         if target_type == '1':
             target = self.getTargetAsUser(target_id=target_id)
-            if isinstance(target, RegistrationApplication):
+            if target:
                 activity_target_type = 'Person'
                 activity_target_url = self.getProfileURL(id=target_id)
                 activity_target_name = target.name
@@ -38,7 +38,7 @@ class ActivityManager:
         #   activity_target_type='TagLabel'
         elif target_type == '3':
             target = self.getTargetAsArticle(target_id=target_id)
-            if isinstance(target, Article):
+            if target:
                 activity_target_type = 'Article'
                 activity_target_url = self.getArticleURL(id=target_id)
                 activity_target_name = target.Title
@@ -75,7 +75,7 @@ class ActivityManager:
     # target_id: the id of the user who is being followed
     def saveFollowActivity(self, target_id):
         target=self.getTargetAsUser(target_id)
-        if isinstance(target, RegistrationApplication):
+        if target:
             activity_target_type = 'Person'
             activity_target_url = self.getProfileURL(id=target_id)
             activity_target_name = target.name
@@ -113,7 +113,7 @@ class ActivityManager:
     # target_id: the id of the user who is being unfollowed
     def saveUnfollowActivity(self, target_id):
         target = self.getTargetAsUser(target_id)
-        if isinstance(target, RegistrationApplication):
+        if target:
             activity_target_type = 'Person'
             activity_target_url = self.getProfileURL(id=target_id)
             activity_target_name = target.name
@@ -150,7 +150,7 @@ class ActivityManager:
     # target_id: the id of the tag which is being upvoted
     def saveUpvoteActivity(self, target_id):
         target = self.getTargetAsTag(target_id)
-        if isinstance(target, Tag):
+        if target:
             activity_target_type = 'Note'
             activity_target_url = self.getTagURL(id=target_id)
             activity_target_name = target.tagName
@@ -187,7 +187,7 @@ class ActivityManager:
     # target_id: the id of the tag which is being downvoted
     def saveDownvoteActivity(self, target_id):
         target = self.getTargetAsTag(target_id)
-        if isinstance(target, Tag):
+        if target:
             activity_target_type = 'Note'
             activity_target_url = self.getTagURL(id=target_id)
             activity_target_name = target.tagName
@@ -225,7 +225,7 @@ class ActivityManager:
     # tag_id: the id of the tag which is being used for tagging
     def saveTaggingActivityForArticle(self, target_id, tag_id):
         target = self.getTargetAsArticle(target_id)
-        if isinstance(target, Article):
+        if target:
             activity_target_type = 'Article'
             activity_target_url = self.getTagURL(id=target_id)
             activity_target_name = target.Title
@@ -305,7 +305,7 @@ class ActivityManager:
     # returns target as user
     def getTargetAsUser(self, target_id):
         target = RegistrationApplication.objects.get(id=target_id)
-        if isinstance(target, RegistrationApplication):
+        if target:
             return target
 
     def getCurrentTimeAsISO(self):
@@ -314,13 +314,13 @@ class ActivityManager:
     # returns target as article
     def getTargetAsArticle(self, target_id):
         target = Article.objects.get(id=target_id)
-        if isinstance(target, Article):
+        if target:
             return target
 
     # returns target as tag
     def getTargetAsTag(self, target_id):
         target = Tag.objects.get(id=target_id)
-        if isinstance(target, Tag):
+        if target:
             return target
 
     def getProfileURL(self, id):
