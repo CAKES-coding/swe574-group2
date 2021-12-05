@@ -107,13 +107,12 @@ def articleDetail(request, pk):
             tag = tag_data.saveTag()
             tag_data.saveRelatedWikiItems()
 
-            tag_relation = TagRelation(article=article,
-                                       tag=tag,
-                                       fragment=fragment_text,
-                                       start_index=fragment_start_index,
-                                       end_index=fragment_end_index
-                                       )
-            tag_relation.save()
+            TagRelation.objects.get_or_create(article=article,
+                                              tag=tag,
+                                              fragment=fragment_text,
+                                              start_index=fragment_start_index,
+                                              end_index=fragment_end_index
+                                              )
 
         elif 'tag_id' in request.POST:
             tag = Tag.objects.get(pk=request.POST['tag_id'])
@@ -124,7 +123,7 @@ def articleDetail(request, pk):
     authors = Author.objects.filter(article=article)
     keywords = Keyword.objects.filter(article=article)
     keywords_list = ', '.join([item.KeywordText for item in keywords])
-    tags = Tag.objects.filter(article=article)
+    tags = TagRelation.objects.filter(article=article).select_related('tag')
 
     article_dict = {"authors": authors,
                     "title": article.Title,

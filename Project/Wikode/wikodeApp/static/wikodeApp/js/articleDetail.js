@@ -56,9 +56,25 @@ tagPieceButton.addEventListener("click", () => {
 
 function highlightAbstract(startInd, endInd) {
     let abstract = document.getElementById("abstract-text");
-    let abstractInnerHTML = abstract.innerHTML;
+    let abstractInnerHTML = abstract.innerText;
     if (startInd >= 0) {
         abstractInnerHTML = abstractInnerHTML.substring(0, startInd) + "<span class='abstract_highlight'>" + abstractInnerHTML.substring(startInd, endInd) + "</span>" + abstractInnerHTML.substring(endInd);
         abstract.innerHTML = abstractInnerHTML;
     }
+}
+
+function unHighlightAbstract() {
+    let abstract = document.getElementById("abstract-text");
+    abstract.innerHTML = abstract.innerText;
+}
+
+let tagRows = document.getElementsByClassName('tag_row');
+
+for (let i = 0; i < tagRows.length; i++) {
+    tagRows[i].addEventListener("mouseover", function (event) {
+        highlightAbstract(tagRows[i].dataset.start, tagRows[i].dataset.end);
+    });
+    tagRows[i].addEventListener("mouseout", function () {
+        unHighlightAbstract();
+    })
 }

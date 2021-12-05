@@ -47,15 +47,15 @@
                     <th class="align-middle" style="text-align: center">Remove</th>
                 </tr>
                 {% for item in tags %}
-                    <tr>
+                    <tr class="tag_row" data-start="{{ item.start_index }}" data-end="{{ item.end_index }}">
                         <td class="align-middle" style="text-align: center"><a
-                                href="{% url 'wikodeApp:articleDetail' item.id %}">{{ item.id }}</a></td>
+                                href="{% url 'wikodeApp:articleDetail' item.id %}">{{ item.tag.id }}</a></td>
                         <td class="align-middle" style="text-align: center"><a
-                                href="https://www.wikidata.org/wiki/{{ item.wikiId }}"
-                                target={"_blank"}>{{ item.wikiId }}</a></td>
-                        <td class="align-middle" style="text-align: center">{{ item.tagName }}</td>
-                        <td class="align-middle" style="text-align: center">{{ item.label }}</td>
-                        <td class="align-middle" style="text-align: center">{{ item.description }}</td>
+                                href="https://www.wikidata.org/wiki/{{ item.tag.wikiId }}"
+                                target={"_blank"}>{{ item.tag.wikiId }}</a></td>
+                        <td class="align-middle" style="text-align: center">{{ item.tag.tagName }}</td>
+                        <td class="align-middle" style="text-align: center">{{ item.tag.label }}</td>
+                        <td class="align-middle" style="text-align: center">{{ item.tag.description }}</td>
                         <td class="align-middle" style="text-align: center">
                             <div class="btn-group" role="group" aria-label="Basic outlined example"
                                  style="display: table">
