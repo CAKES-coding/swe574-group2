@@ -10,6 +10,8 @@ from wikodeApp.models import Activity, Article, RegistrationApplication, Tag, An
 
 class ActivityManager:
 
+    baseUrl = "http://www.wikode.com/wikode/"
+
     def __init__(self, user_id):
         owner = RegistrationApplication.objects.get(id=user_id)
         self.user_id = user_id
@@ -298,7 +300,7 @@ class ActivityManager:
         return self.owner.name
 
     def getOwnerURL(self):
-        return self.getBaseURL() + ("/profile/{}".format(self.user_id))
+        return self.baseUrl + ("/profile/{}".format(self.user_id))
 
     # returns target as user
     def getTargetAsUser(self, target_id):
@@ -321,14 +323,11 @@ class ActivityManager:
         if isinstance(target, Tag):
             return target
 
-    def getBaseURL(self):
-        return "http://www.wikode.com/wikode/"
-
     def getProfileURL(self, id):
-        return self.getBaseURL() + "profile/{}".format(id)
+        return self.baseUrl + "profile/{}".format(id)
 
     def getArticleURL(self, id):
-        return self.getBaseURL() + "articleDetail/{}".format(id)
+        return self.baseUrl + "articleDetail/{}".format(id)
 
     def getTagURL(self, id):
-        return self.getBaseURL() + "tag/{}".format(id)
+        return self.baseUrl + "tag/{}".format(id)
