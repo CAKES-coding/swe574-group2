@@ -9,7 +9,6 @@ from wikodeApp.models import Activity, Article, RegistrationApplication, Tag, An
 # to record an activity.
 
 class ActivityManager:
-
     baseUrl = "http://www.wikode.com/wikode/"
 
     def __init__(self, user_id):
@@ -74,7 +73,7 @@ class ActivityManager:
     # follower is the owner of the activity manager
     # target_id: the id of the user who is being followed
     def saveFollowActivity(self, target_id):
-        target=self.getTargetAsUser(target_id)
+        target = self.getTargetAsUser(target_id)
         if target:
             activity_target_type = 'Person'
             activity_target_url = self.getProfileURL(id=target_id)
@@ -242,8 +241,8 @@ class ActivityManager:
                 "url": self.getOwnerURL()
             },
             "tag": {
-                 "id": self.getTagURL(tag_id)
-             },
+                "id": self.getTagURL(tag_id)
+            },
             "object": {
                 "id": activity_target_url,
                 "type": activity_target_type,
@@ -269,24 +268,25 @@ class ActivityManager:
     def saveAnnotationActivity(self, target_article_id, tag_id, start_index, end_index):
         tag_object = self.getTargetAsTag(target_id=tag_id)
         json = {
-                 "@context": "http://www.w3.org/ns/anno.jsonld",
-                 "id": self.getTagURL(id=tag_id),
-                 "type": "Annotation",
-                "body": [
-                     {
-                      "type": "TextualBody",
-                      "purpose": "tagging",
-                      "value": tag_object.tagName
-                     }
-                ],
-                "target": {
-                   "source": self.getArticleURL(id=target_article_id),
-                   "selector": {
-                        "type": "TextPositionSelector",
-                        "start": start_index,
-                        "end": end_index
-                    }
+            "@context": "http://www.w3.org/ns/anno.jsonld",
+            "id": self.getTagURL(id=tag_id),
+            "via": "https://www.wikidata.org/wiki/{}".format(tag_object.wikiId),
+            "type": "Annotation",
+            "body": [
+                {
+                    "type": "TextualBody",
+                    "purpose": "tagging",
+                    "value": tag_object.tagName
                 }
+            ],
+            "target": {
+                "source": self.getArticleURL(id=target_article_id),
+                "selector": {
+                    "type": "TextPositionSelector",
+                    "start": start_index,
+                    "end": end_index
+                }
+            }
         }
 
         annotation = Annotation(
@@ -294,7 +294,6 @@ class ActivityManager:
         )
 
         annotation.save()
-
 
     def getOwnerName(self):
         return self.owner.name
@@ -309,7 +308,7 @@ class ActivityManager:
             return target
 
     def getCurrentTimeAsISO(self):
-       return str(datetime.datetime.now().isoformat())
+        return str(datetime.datetime.now().isoformat())
 
     # returns target as article
     def getTargetAsArticle(self, target_id):
