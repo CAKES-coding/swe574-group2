@@ -36,6 +36,11 @@ class GetArticleForm(forms.Form):
 
 class TagForm(forms.Form):
     wikiLabel = autocomplete.Select2ListChoiceField(
-        widget=autocomplete.ListSelect2(url='tag-autocomplete'),
-        label="Search Wikidata Entry"
+        widget=autocomplete.ListSelect2(
+            url='tag-autocomplete',
+            attrs={
+                'style': 'width:100%',
+        }),
+        label="Search Wikidata Entry",
     )
+
