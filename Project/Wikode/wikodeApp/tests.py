@@ -7,7 +7,6 @@ from django.contrib.postgres.search import SearchQuery
 from django.urls import reverse
 from wikodeApp.models import RegistrationApplication, Author, Journal, Keyword, Article
 from wikodeApp.utils.textSearch import Search
-from mock import Mock
 
 # Create your tests here.
 
