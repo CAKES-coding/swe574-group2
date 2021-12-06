@@ -299,7 +299,7 @@ class ActivityManager:
         return self.owner.name
 
     def getOwnerURL(self):
-        return self.baseUrl + ("/profile/{}".format(self.user_id))
+        return self.baseUrl + ("profile/{}".format(self.user_id))
 
     # returns target as user
     def getTargetAsUser(self, target_id):
