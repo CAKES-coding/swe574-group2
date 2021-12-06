@@ -136,6 +136,9 @@ def articleDetail(request, pk):
                                               end_index=fragment_end_index
                                               )
 
+            activity_manager = ActivityManager(user_id=request.user.id)
+            activity_manager.saveAnnotationActivity(target_article_id=article.id, tag_id=tag.id, start_index=fragment_start_index, end_index=fragment_end_index)
+
         elif 'tag_relation_id' in request.POST:
             tag = TagRelation.objects.get(id=request.POST['tag_relation_id'])
             tag.delete()

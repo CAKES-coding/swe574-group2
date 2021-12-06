@@ -276,7 +276,7 @@ class ActivityManager:
                 {
                     "type": "TextualBody",
                     "purpose": "tagging",
-                    "value": tag_object.tagName
+                    "value": tag_object.label
                 }
             ],
             "target": {
