@@ -115,6 +115,7 @@ def articleDetail(request, pk):
     if request.method == 'POST':
         print(request.POST)
         if 'get_tag' in request.POST:
+            # brings tag from wikidata
             tag_form = TagForm(data=request.POST)
             tag_data = WikiEntry(tag_form.data['wikiLabel'])
             wiki_info['qid'] = tag_data.getID()
@@ -122,6 +123,8 @@ def articleDetail(request, pk):
             wiki_info['description'] = tag_data.getDescription()
 
         elif 'add_tag' in request.POST:
+            # Tagging an article
+            # end index of "-1" means tagging whole article, else is annotation
             tag_data = WikiEntry(request.POST['qid'])
             fragment_text = request.POST['fragment_text']
             fragment_start_index = request.POST['fragment_start_index']
@@ -137,6 +140,7 @@ def articleDetail(request, pk):
                                               )
 
         elif 'tag_relation_id' in request.POST:
+            # Delete tag from an article
             tag = TagRelation.objects.get(id=request.POST['tag_relation_id'])
             tag.delete()
 

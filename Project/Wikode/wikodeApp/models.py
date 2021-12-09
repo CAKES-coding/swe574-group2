@@ -55,7 +55,6 @@ class Keyword(models.Model):
 
 
 class Tag(models.Model):
-    tagName = models.CharField(max_length=64, default='noname')
     wikiId = models.CharField(max_length=64)
     label = models.CharField(max_length=512)
     description = models.TextField(max_length=1024, null=True)
@@ -123,9 +122,9 @@ class Activity(models.Model):
 
     activity_JSON = JSONField()
 
+
 class Annotation(models.Model):
     annotation_JSON = JSONField()
-
 
 
 class TagRelation(models.Model):
