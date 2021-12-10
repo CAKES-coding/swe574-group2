@@ -5,7 +5,7 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-from wikodeApp.models import Author, Keyword, RegistrationApplication, Article, Tag, TagRelation
+from wikodeApp.models import Author, Keyword, RegistrationApplication, Article, Tag, TagRelation, UserProfileInfo, FollowRelation
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from wikodeApp.forms import ApplicationRegistrationForm, GetArticleForm, TagForm, FilterForm
 from wikodeApp.utils.activityManager import ActivityManager
@@ -292,6 +292,31 @@ def getProfilePageOfUser(request, pk):
     ## pk arguement will be a unique random 6 digit number that represents the requested user.
     ## Here we need to convert the unique random number to user id. Or have another number that represents user.
     ## For developmeny, id=3 is hardcoded below.
+    other_user = User.objects.get(id=3)
+    session_user = User.objects.get(id=request.user.id)
 
-    profile = User.objects.get(id=3)
-    return render(request, 'wikodeApp/profilePage.html', {'profile': profile})
+    is_followed = FollowRelation.objects.filter(followee_id=other_user.id, follower_id=session_user.id).exists()
+
+    return render(request, 'wikodeApp/profilePage.html', {'profile': other_user, 'is_followed': is_followed})
+
+
+@login_required
+def followUser(request, pk):
+    ## TODO
+    ## pk arguement will be a unique random 6 digit number that represents the requested user.
+    ## Here we need to convert the unique random number to user id. Or have another number that represents user.
+    ## For developmeny, id=3 is hardcoded below.
+    other_user = User.objects.get(id=3)
+    session_user = User.objects.get(id=request.user.id)
+
+    check_follow = FollowRelation.objects.filter(followee_id=other_user.id, follower_id=session_user.id).exists()
+
+    if check_follow:
+        is_followed = False
+        following = FollowRelation.objects.get(follower_id=session_user.id, followee_id=other_user.id)
+        following.delete()
+    else:
+        is_followed = True
+        FollowRelation.objects.create(follower_id=session_user.id, followee_id=other_user.id)
+
+    return render(request, 'wikodeApp/profilePage.html', {'profile': other_user, 'is_followed': is_followed})

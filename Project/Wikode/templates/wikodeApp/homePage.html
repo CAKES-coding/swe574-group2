@@ -4,5 +4,13 @@
         {% block search_box %}
         {% endblock %}
 
-    <a href="{% url 'wikodeApp:getProfilePageOfUser' 4567321 %}">Serdar's Profile</a>
+    <div class="container">
+        <ul class="list-group">
+            <li>
+                <a href="{% url 'wikodeApp:getProfilePageOfUser' 4567321 %}">Kenan's Profile</a>
+            </li>
+
+        </ul>
+    </div>
+
 {% endblock %}

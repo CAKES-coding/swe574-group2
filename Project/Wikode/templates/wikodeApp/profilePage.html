@@ -15,12 +15,17 @@
                         <div class="twPc-div">
                             <img alt="profile-background" class="twPc-bg twPc-block" src="{% static 'wikodeApp/img/profile-background.jfif' %}"/>
                             <div class="twPc-bottom-block">
-                                <div class="twPc-button">
-                                    <a href="{% url 'wikodeApp:followUser' user.id %}">
-                                        <button type="button" class="btn btn-lg btn-primary btn-sm" id="follow-button">Follow</button>
-                                    </a>
-                                </div>
-
+                                {% if profile %}
+                                    <div class="twPc-button">
+                                            <a href="{% url 'wikodeApp:followUser' profile.id %}">
+                                                {% if is_followed %}
+                                                    <button type="button" class="btn btn-lg btn-danger btn-sm" id="follow-button">Unfollow</button>
+                                                {% else %}
+                                                    <button type="button" class="btn btn-lg btn-primary btn-sm" id="follow-button">Follow</button>
+                                                {% endif %}
+                                            </a>
+                                    </div>
+                                {% endif %}
                                 <a title="avatar" class="twPc-avatarLink">
                                     <img alt="Emre Çalık" src="{% static 'wikodeApp/img/profile-image.png' %}" class="twPc-avatarImg">
                                 </a>

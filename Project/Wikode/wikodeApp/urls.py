@@ -12,5 +12,6 @@ urlpatterns = [
     path('profile/<int:pk>', views.getProfilePageOfUser, name='getProfilePageOfUser'),
     path('userList/', views.userList, name='userList'),
     path('getArticles/', views.getArticles, name='getArticles'),
-    path('articleDetail/<int:pk>', views.articleDetail, name='articleDetail')
+    path('articleDetail/<int:pk>', views.articleDetail, name='articleDetail'),
+    path('follow/<int:pk>)', views.followUser, name='followUser'),
 ]
