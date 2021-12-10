@@ -276,7 +276,22 @@ def getArticles(request):
     return render(request, 'wikodeApp/fetchArticles.html', {'form': form})
 
 
-@login_required()
-def profilePage(request):
+## Renders the profilePage.html with the authenticated user's information
+## Navigation item 'Profile'sent opens /myprofile url.
+@login_required
+def myProfilePage(request):
     user = request.user
     return render(request, 'wikodeApp/profilePage.html', {'user': user})
+
+
+## Renders the profilePage.html with the clicked user's id information as pk
+## Navigates to /profile/# url.
+@login_required
+def getProfilePageOfUser(request, pk):
+    ## TODO
+    ## pk arguement will be a unique random 6 digit number that represents the requested user.
+    ## Here we need to convert the unique random number to user id. Or have another number that represents user.
+    ## For developmeny, id=3 is hardcoded below.
+
+    profile = User.objects.get(id=3)
+    return render(request, 'wikodeApp/profilePage.html', {'profile': profile})
