@@ -5,13 +5,20 @@
 
     {% if date_labels %}
         <div class="container">
+<!--Added this here in order to show the sarched keyword in search results, highlighted as well.             -->
+            <h3 class="lead">Article Results for : <mark> <b>{{search_term}}</b></mark></h3>
+<!--Here we show the chart            -->
             <canvas id="myChart" width="100" height="30"></canvas>
         </div>
+
+
+
     {% endif %}
 
     {% block search_box %}
     {% endblock %}
 
+<!--Here we show the article search results with the required details-->
     <div class="container">
         <h3 class="lead">Search Results ({{ result_size }} articles)</h3>
         <table class="table table-striped">
@@ -61,6 +68,8 @@
                 {% endif %}
             </ul>
         {% endif %}
+
+<!--This is the chart that shows number of articles for searched keyword        -->
     </div>
     {% if date_labels %}
         <script>
@@ -77,11 +86,14 @@
                 },
                 options: {
                     scales: {
-                        y: {
-                            beginAtZero: true
+                      yAxes: [{
+                        ticks: {
+                            beginAtZero: true,
+                            callback: function(value) {if (value % 1 === 0) {return value;}}
                         }
-                    }
+                    }]
                 }
+              }
             });
         </script>
     {% endif %}
