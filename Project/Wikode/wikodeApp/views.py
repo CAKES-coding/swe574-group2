@@ -287,12 +287,12 @@ def myProfilePage(request):
 ## Renders the profilePage.html with the clicked user's id information as pk
 ## Navigates to /profile/# url.
 @login_required
-def getProfilePageOfUser(request, pk):
+def getProfilePageOfOtherfUser(request, pk):
     ## TODO
-    ## pk arguement will be a unique random 6 digit number that represents the requested user.
+    ## pk arguement may be a unique random 6 digit number that represents the requested user.
     ## Here we need to convert the unique random number to user id. Or have another number that represents user.
-    ## For developmeny, id=3 is hardcoded below.
-    other_user = User.objects.get(id=3)
+    ## For development purpose, pk is hardcoded below.
+    other_user = User.objects.get(id=pk)
     session_user = User.objects.get(id=request.user.id)
 
     is_followed = FollowRelation.objects.filter(followee_id=other_user.id, follower_id=session_user.id).exists()
@@ -305,18 +305,18 @@ def followUser(request, pk):
     ## TODO
     ## pk arguement will be a unique random 6 digit number that represents the requested user.
     ## Here we need to convert the unique random number to user id. Or have another number that represents user.
-    ## For developmeny, id=3 is hardcoded below.
-    other_user = User.objects.get(id=3)
+    ## For development purpose, pk is hardcoded below.
+    other_user = User.objects.get(id=pk)
     session_user = User.objects.get(id=request.user.id)
 
-    check_follow = FollowRelation.objects.filter(followee_id=other_user.id, follower_id=session_user.id).exists()
+    is_followed = FollowRelation.objects.filter(followee_id=other_user.id, follower_id=session_user.id).exists()
 
-    if check_follow:
-        is_followed = False
+    if is_followed:
         following = FollowRelation.objects.get(follower_id=session_user.id, followee_id=other_user.id)
         following.delete()
     else:
-        is_followed = True
         FollowRelation.objects.create(follower_id=session_user.id, followee_id=other_user.id)
 
-    return render(request, 'wikodeApp/profilePage.html', {'profile': other_user, 'is_followed': is_followed})
+    ## Return Follow/Unfollow button appearance is determined by is_followed value.
+    ## If True don't show Follow button, show Unfollow instead.
+    return render(request, 'wikodeApp/profilePage.html', {'profile': other_user, 'is_followed': not is_followed})

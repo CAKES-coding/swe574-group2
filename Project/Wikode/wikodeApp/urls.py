@@ -9,9 +9,9 @@ urlpatterns = [
     path('registrationRequests/', views.registrationRequests, name='registrationRequests'),
     path('userLogin/', views.userLogin, name='userLogin'),
     path('myprofile/', views.myProfilePage, name='myProfilePage'),
-    path('profile/<int:pk>', views.getProfilePageOfUser, name='getProfilePageOfUser'),
+    path('profile/<int:pk>', views.getProfilePageOfOtherfUser, name='getProfilePageOfUser'),
     path('userList/', views.userList, name='userList'),
     path('getArticles/', views.getArticles, name='getArticles'),
     path('articleDetail/<int:pk>', views.articleDetail, name='articleDetail'),
-    path('follow/<int:pk>)', views.followUser, name='followUser'),
+    path('profile/<int:pk>/follow', views.followUser, name='followUser'),
 ]
