@@ -1,13 +1,5 @@
-followingsList = [
-    "Can Dayan",
-    "Semih Solmaz",
-]
-
-followersList = [
-    "Kenan Kural",
-    "Anıl Turan",
-    "Can Dayan",
-]
+followersList = JSON.parse(document.getElementById("followee_list").value);
+followingsList = JSON.parse(document.getElementById("follower_list").value);
 
 const followingsAnchor = document.getElementById("followings");
 const followersAnchor = document.getElementById("followers")
@@ -21,6 +13,7 @@ followingsAnchor.addEventListener('click', (e) => {
 
 followersAnchor.addEventListener('click', (e) => {
     modalBody.innerHTML = "";
+    console.log()
     showModal("Followers", followersList);
 })
 
@@ -40,8 +33,8 @@ const showModal = function(header, list) {
         let tdItem = document.createElement("td")
 
         let itemAnchor = document.createElement("a");
-        itemAnchor.innerHTML = item
-        itemAnchor.href = "#"
+        itemAnchor.innerHTML = item[1]
+        itemAnchor.href = item[0]
         tdItem.appendChild(itemAnchor)
 
         let tdButton = document.createElement("td")

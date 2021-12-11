@@ -52,14 +52,24 @@
                                         </li>
                                         <li class="twPc-ArrangeSizeFit">
                                             <a href="#" title="userDetailsFollowLists" id="followings">
+                                                <input type="hidden" id="followee_list" name="variable" value="{{ follower_list }}">
                                                 <span class="twPc-StatLabel twPc-block">Followings</span>
-                                                <span class="twPc-StatValue">2</span>
+                                                {% if profile %}
+                                                    <span class="twPc-StatValue" id="follower_count">{{ profile.follower.count }}</span>
+                                                {% elif user.is_authenticated %}
+                                                    <span class="twPc-StatValue" id="follower_count">{{ user.follower.count }}</span>
+                                                {% endif %}
                                             </a>
                                         </li>
                                         <li class="twPc-ArrangeSizeFit">
                                             <a href="#" title="followers" id="followers">
+                                                <input type="hidden" id="follower_list" name="variable" value="{{ followee_list }}">
                                                 <span class="twPc-StatLabel twPc-block">Followers</span>
-                                                <span class="twPc-StatValue">3</span>
+                                                 {% if profile %}
+                                                    <span class="twPc-StatValue" id="followee_count">{{ profile.followee.count }}</span>
+                                                {% elif user.is_authenticated %}
+                                                    <span class="twPc-StatValue" id="followee_count">{{ user.followee.count }}</span>
+                                                {% endif %}
                                             </a>
                                         </li>
                                     </ul>

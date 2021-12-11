@@ -12,6 +12,7 @@ from wikodeApp.utils.activityManager import ActivityManager
 from wikodeApp.utils.fetchArticles import createArticles
 import string
 import random
+import json
 from wikodeApp.utils.textSearch import Search
 from dal import autocomplete
 from wikodeApp.utils.wikiManager import getLabelSuggestion, WikiEntry
@@ -33,9 +34,9 @@ def homePage(request):
         search_str = request.POST.get('searchTerms')
         filter_params = filter_form.cleaned_data
         filter_params_str = '&'.join([filter_key + '=' + str(filter_params.get(filter_key))
-                                     for filter_key in filter_params
-                                     if filter_params.get(filter_key)]
-                                    )
+                                      for filter_key in filter_params
+                                      if filter_params.get(filter_key)]
+                                     )
         try:
             results = paginator.page(page)
         except PageNotAnInteger:
@@ -281,7 +282,17 @@ def getArticles(request):
 @login_required
 def myProfilePage(request):
     user = request.user
-    return render(request, 'wikodeApp/profilePage.html', {'user': user})
+
+    follower_list = getFollowerList(user)
+    followee_list = getFolloweeList(user)
+
+    context = {
+        'user': user,
+        'follower_list': follower_list,
+        'followee_list': followee_list,
+    }
+
+    return render(request, 'wikodeApp/profilePage.html', context)
 
 
 ## Renders the profilePage.html with the clicked user's id information as pk
@@ -297,7 +308,21 @@ def getProfilePageOfOtherfUser(request, pk):
 
     is_followed = FollowRelation.objects.filter(followee_id=other_user.id, follower_id=session_user.id).exists()
 
-    return render(request, 'wikodeApp/profilePage.html', {'profile': other_user, 'is_followed': is_followed})
+    follower_list = getFollowerList(other_user)
+    followee_list = getFolloweeList(other_user)
+
+    print(follower_list)
+    print(followee_list)
+
+    context = {
+        'profile': other_user,
+        'is_followed': is_followed,
+        'follower_list': follower_list,
+        'followee_list': followee_list,
+    }
+
+    return render(request, 'wikodeApp/profilePage.html', context)
+
 
 
 @login_required
@@ -320,3 +345,31 @@ def followUser(request, pk):
     ## Return Follow/Unfollow button appearance is determined by is_followed value.
     ## If True don't show Follow button, show Unfollow instead.
     return render(request, 'wikodeApp/profilePage.html', {'profile': other_user, 'is_followed': not is_followed})
+
+
+## Create a followee list from Follow relation that the follower id is other_user.id
+## List example: [1, 'user@example.com']
+def getFolloweeList(user):
+    followee_list = json.dumps(
+        list(
+            FollowRelation
+                .objects
+                .filter(follower_id=user.id)
+                .values_list('followee_id', 'followee__username')
+        )
+    )
+    return followee_list
+
+
+## Create a follower list from Follow relation that the followee id is other_user.id
+## List example: [1, 'user@example.com']
+def getFollowerList(user):
+    follower_list = json.dumps(
+        list(
+            FollowRelation
+                .objects
+                .filter(followee_id=user.id)
+                .values_list('follower_id', 'follower__username')
+        )
+    )
+    return follower_list
