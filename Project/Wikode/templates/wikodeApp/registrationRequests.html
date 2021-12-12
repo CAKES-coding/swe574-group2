@@ -14,7 +14,8 @@
                     <th>Title</th>
                     <th>Request Text</th>
                     <th>Date</th>
-                    <th>Action</th>
+                    <th>Reject</th>
+                    <th>Approve</th>
 
                 </tr>
                 {% for item in registration_requests %}
@@ -27,14 +28,14 @@
                             <form method="POST">
                                 {% csrf_token %}
                                 <input type="hidden" value="{{ item.id }}" name="reject">
-                                <button type="Submit">Reject</button>
+                                <button type="Submit" onclick="return confirm('Are you sure?')">Reject</button>
                             </form>
                         </td>
                         <td>
                             <form method="POST">
                                 {% csrf_token %}
                                 <input type="hidden" value="{{ item.id }}" name="approve">
-                                <button type="Submit">Approve</button>
+                                <button type="Submit" onclick="return confirm('Are you sure?')">Approve</button>
                             </form>
                         </td>
                     </tr>
