@@ -6,6 +6,9 @@ FROM python:3
 # to the terminal with out buffering it first
 ENV PYTHONUNBUFFERED 1
 
+# Install telnet for DB init script
+RUN apt-get update && apt-get install -y telnet
+
 # create root directory for our project in the container
 RUN mkdir /Wikode
 
