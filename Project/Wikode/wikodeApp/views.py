@@ -121,7 +121,6 @@ def articleDetail(request, pk):
             wiki_info['qid'] = tag_data.getID()
             wiki_info['label'] = tag_data.getLabel()
             wiki_info['description'] = tag_data.getDescription()
-
         elif 'add_tag' in request.POST:
             # Tagging an article
             # end index of "-1" means tagging whole article, else is annotation
@@ -138,6 +137,12 @@ def articleDetail(request, pk):
                                               start_index=fragment_start_index,
                                               end_index=fragment_end_index
                                               )
+            activity_manager = ActivityManager(user_id=request.user.id)
+            print(fragment_end_index)
+            if fragment_end_index != "-1":
+                activity_manager.saveAnnotationActivity(target_article_id=article.id, tag_id=tag.id, start_index=fragment_start_index, end_index=fragment_end_index)
+            else:
+                activity_manager.saveTaggingActivityForArticle(target_id=article.id, tag_id=tag.id)
 
         elif 'tag_relation_id' in request.POST:
             # Delete tag from an article
