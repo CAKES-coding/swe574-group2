@@ -26,7 +26,14 @@
                         <td>
                             <form method="POST">
                                 {% csrf_token %}
-                                <input type="hidden" value="{{ item.id }}" name="request_id">
+                                <input type="hidden" value="{{ item.id }}" name="reject">
+                                <button type="Submit">Reject</button>
+                            </form>
+                        </td>
+                        <td>
+                            <form method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" value="{{ item.id }}" name="approve">
                                 <button type="Submit">Approve</button>
                             </form>
                         </td>

@@ -204,21 +204,27 @@ def registration(request):
 @login_required
 def registrationRequests(request):
     if request.method == 'POST':
-        approved_request = RegistrationApplication.objects.get(pk=request.POST['request_id'])
-        approved_request.applicationStatus = '2'
-        approved_request.save()
-        random_password = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
-        user = User(username=approved_request.email,
-                    first_name=approved_request.name,
-                    last_name=approved_request.surname,
-                    email=approved_request.email,
-                    password=random_password)
-        user.set_password(user.password)
-        user.save()
+        if 'approve' in request.POST:
+            approved_request = RegistrationApplication.objects.get(pk=request.POST['approve'])
+            approved_request.applicationStatus = '2'
+            approved_request.save()
+            random_password = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
+            user = User(username=approved_request.email,
+                        first_name=approved_request.name,
+                        last_name=approved_request.surname,
+                        email=approved_request.email,
+                        password=random_password)
+            user.set_password(user.password)
+            user.save()
 
-        requests_list = RegistrationApplication.objects.filter(applicationStatus='1').order_by('applicationDate')
-        requests_dict = {"registration_requests": requests_list, "password": random_password}
-        return render(request, 'wikodeApp/registrationRequests.html', context=requests_dict)
+            requests_list = RegistrationApplication.objects.filter(applicationStatus='1').order_by('applicationDate')
+            requests_dict = {"registration_requests": requests_list, "password": random_password}
+            return render(request, 'wikodeApp/registrationRequests.html', context=requests_dict)
+
+        if 'reject' in request.POST:
+            rejected_request = RegistrationApplication.objects.get(pk=request.POST['reject'])
+            rejected_request.applicationStatus = '3'
+            rejected_request.save()
 
     requests_list = RegistrationApplication.objects.filter(applicationStatus='1').order_by('applicationDate')
     requests_dict = {"registration_requests": requests_list}

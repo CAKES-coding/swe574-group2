@@ -96,6 +96,7 @@ class Article(models.Model):
     def __str__(self):
         return self.Title
 
+
 # Activity Stream 2.0 model
 # user_id: the id of the user who makes the activity
 # activity_type: activity type form one of the activity_types defined
