@@ -306,6 +306,9 @@ def getProfilePageOfOtherfUser(request, pk):
     other_user = User.objects.get(id=pk)
     session_user = User.objects.get(id=request.user.id)
 
+    if other_user == session_user:
+        return redirect('wikodeApp:myProfilePage')
+
     is_followed = FollowRelation.objects.filter(followee_id=other_user.id, follower_id=session_user.id).exists()
 
     follower_list = getFollowerList(other_user)
@@ -355,7 +358,7 @@ def getFolloweeList(user):
             FollowRelation
                 .objects
                 .filter(follower_id=user.id)
-                .values_list('followee_id', 'followee__username')
+                .values_list('followee_id', 'followee__first_name', 'followee__last_name')
         )
     )
     return followee_list
@@ -369,7 +372,7 @@ def getFollowerList(user):
             FollowRelation
                 .objects
                 .filter(followee_id=user.id)
-                .values_list('follower_id', 'follower__username')
+                .values_list('follower_id', 'follower__first_name', 'follower__last_name')
         )
     )
     return follower_list
