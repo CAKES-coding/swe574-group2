@@ -15,19 +15,30 @@
                         <div class="twPc-div">
                             <img alt="profile-background" class="twPc-bg twPc-block" src="{% static 'wikodeApp/img/profile-background.jfif' %}"/>
                             <div class="twPc-bottom-block">
-                                <div class="twPc-button">
-                                    <button type="button" class="btn btn-lg btn-primary btn-sm" id="follow-button">Follow</button>
-                                </div>
+                                {% if profile %}
+                                    <div class="twPc-button">
+                                            {% if is_followed %}
+                                                <button type="button" class="btn btn-lg btn-danger btn-sm" id="follow-button">Unfollow</button>
+                                            {% else %}
+                                                <button type="button" class="btn btn-lg btn-primary btn-sm" id="follow-button">Follow</button>
+                                            {% endif %}
+                                    </div>
+                                {% endif %}
 
                                 <a title="avatar" class="twPc-avatarLink">
                                     <img alt="Emre Çalık" src="{% static 'wikodeApp/img/profile-image.png' %}" class="twPc-avatarImg">
                                 </a>
 
-                                {% if user.is_authenticated %}
-                                <div class="twPc-divUser">
-                                    <div class="twPc-divName"> {{ user.get_full_name }} </div>
-                                    <span> {{ user.get_username }} </span>
-                                </div>
+                                {% if profile %}
+                                    <div class="twPc-divUser">
+                                        <div class="twPc-divName"> {{ profile.get_full_name }} </div>
+                                        <span> {{ profile.get_username }} </span>
+                                    </div>
+                                {% elif user.is_authenticated %}
+                                    <div class="twPc-divUser">
+                                        <div class="twPc-divName"> {{ user.get_full_name }} </div>
+                                        <span> {{ user.get_username }} </span>
+                                    </div>
                                 {% endif %}
 
                                 <div class="twPc-divStats">

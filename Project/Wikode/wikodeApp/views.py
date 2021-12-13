@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.http import HttpResponseRedirect, HttpResponse
@@ -285,7 +285,35 @@ def getArticles(request):
     return render(request, 'wikodeApp/fetchArticles.html', {'form': form})
 
 
-@login_required()
-def profilePage(request):
+## Renders the profilePage.html with the authenticated user's information
+## Navigation item 'Profile'sent opens /myprofile url.
+@login_required
+def myProfilePage(request):
     user = request.user
-    return render(request, 'wikodeApp/profilePage.html', {'user': user})
+
+    context = {
+        'user': user,
+    }
+
+    return render(request, 'wikodeApp/profilePage.html', context)
+
+
+## Renders the profilePage.html with the clicked user's id information as pk
+## Navigates to /profile/# url.
+@login_required
+def getProfilePageOfOtherUser(request, pk):
+    ## TODO
+    ## pk arguement may be a unique random 6 digit number that represents the requested user.
+    ## Here we need to convert the unique random number to user id. Or have another number that represents user.
+    ## For development purpose, pk is hardcoded below.
+    other_user = User.objects.get(id=pk)
+    session_user = User.objects.get(id=request.user.id)
+
+    if other_user == session_user:
+        return redirect('wikodeApp:myProfilePage')
+
+    context = {
+        'profile': other_user,
+    }
+
+    return render(request, 'wikodeApp/profilePage.html', context)
