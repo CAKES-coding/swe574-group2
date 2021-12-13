@@ -32,8 +32,8 @@ def homePage(request):
         paginator = Paginator(results_list, 25)
         search_str = request.POST.get('searchTerms')
         filter_params = filter_form.cleaned_data
-        ali=filter_form.cleaned_data.get('start_date')
-        ali2 = filter_form.cleaned_data.get('end_date')
+
+
         filter_params_str = '&'.join([filter_key + '=' + str(filter_params.get(filter_key))
                                      for filter_key in filter_params
                                      if filter_params.get(filter_key)]

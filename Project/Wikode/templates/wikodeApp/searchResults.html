@@ -9,13 +9,13 @@
             <h3 class="lead">Article Results for : <mark> <b>{{search_term}}</b></mark></h3>
 <!--Added this here in order to show the filter options, meaning what the user is filtered.             -->
 
-            <h3 id="tek" class="lead">Filter Parameters : <mark><b>{{filter_params}}</b></mark></h3>
+            <h3 id="filterID" class="lead">Filter Parameters : <mark><b>{{filter_params}}</b></mark></h3>
 <!--Added these in order to fix the view of filter parameters            -->
             <script>
-            let text = document.getElementById("tek").innerHTML;
-            document.getElementById("tek").innerHTML = text.replaceAll("_", " ");;
-            let text2 = document.getElementById("tek").innerHTML;
-            document.getElementById("tek").innerHTML = text2.replaceAll("&amp", " ");;
+            let text = document.getElementById("filterID").innerHTML;
+            document.getElementById("filterID").innerHTML = text.replaceAll("_", " ");;
+            let text2 = document.getElementById("filterID").innerHTML;
+            document.getElementById("filterID").innerHTML = text2.replaceAll("&amp", " ");;
 
 
             </script>
