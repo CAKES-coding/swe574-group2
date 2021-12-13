@@ -297,7 +297,7 @@ def myProfilePage(request):
 ## Renders the profilePage.html with the clicked user's id information as pk
 ## Navigates to /profile/# url.
 @login_required
-def getProfilePageOfOtherfUser(request, pk):
+def getProfilePageOfOtherUser(request, pk):
     ## TODO
     ## pk arguement may be a unique random 6 digit number that represents the requested user.
     ## Here we need to convert the unique random number to user id. Or have another number that represents user.
