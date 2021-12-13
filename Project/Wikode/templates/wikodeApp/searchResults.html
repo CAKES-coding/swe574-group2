@@ -8,8 +8,17 @@
 <!--Added this here in order to show the sarched keyword in search results, highlighted as well.             -->
             <h3 class="lead">Article Results for : <mark> <b>{{search_term}}</b></mark></h3>
 <!--Added this here in order to show the filter options, meaning what the user is filtered.             -->
-            <h3 class="lead">Filter Parameters : <mark><b>{{filter_params}}</b></mark></h3>
 
+            <h3 id="tek" class="lead">Filter Parameters : <mark><b>{{filter_params}}</b></mark></h3>
+
+            <script>
+            let text = document.getElementById("tek").innerHTML;
+            document.getElementById("tek").innerHTML = text.replaceAll("_", " ");;
+            let text2 = document.getElementById("tek").innerHTML;
+            document.getElementById("tek").innerHTML = text2.replaceAll("&amp", " ");;
+
+
+            </script>
 
 <!--Here we show the chart            -->
             <canvas id="myChart" width="100" height="30"></canvas>
@@ -90,10 +99,10 @@
                 },
                 options: {
                     scales: {
-                      yAxes: [{
-                        ticks: {
-                            beginAtZero: true,
-                            callback: function(value) {if (value % 1 === 0) {return value;}}
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true,
+                                    callback: function(value) {if (value % 1 === 0) {return value;}}
                         }
                     }]
                 }
