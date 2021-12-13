@@ -42,11 +42,12 @@ const showModal = function(header, list) {
         tdItem.appendChild(itemAnchor)
 
         let tdButton = document.createElement("td")
-        let button = getFollowButton()
+        let is_following = true
+        let button = getFollowButton(is_following)
         tdButton.appendChild(button)
 
         row.appendChild(tdItem)
-        row.appendChild(tdButton)
+        // row.appendChild(tdButton)
         listTableBody.appendChild(row)
     })
 
@@ -55,11 +56,16 @@ const showModal = function(header, list) {
     modalBody.appendChild(listTable);
 }
 
-const getFollowButton = function () {
+const getFollowButton = function (is_following) {
     const followButton = document.createElement("button");
-    followButton.innerHTML = "Follow"
     followButton.classList.add("btn")
-    followButton.classList.add("btn-primary")
+    if (is_following) {
+        followButton.innerHTML = "Unfollow"
+        followButton.classList.add("btn-danger");
+    } else {
+        followButton.innerHTML = "Follow"
+        followButton.classList.add("btn-primary");
+    }
     followButton.classList.add("btn-sm")
     return followButton
 }
