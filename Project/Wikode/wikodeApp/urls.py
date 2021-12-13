@@ -11,5 +11,6 @@ urlpatterns = [
     path('profile/', views.profilePage, name='profilePage'),
     path('userList/', views.userList, name='userList'),
     path('getArticles/', views.getArticles, name='getArticles'),
-    path('articleDetail/<int:pk>', views.articleDetail, name='articleDetail')
+    path('articleDetail/<int:pk>', views.articleDetail, name='articleDetail'),
+    path('upVote/', views.upVote, name='upVote')
 ]

@@ -127,10 +127,15 @@ class Annotation(models.Model):
     annotation_JSON = JSONField()
 
 
-
 class TagRelation(models.Model):
     article = models.ForeignKey(Article, on_delete=models.CASCADE)
     tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
     fragment = models.TextField(max_length=1024)
     start_index = models.IntegerField(null=True)
     end_index = models.IntegerField(null=True)
+
+
+class Vote(models.Model):
+    tag_relation = models.ForeignKey(TagRelation, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    vote = models.IntegerField(null=True)

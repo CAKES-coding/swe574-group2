@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from wikodeApp.models import Author, Keyword, RegistrationApplication, Article, Tag, TagRelation
@@ -10,6 +10,7 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from wikodeApp.forms import ApplicationRegistrationForm, GetArticleForm, TagForm, FilterForm
 from wikodeApp.utils.activityManager import ActivityManager
 from wikodeApp.utils.fetchArticles import createArticles
+from wikodeApp.utils.voteManager import VoteManager
 import string
 import random
 from wikodeApp.utils.textSearch import Search
@@ -285,3 +286,14 @@ def getArticles(request):
 def profilePage(request):
     user = request.user
     return render(request, 'wikodeApp/profilePage.html', {'user': user})
+
+
+@login_required()
+def upVote(request):
+    if request.method == 'POST':
+        print()
+        vote_manager = VoteManager(user_id=request.user.id)
+        tag_relation_id = request.POST.get('tagRelationId')
+        vote_manager.upVote(tag_relation_id)
+        print("VOTE!!!!")
+    return JsonResponse({"instance": 1}, status=200)

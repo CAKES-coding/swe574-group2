@@ -1,5 +1,5 @@
 let abstractText = document.getElementById("abstract-text");
-let tagPieceButton = document.getElementById("tag-piece-button")
+let tagPieceButton = document.getElementById("tag-piece-button");
 
 let startIndex = 0;
 let endIndex = 0;
@@ -78,3 +78,21 @@ for (let i = 0; i < tagRows.length; i++) {
         unHighlightAbstract();
     })
 }
+
+function upVote(tagRelationId) {
+    let token = document.getElementsByName("csrfmiddlewaretoken")[0].value
+    $.ajax({
+        url: '/wikode/upVote/',
+        type: 'POST',
+        data: {
+            csrfmiddlewaretoken: token,
+            tagRelationId: tagRelationId
+        }
+    })
+}
+
+function downVote() {
+    console.log("downvote")
+}
+
+
