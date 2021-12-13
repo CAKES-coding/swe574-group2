@@ -97,6 +97,7 @@ class Article(models.Model):
     def __str__(self):
         return self.Title
 
+
 # Activity Stream 2.0 model
 # user_id: the id of the user who makes the activity
 # activity_type: activity type form one of the activity_types defined
@@ -123,9 +124,9 @@ class Activity(models.Model):
 
     activity_JSON = JSONField()
 
+
 class Annotation(models.Model):
     annotation_JSON = JSONField()
-
 
 
 class TagRelation(models.Model):
@@ -134,3 +135,9 @@ class TagRelation(models.Model):
     fragment = models.TextField(max_length=1024)
     start_index = models.IntegerField(null=True)
     end_index = models.IntegerField(null=True)
+
+
+class FollowRelation(models.Model):
+    follower = models.ForeignKey(User, related_name='follower', on_delete=models.CASCADE)
+    followee = models.ForeignKey(User, related_name='followee', on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now_add=True)

@@ -5,13 +5,15 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-from wikodeApp.models import Author, Keyword, RegistrationApplication, Article, Tag, TagRelation
+from wikodeApp.models import Author, Keyword, RegistrationApplication, Article, Tag, TagRelation, UserProfileInfo, FollowRelation
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from wikodeApp.forms import ApplicationRegistrationForm, GetArticleForm, TagForm, FilterForm
+from wikodeApp.utils import followManager
 from wikodeApp.utils.activityManager import ActivityManager
 from wikodeApp.utils.fetchArticles import createArticles
 import string
 import random
+import json
 from wikodeApp.utils.textSearch import Search
 from dal import autocomplete
 from wikodeApp.utils.wikiManager import getLabelSuggestion, WikiEntry
@@ -35,9 +37,9 @@ def homePage(request):
 
 
         filter_params_str = '&'.join([filter_key + '=' + str(filter_params.get(filter_key))
-                                     for filter_key in filter_params
-                                     if filter_params.get(filter_key)]
-                                    )
+                                      for filter_key in filter_params
+                                      if filter_params.get(filter_key)]
+                                     )
         try:
             results = paginator.page(page)
         except PageNotAnInteger:
@@ -291,8 +293,13 @@ def getArticles(request):
 def myProfilePage(request):
     user = request.user
 
+    follower_list = followManager.getFollowerList(user)
+    followee_list = followManager.getFolloweeList(user)
+
     context = {
         'user': user,
+        'follower_list': follower_list,
+        'followee_list': followee_list,
     }
 
     return render(request, 'wikodeApp/profilePage.html', context)
@@ -312,8 +319,45 @@ def getProfilePageOfOtherUser(request, pk):
     if other_user == session_user:
         return redirect('wikodeApp:myProfilePage')
 
+    is_followed = FollowRelation.objects.filter(followee_id=other_user.id, follower_id=session_user.id).exists()
+
+    follower_list = followManager.getFollowerList(other_user)
+    followee_list = followManager.getFolloweeList(other_user)
+
     context = {
         'profile': other_user,
+        'is_followed': is_followed,
+        'follower_list': follower_list,
+        'followee_list': followee_list,
     }
 
     return render(request, 'wikodeApp/profilePage.html', context)
+
+
+@login_required
+def followUser(request, pk):
+    ## TODO
+    ## pk arguement may be a unique random 6 digit number that represents the requested user.
+    ## Here we need to convert the unique random number to user id. Or have another number that represents user.
+    ## For development purpose, pk is hardcoded below.
+    other_user = User.objects.get(id=pk)
+    session_user = User.objects.get(id=request.user.id)
+    activityManager = ActivityManager(session_user.id)
+
+    is_followed = FollowRelation.objects.filter(followee_id=other_user.id, follower_id=session_user.id).exists()
+
+    if is_followed:
+        activityManager.saveUnfollowActivity(other_user.id)
+        following = FollowRelation.objects.get(follower_id=session_user.id, followee_id=other_user.id)
+        following.delete()
+    else:
+        activityManager.saveFollowActivity(other_user.id)
+        FollowRelation.objects.create(follower_id=session_user.id, followee_id=other_user.id)
+
+
+    ## Return Follow/Unfollow button appearance is determined by is_followed value.
+    ## If True don't show Follow button, show Unfollow instead.
+    return redirect('wikodeApp:getProfilePageOfOtherUser', pk)
+
+
+
