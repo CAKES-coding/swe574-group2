@@ -353,7 +353,7 @@ def followUser(request, pk):
 
 
 ## Create a followee list from Follow relation that the follower id is other_user.id
-## List example: [1, 'user@example.com']
+## List example: [1, 'Can', 'Dayan']
 def getFolloweeList(user):
     followee_list = json.dumps(
         list(
@@ -367,7 +367,7 @@ def getFolloweeList(user):
 
 
 ## Create a follower list from Follow relation that the followee id is other_user.id
-## List example: [1, 'user@example.com']
+## List example: [1, 'Can', 'Dayan']
 def getFollowerList(user):
     follower_list = json.dumps(
         list(
