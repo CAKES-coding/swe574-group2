@@ -121,7 +121,6 @@ def articleDetail(request, pk):
             wiki_info['qid'] = tag_data.getID()
             wiki_info['label'] = tag_data.getLabel()
             wiki_info['description'] = tag_data.getDescription()
-
         elif 'add_tag' in request.POST:
             tag_data = WikiEntry(request.POST['qid'])
             fragment_text = request.POST['fragment_text']
@@ -136,6 +135,12 @@ def articleDetail(request, pk):
                                               start_index=fragment_start_index,
                                               end_index=fragment_end_index
                                               )
+            activity_manager = ActivityManager(user_id=request.user.id)
+            print(fragment_end_index)
+            if fragment_end_index != "-1":
+                activity_manager.saveAnnotationActivity(target_article_id=article.id, tag_id=tag.id, start_index=fragment_start_index, end_index=fragment_end_index)
+            else:
+                activity_manager.saveTaggingActivityForArticle(target_id=article.id, tag_id=tag.id)
 
         elif 'tag_relation_id' in request.POST:
             tag = TagRelation.objects.get(id=request.POST['tag_relation_id'])
@@ -314,9 +319,6 @@ def getProfilePageOfOtherfUser(request, pk):
     follower_list = getFollowerList(other_user)
     followee_list = getFolloweeList(other_user)
 
-    print(follower_list)
-    print(followee_list)
-
     context = {
         'profile': other_user,
         'is_followed': is_followed,
@@ -330,7 +332,7 @@ def getProfilePageOfOtherfUser(request, pk):
 @login_required
 def followUser(request, pk):
     ## TODO
-    ## pk arguement will be a unique random 6 digit number that represents the requested user.
+    ## pk arguement may be a unique random 6 digit number that represents the requested user.
     ## Here we need to convert the unique random number to user id. Or have another number that represents user.
     ## For development purpose, pk is hardcoded below.
     other_user = User.objects.get(id=pk)
@@ -376,3 +378,5 @@ def getFollowerList(user):
         )
     )
     return follower_list
+
+
