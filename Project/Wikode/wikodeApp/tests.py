@@ -9,7 +9,7 @@ from wikodeApp.models import RegistrationApplication, Author, Journal, Keyword, 
     FollowRelation
 from wikodeApp.utils.textSearch import Search
 from wikodeApp.utils.activityManager import ActivityManager
-from wikodeApp.views import getProfilePageOfOtherfUser, followUser
+from wikodeApp.views import getProfilePageOfOtherUser, followUser
 
 
 # Create your tests here.
@@ -274,7 +274,7 @@ class Test(TestCase):
         other_user = RegistrationApplication.objects.create(id=3, name='test_user_2')
 
         self.client.login(username='bugs', password='123456')
-        url = reverse("wikodeApp:getProfilePageOfUser", args=[3])
+        url = reverse("wikodeApp:getProfilePageOfOtherUser", args=[3])
 
         resp = self.client.get(url)
 

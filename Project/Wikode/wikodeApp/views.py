@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from wikodeApp.models import Author, Keyword, RegistrationApplication, Article, Tag, TagRelation, UserProfileInfo, FollowRelation
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from wikodeApp.forms import ApplicationRegistrationForm, GetArticleForm, TagForm, FilterForm
+from wikodeApp.utils import followManager
 from wikodeApp.utils.activityManager import ActivityManager
 from wikodeApp.utils.fetchArticles import createArticles
 import string
@@ -288,8 +289,8 @@ def getArticles(request):
 def myProfilePage(request):
     user = request.user
 
-    follower_list = getFollowerList(user)
-    followee_list = getFolloweeList(user)
+    follower_list = followManager.getFollowerList(user)
+    followee_list = followManager.getFolloweeList(user)
 
     context = {
         'user': user,
@@ -303,7 +304,7 @@ def myProfilePage(request):
 ## Renders the profilePage.html with the clicked user's id information as pk
 ## Navigates to /profile/# url.
 @login_required
-def getProfilePageOfOtherfUser(request, pk):
+def getProfilePageOfOtherUser(request, pk):
     ## TODO
     ## pk arguement may be a unique random 6 digit number that represents the requested user.
     ## Here we need to convert the unique random number to user id. Or have another number that represents user.
@@ -316,8 +317,8 @@ def getProfilePageOfOtherfUser(request, pk):
 
     is_followed = FollowRelation.objects.filter(followee_id=other_user.id, follower_id=session_user.id).exists()
 
-    follower_list = getFollowerList(other_user)
-    followee_list = getFolloweeList(other_user)
+    follower_list = followManager.getFollowerList(other_user)
+    followee_list = followManager.getFolloweeList(other_user)
 
     context = {
         'profile': other_user,
@@ -337,46 +338,22 @@ def followUser(request, pk):
     ## For development purpose, pk is hardcoded below.
     other_user = User.objects.get(id=pk)
     session_user = User.objects.get(id=request.user.id)
+    activityManager = ActivityManager(session_user.id)
 
     is_followed = FollowRelation.objects.filter(followee_id=other_user.id, follower_id=session_user.id).exists()
 
     if is_followed:
+        activityManager.saveUnfollowActivity(other_user.id)
         following = FollowRelation.objects.get(follower_id=session_user.id, followee_id=other_user.id)
         following.delete()
     else:
+        activityManager.saveFollowActivity(other_user.id)
         FollowRelation.objects.create(follower_id=session_user.id, followee_id=other_user.id)
 
 
     ## Return Follow/Unfollow button appearance is determined by is_followed value.
     ## If True don't show Follow button, show Unfollow instead.
-    return redirect('wikodeApp:getProfilePageOfOtherfUser', pk)
+    return redirect('wikodeApp:getProfilePageOfOtherUser', pk)
 
-
-## Create a followee list from Follow relation that the follower id is other_user.id
-## List example: [1, 'Can', 'Dayan']
-def getFolloweeList(user):
-    followee_list = json.dumps(
-        list(
-            FollowRelation
-                .objects
-                .filter(follower_id=user.id)
-                .values_list('followee_id', 'followee__first_name', 'followee__last_name')
-        )
-    )
-    return followee_list
-
-
-## Create a follower list from Follow relation that the followee id is other_user.id
-## List example: [1, 'Can', 'Dayan']
-def getFollowerList(user):
-    follower_list = json.dumps(
-        list(
-            FollowRelation
-                .objects
-                .filter(followee_id=user.id)
-                .values_list('follower_id', 'follower__first_name', 'follower__last_name')
-        )
-    )
-    return follower_list
 
 

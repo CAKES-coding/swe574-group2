@@ -31,14 +31,18 @@ const showModal = function(header, list) {
 
         let row = document.createElement("tr")
         let tdItem = document.createElement("td")
-
         let itemAnchor = document.createElement("a");
-        let first_name = item[1];
-        let last_name = item[2];
-        let full_name = first_name + " " + last_name
 
-        itemAnchor.innerHTML = full_name
-        itemAnchor.href = item[0]
+
+        if (item.length > 2) {
+            let first_name = item[1];
+            let last_name = item[2];
+            let full_name = first_name + " " + last_name
+
+            itemAnchor.innerHTML = full_name
+            itemAnchor.href = item[0]
+        }
+
         tdItem.appendChild(itemAnchor)
 
         let tdButton = document.createElement("td")
