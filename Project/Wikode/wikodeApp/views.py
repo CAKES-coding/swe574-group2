@@ -34,6 +34,8 @@ def homePage(request):
         paginator = Paginator(results_list, 25)
         search_str = request.POST.get('searchTerms')
         filter_params = filter_form.cleaned_data
+
+
         filter_params_str = '&'.join([filter_key + '=' + str(filter_params.get(filter_key))
                                       for filter_key in filter_params
                                       if filter_params.get(filter_key)]
@@ -73,9 +75,10 @@ def homePage(request):
                 "keywords_field": request.GET.get('keywords_field', None),
                 "order_by": request.GET.get('order_by', None)
             }
-
             search.filterArticles(filter_params)
             results_list = search.getSearchResults(filter_params.get('order_by'))
+
+            order=str(filter_params.get('order_by'))
 
             paginator = Paginator(results_list, 25)
             search_str = request.GET.get('term')
@@ -84,6 +87,7 @@ def homePage(request):
                                           for filter_key in filter_params
                                           if filter_params.get(filter_key)]
                                          )
+
             try:
                 results = paginator.page(page)
             except PageNotAnInteger:
