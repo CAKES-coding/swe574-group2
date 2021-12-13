@@ -35,7 +35,7 @@ const showModal = function(header, list) {
         let itemAnchor = document.createElement("a");
         let first_name = item[1];
         let last_name = item[2];
-        var full_name = first_name + " " + last_name
+        let full_name = first_name + " " + last_name
 
         itemAnchor.innerHTML = full_name
         itemAnchor.href = item[0]
