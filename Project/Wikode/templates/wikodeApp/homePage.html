@@ -1,8 +1,18 @@
 {% extends 'wikodeApp/base.html' %}
 
 {% block body_block %}
-        {% block search_box %}
-        {% endblock %}
+    {% block search_box %}
+    {% endblock %}
 
-    <a href="{% url 'wikodeApp:getProfilePageOfUser' 4567321 %}">Serdar's Profile</a>
+   <div class="container">
+        <ul class="list-group">
+            <li>
+                <a href="{% url 'wikodeApp:getProfilePageOfOtherfUser' 3 %}">Kenan's Profile</a>
+            </li>
+            <li>
+                <a href="{% url 'wikodeApp:getProfilePageOfOtherfUser' 2 %}">Can's Profile</a>
+            </li>
+
+        </ul>
+    </div>
 {% endblock %}
