@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.http import HttpResponseRedirect, HttpResponse
@@ -324,7 +324,6 @@ def getProfilePageOfOtherfUser(request, pk):
     return render(request, 'wikodeApp/profilePage.html', context)
 
 
-
 @login_required
 def followUser(request, pk):
     ## TODO
@@ -342,9 +341,10 @@ def followUser(request, pk):
     else:
         FollowRelation.objects.create(follower_id=session_user.id, followee_id=other_user.id)
 
+
     ## Return Follow/Unfollow button appearance is determined by is_followed value.
     ## If True don't show Follow button, show Unfollow instead.
-    return render(request, 'wikodeApp/profilePage.html', {'profile': other_user, 'is_followed': not is_followed})
+    return redirect('wikodeApp:getProfilePageOfOtherfUser', pk)
 
 
 ## Create a followee list from Follow relation that the follower id is other_user.id
