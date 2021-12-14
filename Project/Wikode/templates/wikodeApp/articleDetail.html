@@ -67,7 +67,9 @@
                                     </button>
                                 </span>
 
-                                <span id="totalVotes" style="display: table-cell; vertical-align: center">0</span>
+                                <span id="totalVotes-{{ item.id }}" style="display: table-cell; vertical-align: center">
+                                    {{ item.vote_sum }}
+                                </span>
 
                                 <span style="margin-left: 5px">
                                     <button type="button" class="btn btn-outline-danger" data-bs-toggle="button"

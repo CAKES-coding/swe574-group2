@@ -133,6 +133,7 @@ class TagRelation(models.Model):
     fragment = models.TextField(max_length=1024)
     start_index = models.IntegerField(null=True)
     end_index = models.IntegerField(null=True)
+    vote_sum = models.IntegerField(default=0)
 
 
 class Vote(models.Model):

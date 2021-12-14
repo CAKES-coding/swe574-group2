@@ -80,14 +80,14 @@ for (let i = 0; i < tagRows.length; i++) {
 }
 
 function upVote(tagRelationId) {
-    sendAjaxRequest('/wikode/upVote/', tagRelationId)
+    sendVoteRequest('/wikode/upVote/', tagRelationId)
 }
 
 function downVote(tagRelationId) {
-    sendAjaxRequest('/wikode/downVote/', tagRelationId)
+    sendVoteRequest('/wikode/downVote/', tagRelationId)
 }
 
-function sendAjaxRequest(url, tagRelationId) {
+function sendVoteRequest(url, tagRelationId) {
     let token = document.getElementsByName("csrfmiddlewaretoken")[0].value
     $.ajax({
         url: url,
@@ -95,8 +95,13 @@ function sendAjaxRequest(url, tagRelationId) {
         data: {
             csrfmiddlewaretoken: token,
             tagRelationId: tagRelationId
+        },
+        success: function (voteSum) {
+            document.getElementById("totalVotes-" + tagRelationId).innerHTML = voteSum["voteSum"];
         }
     })
 }
+
+
 
 

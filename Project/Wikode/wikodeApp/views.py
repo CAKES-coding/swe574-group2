@@ -295,8 +295,8 @@ def upVote(request):
     tag_relation_id = request.POST.get('tagRelationId')
     vote_manager.upVote(tag_relation_id)
     vote_sum = vote_manager.getVoteSum(tag_relation_id)
-    print(vote_sum)
-    return JsonResponse({"instance": 1}, status=200)
+    TagRelation.objects.filter(id=tag_relation_id).update(vote_sum=vote_sum)
+    return JsonResponse({"voteSum": vote_sum}, status=200)
 
 
 @login_required()
@@ -305,5 +305,5 @@ def downVote(request):
     tag_relation_id = request.POST.get('tagRelationId')
     vote_manager.downVote(tag_relation_id)
     vote_sum = vote_manager.getVoteSum(tag_relation_id)
-    print(vote_sum)
-    return JsonResponse({"instance": 1}, status=200)
+    TagRelation.objects.filter(id=tag_relation_id).update(vote_sum=vote_sum)
+    return JsonResponse({"voteSum": vote_sum}, status=200)
