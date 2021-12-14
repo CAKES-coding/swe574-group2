@@ -292,12 +292,18 @@ def profilePage(request):
 @login_required()
 def upVote(request):
     vote_manager = VoteManager(user_id=request.user.id)
-    vote_manager.upVote(request.POST.get('tagRelationId'))
+    tag_relation_id = request.POST.get('tagRelationId')
+    vote_manager.upVote(tag_relation_id)
+    vote_sum = vote_manager.getVoteSum(tag_relation_id)
+    print(vote_sum)
     return JsonResponse({"instance": 1}, status=200)
 
 
 @login_required()
 def downVote(request):
     vote_manager = VoteManager(user_id=request.user.id)
-    vote_manager.downVote(request.POST.get('tagRelationId'))
+    tag_relation_id = request.POST.get('tagRelationId')
+    vote_manager.downVote(tag_relation_id)
+    vote_sum = vote_manager.getVoteSum(tag_relation_id)
+    print(vote_sum)
     return JsonResponse({"instance": 1}, status=200)
