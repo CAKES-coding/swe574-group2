@@ -290,20 +290,16 @@ def profilePage(request):
 
 
 @login_required()
-def upVote(request):
+def vote(request):
     vote_manager = VoteManager(user_id=request.user.id)
     tag_relation_id = request.POST.get('tagRelationId')
-    vote_manager.upVote(tag_relation_id)
-    vote_sum = vote_manager.getVoteSum(tag_relation_id)
-    TagRelation.objects.filter(id=tag_relation_id).update(vote_sum=vote_sum)
-    return JsonResponse({"voteSum": vote_sum}, status=200)
+    vote_type = request.POST.get('voteType')
+    
+    if vote_type == 'upVote':
+        vote_manager.upVote(tag_relation_id)
+    else:
+        vote_manager.downVote(tag_relation_id)
 
-
-@login_required()
-def downVote(request):
-    vote_manager = VoteManager(user_id=request.user.id)
-    tag_relation_id = request.POST.get('tagRelationId')
-    vote_manager.downVote(tag_relation_id)
     vote_sum = vote_manager.getVoteSum(tag_relation_id)
     TagRelation.objects.filter(id=tag_relation_id).update(vote_sum=vote_sum)
     return JsonResponse({"voteSum": vote_sum}, status=200)
