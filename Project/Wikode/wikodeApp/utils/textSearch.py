@@ -1,4 +1,4 @@
-from wikodeApp.models import Article, Author
+from wikodeApp.models import Article, Author, Tag, TagRelation
 from functools import reduce
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.db.models import F, Q, Value
@@ -14,7 +14,11 @@ class Search:
     def __init__(self, search_terms):
         self.search_terms = search_terms
         self.search_queries = [SearchQuery(term, search_type='phrase') for term in self.search_terms]
+        # For search terms in articles bitwise and
         self.article_search_query = reduce(lambda x, y: x & y, self.search_queries)
+        # For search terms in tags bitwise or
+        self.tag_search_query = reduce(lambda x, y: x | y, self.search_queries)
+        self.related_tags = self.getRelatedTags()
         if len(search_terms[0]) > 1:
             self.result_list = Article.objects.filter(Q(SearchIndex=self.article_search_query))
         else:
@@ -74,3 +78,13 @@ class Search:
         ordered_data = OrderedDict(sorted(data_dict.items()))
 
         return ordered_data
+
+    def getRelatedTags(self):
+
+        main_tags = Tag.objects.filter(Q(searchIndex=self.tag_search_query))
+        parent_tags = Tag.objects.filter(parentTags__in=main_tags)
+        child_tags = Tag.objects.filter(childTags__in=main_tags)
+        sibling_tags = Tag.objects.filter(childTags__in=parent_tags)
+
+        # related_tags = parent_tags + child_tags
+        return None
