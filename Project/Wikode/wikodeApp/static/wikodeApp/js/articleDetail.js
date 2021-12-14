@@ -80,19 +80,23 @@ for (let i = 0; i < tagRows.length; i++) {
 }
 
 function upVote(tagRelationId) {
+    sendAjaxRequest('/wikode/upVote/', tagRelationId)
+}
+
+function downVote(tagRelationId) {
+    sendAjaxRequest('/wikode/downVote/', tagRelationId)
+}
+
+function sendAjaxRequest(url, tagRelationId) {
     let token = document.getElementsByName("csrfmiddlewaretoken")[0].value
     $.ajax({
-        url: '/wikode/upVote/',
+        url: url,
         type: 'POST',
         data: {
             csrfmiddlewaretoken: token,
             tagRelationId: tagRelationId
         }
     })
-}
-
-function downVote() {
-    console.log("downvote")
 }
 
 

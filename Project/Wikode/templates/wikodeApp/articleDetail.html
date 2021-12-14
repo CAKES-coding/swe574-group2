@@ -71,8 +71,8 @@
 
                                 <span style="margin-left: 5px">
                                     <button type="button" class="btn btn-outline-danger" data-bs-toggle="button"
-                                            autocomplete="off" onclick="downVote()">
-                                        <i class="bi bi-hand-thumbs-down"></i>
+                                            onclick="downVote({{ item.id }})">
+                                        <i class="bi bi-hand-thumbs-down" id="downvote"></i>
                                     </button>
                                 </span>
                             </div>

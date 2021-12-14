@@ -138,4 +138,4 @@ class TagRelation(models.Model):
 class Vote(models.Model):
     tag_relation = models.ForeignKey(TagRelation, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    vote = models.IntegerField(null=True)
+    value = models.IntegerField(null=True)

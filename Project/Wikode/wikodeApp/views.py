@@ -34,9 +34,9 @@ def homePage(request):
         search_str = request.POST.get('searchTerms')
         filter_params = filter_form.cleaned_data
         filter_params_str = '&'.join([filter_key + '=' + str(filter_params.get(filter_key))
-                                     for filter_key in filter_params
-                                     if filter_params.get(filter_key)]
-                                    )
+                                      for filter_key in filter_params
+                                      if filter_params.get(filter_key)]
+                                     )
         try:
             results = paginator.page(page)
         except PageNotAnInteger:
@@ -138,7 +138,8 @@ def articleDetail(request, pk):
             activity_manager = ActivityManager(user_id=request.user.id)
             print(fragment_end_index)
             if fragment_end_index != "-1":
-                activity_manager.saveAnnotationActivity(target_article_id=article.id, tag_id=tag.id, start_index=fragment_start_index, end_index=fragment_end_index)
+                activity_manager.saveAnnotationActivity(target_article_id=article.id, tag_id=tag.id,
+                                                        start_index=fragment_start_index, end_index=fragment_end_index)
             else:
                 activity_manager.saveTaggingActivityForArticle(target_id=article.id, tag_id=tag.id)
 
@@ -290,10 +291,13 @@ def profilePage(request):
 
 @login_required()
 def upVote(request):
-    if request.method == 'POST':
-        print()
-        vote_manager = VoteManager(user_id=request.user.id)
-        tag_relation_id = request.POST.get('tagRelationId')
-        vote_manager.upVote(tag_relation_id)
-        print("VOTE!!!!")
+    vote_manager = VoteManager(user_id=request.user.id)
+    vote_manager.upVote(request.POST.get('tagRelationId'))
+    return JsonResponse({"instance": 1}, status=200)
+
+
+@login_required()
+def downVote(request):
+    vote_manager = VoteManager(user_id=request.user.id)
+    vote_manager.downVote(request.POST.get('tagRelationId'))
     return JsonResponse({"instance": 1}, status=200)
