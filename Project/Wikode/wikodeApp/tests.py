@@ -5,9 +5,11 @@ from django.test import TestCase, Client
 from django.utils import timezone
 from django.contrib.postgres.search import SearchQuery
 from django.urls import reverse
-from wikodeApp.models import RegistrationApplication, Author, Journal, Keyword, Article, Tag, Activity, Annotation
+from wikodeApp.models import RegistrationApplication, Author, Journal, Keyword, Article, Tag, Activity, Annotation, \
+    FollowRelation
 from wikodeApp.utils.textSearch import Search
 from wikodeApp.utils.activityManager import ActivityManager
+from wikodeApp.views import getProfilePageOfOtherUser, followUser
 
 
 # Create your tests here.
@@ -267,3 +269,26 @@ class Test(TestCase):
         activity_manager.saveDownvoteActivity(target_id=88)
         self.assertTrue(isinstance(Activity.objects.get(target_id=88), Activity))
 
+    def test_get_other_profile(self):
+        self.create_user()
+        other_user = RegistrationApplication.objects.create(id=3, name='test_user_2')
+
+        self.client.login(username='bugs', password='123456')
+        url = reverse("wikodeApp:getProfilePageOfOtherUser", args=[3])
+
+        resp = self.client.get(url)
+
+        self.assertEqual(resp.status_code, 200)
+
+    def test_follow_other_user(self):
+        self.create_user()
+        other_user = RegistrationApplication.objects.create(id=3, name='test_user_2')
+
+        self.client.login(username='bugs', password='123456')
+        url = reverse("wikodeApp:followUser", args=[3])
+        FollowRelation.objects.filter(followee_id=other_user.id, follower_id=1).exists()
+
+        resp = self.client.get(url)
+
+        self.assertEqual(resp.status_code, 200)
+        self.assertTrue(FollowRelation.objects.filter(followee_id=other_user.id, follower_id=1).exists())

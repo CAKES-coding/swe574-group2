@@ -1,13 +1,5 @@
-followingsList = [
-    "Can Dayan",
-    "Semih Solmaz",
-]
-
-followersList = [
-    "Kenan Kural",
-    "Anıl Turan",
-    "Can Dayan",
-]
+followersList = JSON.parse(document.getElementById("followee_list").value);
+followingsList = JSON.parse(document.getElementById("follower_list").value);
 
 const followingsAnchor = document.getElementById("followings");
 const followersAnchor = document.getElementById("followers")
@@ -21,6 +13,7 @@ followingsAnchor.addEventListener('click', (e) => {
 
 followersAnchor.addEventListener('click', (e) => {
     modalBody.innerHTML = "";
+    console.log()
     showModal("Followers", followersList);
 })
 
@@ -38,18 +31,27 @@ const showModal = function(header, list) {
 
         let row = document.createElement("tr")
         let tdItem = document.createElement("td")
-
         let itemAnchor = document.createElement("a");
-        itemAnchor.innerHTML = item
-        itemAnchor.href = "#"
+
+
+        if (item.length > 2) {
+            let first_name = item[1];
+            let last_name = item[2];
+            let full_name = first_name + " " + last_name
+
+            itemAnchor.innerHTML = full_name
+            itemAnchor.href = item[0]
+        }
+
         tdItem.appendChild(itemAnchor)
 
         let tdButton = document.createElement("td")
-        let button = getFollowButton()
+        let is_following = true
+        let button = getFollowButton(is_following)
         tdButton.appendChild(button)
 
         row.appendChild(tdItem)
-        row.appendChild(tdButton)
+        // row.appendChild(tdButton)
         listTableBody.appendChild(row)
     })
 
@@ -58,11 +60,16 @@ const showModal = function(header, list) {
     modalBody.appendChild(listTable);
 }
 
-const getFollowButton = function () {
+const getFollowButton = function (is_following) {
     const followButton = document.createElement("button");
-    followButton.innerHTML = "Follow"
     followButton.classList.add("btn")
-    followButton.classList.add("btn-primary")
+    if (is_following) {
+        followButton.innerHTML = "Unfollow"
+        followButton.classList.add("btn-danger");
+    } else {
+        followButton.innerHTML = "Follow"
+        followButton.classList.add("btn-primary");
+    }
     followButton.classList.add("btn-sm")
     return followButton
 }

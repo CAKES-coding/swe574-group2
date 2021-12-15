@@ -1,13 +1,15 @@
 from django.contrib.auth.models import User
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-from wikodeApp.models import Author, Keyword, RegistrationApplication, Article, Tag, TagRelation
+from wikodeApp.models import Author, Keyword, RegistrationApplication, Article, Tag, TagRelation, UserProfileInfo, \
+    FollowRelation
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from wikodeApp.forms import ApplicationRegistrationForm, GetArticleForm, TagForm, FilterForm
+from wikodeApp.utils import followManager
 from wikodeApp.utils.activityManager import ActivityManager
 from wikodeApp.utils.fetchArticles import createArticles
 from wikodeApp.utils.voteManager import VoteManager
@@ -33,6 +35,7 @@ def homePage(request):
         paginator = Paginator(results_list, 25)
         search_str = request.POST.get('searchTerms')
         filter_params = filter_form.cleaned_data
+
         filter_params_str = '&'.join([filter_key + '=' + str(filter_params.get(filter_key))
                                       for filter_key in filter_params
                                       if filter_params.get(filter_key)]
@@ -72,9 +75,10 @@ def homePage(request):
                 "keywords_field": request.GET.get('keywords_field', None),
                 "order_by": request.GET.get('order_by', None)
             }
-
             search.filterArticles(filter_params)
             results_list = search.getSearchResults(filter_params.get('order_by'))
+
+            order = str(filter_params.get('order_by'))
 
             paginator = Paginator(results_list, 25)
             search_str = request.GET.get('term')
@@ -83,6 +87,7 @@ def homePage(request):
                                           for filter_key in filter_params
                                           if filter_params.get(filter_key)]
                                          )
+
             try:
                 results = paginator.page(page)
             except PageNotAnInteger:
@@ -116,12 +121,15 @@ def articleDetail(request, pk):
     if request.method == 'POST':
         print(request.POST)
         if 'get_tag' in request.POST:
+            # brings tag from wikidata
             tag_form = TagForm(data=request.POST)
             tag_data = WikiEntry(tag_form.data['wikiLabel'])
             wiki_info['qid'] = tag_data.getID()
             wiki_info['label'] = tag_data.getLabel()
             wiki_info['description'] = tag_data.getDescription()
         elif 'add_tag' in request.POST:
+            # Tagging an article
+            # end index of "-1" means tagging whole article, else is annotation
             tag_data = WikiEntry(request.POST['qid'])
             fragment_text = request.POST['fragment_text']
             fragment_start_index = request.POST['fragment_start_index']
@@ -144,6 +152,7 @@ def articleDetail(request, pk):
                 activity_manager.saveTaggingActivityForArticle(target_id=article.id, tag_id=tag.id)
 
         elif 'tag_relation_id' in request.POST:
+            # Delete tag from an article
             tag = TagRelation.objects.get(id=request.POST['tag_relation_id'])
             tag.delete()
 
@@ -202,21 +211,27 @@ def registration(request):
 @login_required
 def registrationRequests(request):
     if request.method == 'POST':
-        approved_request = RegistrationApplication.objects.get(pk=request.POST['request_id'])
-        approved_request.applicationStatus = '2'
-        approved_request.save()
-        random_password = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
-        user = User(username=approved_request.email,
-                    first_name=approved_request.name,
-                    last_name=approved_request.surname,
-                    email=approved_request.email,
-                    password=random_password)
-        user.set_password(user.password)
-        user.save()
+        if 'approve' in request.POST:
+            approved_request = RegistrationApplication.objects.get(pk=request.POST['approve'])
+            approved_request.applicationStatus = '2'
+            approved_request.save()
+            random_password = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
+            user = User(username=approved_request.email,
+                        first_name=approved_request.name,
+                        last_name=approved_request.surname,
+                        email=approved_request.email,
+                        password=random_password)
+            user.set_password(user.password)
+            user.save()
 
-        requests_list = RegistrationApplication.objects.filter(applicationStatus='1').order_by('applicationDate')
-        requests_dict = {"registration_requests": requests_list, "password": random_password}
-        return render(request, 'wikodeApp/registrationRequests.html', context=requests_dict)
+            requests_list = RegistrationApplication.objects.filter(applicationStatus='1').order_by('applicationDate')
+            requests_dict = {"registration_requests": requests_list, "password": random_password}
+            return render(request, 'wikodeApp/registrationRequests.html', context=requests_dict)
+
+        if 'reject' in request.POST:
+            rejected_request = RegistrationApplication.objects.get(pk=request.POST['reject'])
+            rejected_request.applicationStatus = '3'
+            rejected_request.save()
 
     requests_list = RegistrationApplication.objects.filter(applicationStatus='1').order_by('applicationDate')
     requests_dict = {"registration_requests": requests_list}
@@ -283,10 +298,76 @@ def getArticles(request):
     return render(request, 'wikodeApp/fetchArticles.html', {'form': form})
 
 
-@login_required()
-def profilePage(request):
+## Renders the profilePage.html with the authenticated user's information
+## Navigation item 'Profile'sent opens /myprofile url.
+@login_required
+def myProfilePage(request):
     user = request.user
-    return render(request, 'wikodeApp/profilePage.html', {'user': user})
+
+    follower_list = followManager.getFollowerList(user)
+    followee_list = followManager.getFolloweeList(user)
+
+    context = {
+        'user': user,
+        'follower_list': follower_list,
+        'followee_list': followee_list,
+    }
+
+    return render(request, 'wikodeApp/profilePage.html', context)
+
+
+## Renders the profilePage.html with the clicked user's id information as pk
+## Navigates to /profile/# url.
+@login_required
+def getProfilePageOfOtherUser(request, pk):
+    ## TODO
+    ## pk arguement may be a unique random 6 digit number that represents the requested user.
+    ## Here we need to convert the unique random number to user id. Or have another number that represents user.
+    ## For development purpose, pk is hardcoded below.
+    other_user = User.objects.get(id=pk)
+    session_user = User.objects.get(id=request.user.id)
+
+    if other_user == session_user:
+        return redirect('wikodeApp:myProfilePage')
+
+    is_followed = FollowRelation.objects.filter(followee_id=other_user.id, follower_id=session_user.id).exists()
+
+    follower_list = followManager.getFollowerList(other_user)
+    followee_list = followManager.getFolloweeList(other_user)
+
+    context = {
+        'profile': other_user,
+        'is_followed': is_followed,
+        'follower_list': follower_list,
+        'followee_list': followee_list,
+    }
+
+    return render(request, 'wikodeApp/profilePage.html', context)
+
+
+@login_required
+def followUser(request, pk):
+    ## TODO
+    ## pk arguement may be a unique random 6 digit number that represents the requested user.
+    ## Here we need to convert the unique random number to user id. Or have another number that represents user.
+    ## For development purpose, pk is hardcoded below.
+    other_user = User.objects.get(id=pk)
+    session_user = User.objects.get(id=request.user.id)
+    activityManager = ActivityManager(session_user.id)
+
+    is_followed = FollowRelation.objects.filter(followee_id=other_user.id, follower_id=session_user.id).exists()
+
+    if is_followed:
+        activityManager.saveUnfollowActivity(other_user.id)
+        following = FollowRelation.objects.get(follower_id=session_user.id, followee_id=other_user.id)
+        following.delete()
+    else:
+        activityManager.saveFollowActivity(other_user.id)
+        FollowRelation.objects.create(follower_id=session_user.id, followee_id=other_user.id)
+
+    ## Return Follow/Unfollow button appearance is determined by is_followed value.
+    ## If True don't show Follow button, show Unfollow instead.
+    return redirect('wikodeApp:getProfilePageOfOtherUser', pk)
 
 
 @login_required()
