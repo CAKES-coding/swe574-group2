@@ -97,10 +97,54 @@ function sendVoteRequest(tagRelationId, voteType) {
             tagRelationId: tagRelationId,
             voteType: voteType
         },
-        success: function (voteSum) {
-            document.getElementById("totalVotes-" + tagRelationId).innerHTML = voteSum["voteSum"];
+        success: function (vote) {
+            document.getElementById("totalVotes-" + tagRelationId).innerHTML = vote["voteSum"];
+            let userVote = vote["userVote"]
+            adjustVoteButtonColor(userVote, tagRelationId)
         }
     })
+}
+
+function getTagRelationIds() {
+    let tagRelationIds = [];
+    let tagRows = document.getElementsByClassName("tag_row");
+    for (let i = 0; i < tagRows.length; i++) {
+        tagRelationIds[i] = parseInt(tagRows[i].id);
+    }
+    return tagRelationIds
+}
+
+window.onload = function () {
+    let token = document.getElementsByName("csrfmiddlewaretoken")[0].value
+    $.ajax({
+        url: '/wikode/vote/',
+        type: 'GET',
+        data: {
+            csrfmiddlewaretoken: token,
+            tagRelationIds: getTagRelationIds().toString()
+        },
+        success: function (userVoteDict) {
+            userVoteDict = userVoteDict['userVoteDict']
+            for (let tagRelationId in userVoteDict) {
+                adjustVoteButtonColor(userVoteDict[tagRelationId], tagRelationId)
+            }
+        }
+    })
+}
+
+function adjustVoteButtonColor(userVote, tagRelationId) {
+    let upvoteButton = document.getElementById("upvote-button-" + tagRelationId);
+    let downvoteButton = document.getElementById("downvote-button-" + tagRelationId);
+    if (userVote === 1) {
+        upvoteButton.className = "btn btn-primary";
+        downvoteButton.className = "btn btn-outline-danger";
+    } else if (userVote === 0) {
+        upvoteButton.className = "btn btn-outline-primary";
+        downvoteButton.className = "btn btn-outline-danger";
+    } else if (userVote === -1) {
+        upvoteButton.className = "btn btn-outline-primary";
+        downvoteButton.className = "btn btn-danger";
+    }
 }
 
 

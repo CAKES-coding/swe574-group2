@@ -48,7 +48,7 @@
 
                 </tr>
                 {% for item in tags %}
-                    <tr class="tag_row" data-start="{{ item.start_index }}" data-end="{{ item.end_index }}">
+                    <tr class="tag_row" data-start="{{ item.start_index }}" data-end="{{ item.end_index }}" id="{{ item.id }}">
                         <td class="align-middle" style="text-align: center"><a
                                 href="{% url 'wikodeApp:articleDetail' item.id %}">{{ item.tag.id }}</a></td>
                         <td class="align-middle" style="text-align: center"><a
@@ -61,8 +61,8 @@
                             <div class="btn-group" role="group" aria-label="Basic outlined example"
                                  style="display: table">
                                 <span style="margin-right: 5px">
-                                    <button type="button" class="btn btn-outline-success" data-bs-toggle="button"
-                                            autocomplete="off" onclick="upVote({{ item.id }})">
+                                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="button"
+                                            id="upvote-button-{{ item.id }}" onclick="upVote({{ item.id }})">
                                         <i class="bi bi-hand-thumbs-up" id="upvote"></i>
                                     </button>
                                 </span>
@@ -73,7 +73,7 @@
 
                                 <span style="margin-left: 5px">
                                     <button type="button" class="btn btn-outline-danger" data-bs-toggle="button"
-                                            onclick="downVote({{ item.id }})">
+                                            id="downvote-button-{{ item.id }}" onclick="downVote({{ item.id }})">
                                         <i class="bi bi-hand-thumbs-down" id="downvote"></i>
                                     </button>
                                 </span>

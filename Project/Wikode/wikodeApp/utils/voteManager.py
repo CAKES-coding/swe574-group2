@@ -52,6 +52,19 @@ class VoteManager:
         votes = Vote.objects.filter(tag_relation_id=tag_relation_id)
         return votes.aggregate(values=Sum('value'))['values']
 
+    def getUserVote(self, tag_relation_id):
+        vote = self.getVote(tag_relation_id)
+        if not vote.exists():
+            return 0
+        return vote[0].value
+
+    def getUserVoteDict(self, tag_relation_ids):
+        user_vote_dict = {}
+        for tag_relation_id in tag_relation_ids:
+            vote = self.getUserVote(int(tag_relation_id))
+            user_vote_dict[int(tag_relation_id)] = vote
+        return user_vote_dict
+
 class VoteEnum(Enum):
     UPVOTED = 1
     NOTR = 0
