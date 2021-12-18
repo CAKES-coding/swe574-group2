@@ -139,10 +139,12 @@
                         <div class="media-body">
                           <h4 class="media-heading">
 
-                            <small class="pull-right">5m ago</small>
+<!--                            <small class="pull-right">5m ago</small>-->
                             <a class="name" href="{{activity.userURL}}">{{activity.userName}}</a> {{activity.sentence}} <a href="{{activity.objectURL}}">{{activity.articleName}}</a>.
                           </h4>
-                          <small>Today 5:50 pm - 31.10.2021</small>
+                          <small>Activity Date: {{activity.published}}</small>
+                          <br>
+                          <small>Activity Time: {{activity.publishedTime}}</small>
                         </div>
                       </div>
                     </li>

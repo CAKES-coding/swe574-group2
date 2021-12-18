@@ -116,7 +116,8 @@ def homePage(request):
                             "objectURL": activiyJson.get("object").get("url")[29:],
                             "articleName": activiyJson.get("object").get("name"),
                             "sentence": "Viewed",
-                            "published": activiyJson.get("published")
+                            "published": activiyJson.get("published")[:10],
+                            "publishedTime": activiyJson.get("published")[11:16]
                             }
                     feedList.append(feedView)
                 if eachActivity.activity_type == '2':
@@ -126,7 +127,8 @@ def homePage(request):
                             "objectURL": activiyJson.get("object").get("url")[29:],
                             "articleName": activiyJson.get("object").get("name"),
                             "sentence": "Followed",
-                            "published": activiyJson.get("published")
+                            "published": activiyJson.get("published")[:10],
+                            "publishedTime": activiyJson.get("published")[11:16]
                             }
                     feedList.append(feedFollow)
                 if eachActivity.activity_type == '3':
@@ -136,7 +138,8 @@ def homePage(request):
                             "objectURL": activiyJson.get("object").get("url")[29:],
                             "articleName": activiyJson.get("object").get("name"),
                             "sentence": "Unfollowed",
-                            "published": activiyJson.get("published")
+                            "published": activiyJson.get("published")[:10],
+                            "publishedTime": activiyJson.get("published")[11:16]
 
                             }
                     feedList.append(feedUnFollow)
@@ -146,7 +149,9 @@ def homePage(request):
                             "userName": activiyJson.get("actor").get("name"),
                             "objectURL": activiyJson.get("object").get("url")[29:],
                             "articleName": activiyJson.get("object").get("name"),
-                            "sentence": "Upvoted"
+                            "sentence": "Upvoted",
+                            "published": activiyJson.get("published")[:10],
+                            "publishedTime": activiyJson.get("published")[11:16]
                             }
                     feedList.append(feedUpvote)
                 if eachActivity.activity_type == '5':
@@ -156,7 +161,8 @@ def homePage(request):
                             "objectURL": activiyJson.get("object").get("url")[29:],
                             "articleName": activiyJson.get("object").get("name"),
                             "sentence": "Downvoted",
-                            "published": activiyJson.get("published")
+                            "published": activiyJson.get("published")[:10],
+                            "publishedTime": activiyJson.get("published")[11:16]
                             }
                     feedList.append(feedDownvote)
 
@@ -167,7 +173,8 @@ def homePage(request):
                             "objectURL": "#",
                             "articleName": activiyJson.get("object").get("name"),
                             "sentence": "Tagged",
-                            "published": activiyJson.get("published")
+                            "published": activiyJson.get("published")[:10],
+                            "publishedTime": activiyJson.get("published")[11:16]
                             }
                     feedList.append(feedTagged)
 
