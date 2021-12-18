@@ -141,13 +141,14 @@
                 </div>
 
                 <div class="overflow-scroll" id="recent-activities" style="display: none">
-                    <table class="table table-striped">
+                    <table class="table table-striped feeduseritem">
                         <tbody>
                         {% for activity in feedList %}
                         <tr>
                             <td>
                                 <a href="{{activity.userURL}}">{{activity.userName}}</a> {{activity.sentence}} <a href="{{activity.objectURL}}">{{activity.articleName}}</a>.
                                 <div style="font-style: italic; font-size: 12px"> Activity Date: {{activity.published}}</div>
+                                <div style="font-style: italic; font-size: 12px"> Activity Time: {{activity.publishedTime}}</div>
                             </td>
                         </tr>
                         {% endfor %}
@@ -177,6 +178,8 @@
 <!--                        </tr>-->
                         </tbody>
                     </table>
+                    <button type="button" id="viewMoreforProfile" class="btn btn-block btn-primary waves-effect waves-light"><i class="icon md-chevron-down margin-right-5" aria-hidden="true"></i>Show
+                    More</button>
                 </div>
 
             </div>
