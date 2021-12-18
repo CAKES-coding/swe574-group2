@@ -389,8 +389,7 @@ def myProfilePage(request):
     follower_list = followManager.getFollowerList(user)
     followee_list = followManager.getFolloweeList(user)
 
-    # In order to get recent activities we retrieve the last 50 activities entered to DB
-
+    # In order to get recent activities of a user we retrieve the activities of the current user
     recentActivities = Activity.objects.filter(user_id = user.id)
     feedList = []
     # Here we are creating feeds by considering the activity type
