@@ -22,10 +22,11 @@ $(document).ready(function () {
         $(".searchContainer").toggle();
     });
 
-$(".feeditem:gt(9)").addClass("hiddenfeed");
+$(".feeditem:gt(5)").addClass("hiddenfeed");
 
-    $("#viewMore").click(function () {
-    $(".feeditem:hidden:gt(10)").show();
+$("#viewMore").click(function () {
+    $(".hiddenfeed:lt(9)").removeClass("hiddenfeed");
+
     });
 
 });

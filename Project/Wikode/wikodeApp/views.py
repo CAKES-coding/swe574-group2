@@ -104,9 +104,10 @@ def homePage(request):
                        }
 
         else:
+            #In order to get recent activities we retrieve the last 50 activities entered to DB
             recentActivities = Activity.objects.order_by('-id')[:50]
             feedList=[]
-
+            #Here we are creating feeds by considering the activity type
             for eachActivity in recentActivities:
                 if eachActivity.activity_type == '1':
                     activiyJson = eachActivity.activity_JSON
@@ -117,7 +118,7 @@ def homePage(request):
                             "sentence": "viewed"
                             }
                     feedList.append(feed)
-
+            #Then here we show the send the activities frontend
             context = {"parent_template": "wikodeApp/homePage.html",
                        "feedList": feedList,
                        "filter_form": FilterForm(initial={'order_by': 'relevance'})}
