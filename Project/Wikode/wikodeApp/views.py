@@ -5,7 +5,8 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-from wikodeApp.models import Author, Keyword, RegistrationApplication, Article, Tag, TagRelation, UserProfileInfo, FollowRelation
+from wikodeApp.models import Author, Keyword, RegistrationApplication, Article, Tag, TagRelation, UserProfileInfo, \
+    FollowRelation, Activity
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from wikodeApp.forms import ApplicationRegistrationForm, GetArticleForm, TagForm, FilterForm
 from wikodeApp.utils import followManager
@@ -34,7 +35,6 @@ def homePage(request):
         paginator = Paginator(results_list, 25)
         search_str = request.POST.get('searchTerms')
         filter_params = filter_form.cleaned_data
-
 
         filter_params_str = '&'.join([filter_key + '=' + str(filter_params.get(filter_key))
                                       for filter_key in filter_params
@@ -78,7 +78,7 @@ def homePage(request):
             search.filterArticles(filter_params)
             results_list = search.getSearchResults(filter_params.get('order_by'))
 
-            order=str(filter_params.get('order_by'))
+            order = str(filter_params.get('order_by'))
 
             paginator = Paginator(results_list, 25)
             search_str = request.GET.get('term')
@@ -104,7 +104,22 @@ def homePage(request):
                        }
 
         else:
+            recentActivities = Activity.objects.order_by('-id')[:50]
+            feedList=[]
+
+            for eachActivity in recentActivities:
+                if eachActivity.activity_type == '1':
+                    activiyJson = eachActivity.activity_JSON
+                    feed = {"userURL": activiyJson.get("actor").get("url")[22:],
+                            "userName": activiyJson.get("actor").get("name"),
+                            "objectURL": activiyJson.get("object").get("url")[29:],
+                            "articleName": activiyJson.get("object").get("name"),
+                            "sentence": "viewed"
+                            }
+                    feedList.append(feed)
+
             context = {"parent_template": "wikodeApp/homePage.html",
+                       "feedList": feedList,
                        "filter_form": FilterForm(initial={'order_by': 'relevance'})}
 
     return render(request, 'wikodeApp/searchAndFilterBox.html', context=context)
@@ -146,7 +161,8 @@ def articleDetail(request, pk):
             activity_manager = ActivityManager(user_id=request.user.id)
             print(fragment_end_index)
             if fragment_end_index != "-1":
-                activity_manager.saveAnnotationActivity(target_article_id=article.id, tag_id=tag.id, start_index=fragment_start_index, end_index=fragment_end_index)
+                activity_manager.saveAnnotationActivity(target_article_id=article.id, tag_id=tag.id,
+                                                        start_index=fragment_start_index, end_index=fragment_end_index)
             else:
                 activity_manager.saveTaggingActivityForArticle(target_id=article.id, tag_id=tag.id)
 
@@ -364,10 +380,6 @@ def followUser(request, pk):
         activityManager.saveFollowActivity(other_user.id)
         FollowRelation.objects.create(follower_id=session_user.id, followee_id=other_user.id)
 
-
     ## Return Follow/Unfollow button appearance is determined by is_followed value.
     ## If True don't show Follow button, show Unfollow instead.
     return redirect('wikodeApp:getProfilePageOfOtherUser', pk)
-
-
-

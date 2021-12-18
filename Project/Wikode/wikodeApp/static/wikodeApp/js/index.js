@@ -22,6 +22,11 @@ $(document).ready(function () {
         $(".searchContainer").toggle();
     });
 
+$(".feeditem:gt(9)").addClass("hiddenfeed");
+
+    $("#viewMore").click(function () {
+    $(".feeditem:hidden:gt(10)").show();
+    });
 
 });
 
