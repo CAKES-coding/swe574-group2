@@ -111,13 +111,66 @@ def homePage(request):
             for eachActivity in recentActivities:
                 if eachActivity.activity_type == '1':
                     activiyJson = eachActivity.activity_JSON
-                    feed = {"userURL": activiyJson.get("actor").get("url")[22:],
+                    feedView = {"userURL": activiyJson.get("actor").get("url")[22:],
                             "userName": activiyJson.get("actor").get("name"),
                             "objectURL": activiyJson.get("object").get("url")[29:],
                             "articleName": activiyJson.get("object").get("name"),
-                            "sentence": "viewed"
+                            "sentence": "Viewed",
+                            "published": activiyJson.get("published")
                             }
-                    feedList.append(feed)
+                    feedList.append(feedView)
+                if eachActivity.activity_type == '2':
+                    activiyJson = eachActivity.activity_JSON
+                    feedFollow = {"userURL": activiyJson.get("actor").get("url")[29:],
+                            "userName": activiyJson.get("actor").get("name"),
+                            "objectURL": activiyJson.get("object").get("url")[29:],
+                            "articleName": activiyJson.get("object").get("name"),
+                            "sentence": "Followed",
+                            "published": activiyJson.get("published")
+                            }
+                    feedList.append(feedFollow)
+                if eachActivity.activity_type == '3':
+                    activiyJson = eachActivity.activity_JSON
+                    feedUnFollow = {"userURL": activiyJson.get("actor").get("url")[29:],
+                            "userName": activiyJson.get("actor").get("name"),
+                            "objectURL": activiyJson.get("object").get("url")[29:],
+                            "articleName": activiyJson.get("object").get("name"),
+                            "sentence": "Unfollowed",
+                            "published": activiyJson.get("published")
+
+                            }
+                    feedList.append(feedUnFollow)
+                if eachActivity.activity_type == '4':
+                    activiyJson = eachActivity.activity_JSON
+                    feedUpvote = {"userURL": activiyJson.get("actor").get("url")[29:],
+                            "userName": activiyJson.get("actor").get("name"),
+                            "objectURL": activiyJson.get("object").get("url")[29:],
+                            "articleName": activiyJson.get("object").get("name"),
+                            "sentence": "Upvoted"
+                            }
+                    feedList.append(feedUpvote)
+                if eachActivity.activity_type == '5':
+                    activiyJson = eachActivity.activity_JSON
+                    feedDownvote = {"userURL": activiyJson.get("actor").get("url")[29:],
+                            "userName": activiyJson.get("actor").get("name"),
+                            "objectURL": activiyJson.get("object").get("url")[29:],
+                            "articleName": activiyJson.get("object").get("name"),
+                            "sentence": "Downvoted",
+                            "published": activiyJson.get("published")
+                            }
+                    feedList.append(feedDownvote)
+
+                if eachActivity.activity_type == '6':
+                    activiyJson = eachActivity.activity_JSON
+                    feedTagged = {"userURL": activiyJson.get("actor").get("url")[29:],
+                            "userName": activiyJson.get("actor").get("name"),
+                            "objectURL": "#",
+                            "articleName": activiyJson.get("object").get("name"),
+                            "sentence": "Tagged",
+                            "published": activiyJson.get("published")
+                            }
+                    feedList.append(feedTagged)
+
             #Then here we show the send the activities frontend
             context = {"parent_template": "wikodeApp/homePage.html",
                        "feedList": feedList,

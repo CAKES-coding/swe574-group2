@@ -22,12 +22,11 @@ $(document).ready(function () {
         $(".searchContainer").toggle();
     });
 
-$(".feeditem:gt(5)").addClass("hiddenfeed");
+$(".feeditem").slice(4,-1).hide();
 
-//View more button is added to show hidden activities
-$("#viewMore").click(function () {
-    $(".hiddenfeed:lt(9)").removeClass("hiddenfeed");
-
+    $("#viewMore").click(function () {
+        $(".feeditem:hidden").slice(3).show();
+//        $("#viewMore").hide();
     });
 
 });
