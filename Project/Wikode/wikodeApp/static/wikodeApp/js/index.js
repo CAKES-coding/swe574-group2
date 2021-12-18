@@ -24,6 +24,7 @@ $(document).ready(function () {
 
 $(".feeditem:gt(5)").addClass("hiddenfeed");
 
+//View more button is added to show hidden activities
 $("#viewMore").click(function () {
     $(".hiddenfeed:lt(9)").removeClass("hiddenfeed");
 
