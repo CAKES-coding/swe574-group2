@@ -143,36 +143,38 @@
                 <div class="overflow-scroll" id="recent-activities" style="display: none">
                     <table class="table table-striped">
                         <tbody>
+                        {% for activity in feedList %}
                         <tr>
                             <td>
-                                <a href="#">Emre</a> tagged <a href="#">Mechanisms of SARS-CoV-2 Transmission and Pathogenesis</a>.
-                                <div style="font-style: italic; font-size: 12px">moments ago</div>
+                                <a href="{{activity.userURL}}">{{activity.userName}}</a> {{activity.sentence}} <a href="{{activity.objectURL}}">{{activity.articleName}}</a>.
+                                <div style="font-style: italic; font-size: 12px"> Activity Date: {{activity.published}}</div>
                             </td>
                         </tr>
-                        <tr>
-                            <td>
-                                <a href="#">Emre</a> voted for <a href="#">Pregnancy and Birth Outcomes during the Early Months of the COVID-19 Pandemic: The MOACC-19 Cohort</a>.
-                                <div style="font-style: italic; font-size: 12px">7 minutes ago</div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <a href="#">Emre</a> updated <a href="#">Susceptibility and Attenuated Transmissibility of SARS-CoV-2 in Domestic Cats</a>.
-                                <div style="font-style: italic; font-size: 12px">3 days ago</div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <a href="#">Emre</a> is followed by <a href="#">Can</a>.
-                                <div style="font-style: italic; font-size: 12px">1 month ago</div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <a href="#">Emre</a> followed <a href="#">Semih</a>.
-                                <div style="font-style: italic; font-size: 12px">3 months ago</div>
-                            </td>
-                        </tr>
+                        {% endfor %}
+<!--                        <tr>-->
+<!--                            <td>-->
+<!--                                <a href="#">Emre</a> voted for <a href="#">Pregnancy and Birth Outcomes during the Early Months of the COVID-19 Pandemic: The MOACC-19 Cohort</a>.-->
+<!--                                <div style="font-style: italic; font-size: 12px">7 minutes ago</div>-->
+<!--                            </td>-->
+<!--                        </tr>-->
+<!--                        <tr>-->
+<!--                            <td>-->
+<!--                                <a href="#">Emre</a> updated <a href="#">Susceptibility and Attenuated Transmissibility of SARS-CoV-2 in Domestic Cats</a>.-->
+<!--                                <div style="font-style: italic; font-size: 12px">3 days ago</div>-->
+<!--                            </td>-->
+<!--                        </tr>-->
+<!--                        <tr>-->
+<!--                            <td>-->
+<!--                                <a href="#">Emre</a> is followed by <a href="#">Can</a>.-->
+<!--                                <div style="font-style: italic; font-size: 12px">1 month ago</div>-->
+<!--                            </td>-->
+<!--                        </tr>-->
+<!--                        <tr>-->
+<!--                            <td>-->
+<!--                                <a href="#">Emre</a> followed <a href="#">Semih</a>.-->
+<!--                                <div style="font-style: italic; font-size: 12px">3 months ago</div>-->
+<!--                            </td>-->
+<!--                        </tr>-->
                         </tbody>
                     </table>
                 </div>
