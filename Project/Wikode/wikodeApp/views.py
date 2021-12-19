@@ -78,8 +78,6 @@ def homePage(request):
             search.filterArticles(filter_params)
             results_list = search.getSearchResults(filter_params.get('order_by'))
 
-            order = str(filter_params.get('order_by'))
-
             paginator = Paginator(results_list, 25)
             search_str = request.GET.get('term')
 
@@ -113,9 +111,10 @@ def homePage(request):
                 if eachActivity.activity_type == '1':
                     activiyJson = eachActivity.activity_JSON
                     userID = int(activiyJson.get("actor").get("url").split("/")[-1])
+                    articleID = int(activiyJson.get("object").get("url").split("/")[-1])
                     feedView = {"userID": userID,
                                 "userName": activiyJson.get("actor").get("name"),
-                                "objectURL": activiyJson.get("object").get("url")[29:],
+                                "articleID": articleID,
                                 "articleName": activiyJson.get("object").get("name"),
                                 "sentence": "Viewed",
                                 "published": activiyJson.get("published")[:10],
@@ -126,9 +125,10 @@ def homePage(request):
                 if eachActivity.activity_type == '2':
                     activiyJson = eachActivity.activity_JSON
                     userID = int(activiyJson.get("actor").get("url").split("/")[-1])
+                    articleID = int(activiyJson.get("object").get("url").split("/")[-1])
                     feedFollow = {"userID": userID,
                                   "userName": activiyJson.get("actor").get("name"),
-                                  "objectURL": activiyJson.get("object").get("url")[29:],
+                                  "articleID": articleID,
                                   "articleName": activiyJson.get("object").get("name"),
                                   "sentence": "Followed",
                                   "published": activiyJson.get("published")[:10],
@@ -139,9 +139,10 @@ def homePage(request):
                 if eachActivity.activity_type == '3':
                     activiyJson = eachActivity.activity_JSON
                     userID = int(activiyJson.get("actor").get("url").split("/")[-1])
+                    articleID = int(activiyJson.get("object").get("url").split("/")[-1])
                     feedUnFollow = {"userID": userID,
                                     "userName": activiyJson.get("actor").get("name"),
-                                    "objectURL": activiyJson.get("object").get("url")[29:],
+                                    "articleID": articleID,
                                     "articleName": activiyJson.get("object").get("name"),
                                     "sentence": "Unfollowed",
                                     "published": activiyJson.get("published")[:10],
@@ -153,9 +154,10 @@ def homePage(request):
                 if eachActivity.activity_type == '4':
                     activiyJson = eachActivity.activity_JSON
                     userID = int(activiyJson.get("actor").get("url").split("/")[-1])
+                    articleID = int(activiyJson.get("object").get("url").split("/")[-1])
                     feedUpvote = {"userID": userID,
                                   "userName": activiyJson.get("actor").get("name"),
-                                  "objectURL": activiyJson.get("object").get("url")[29:],
+                                  "articleID": articleID,
                                   "articleName": activiyJson.get("object").get("name"),
                                   "sentence": "Upvoted",
                                   "published": activiyJson.get("published")[:10],
@@ -166,9 +168,10 @@ def homePage(request):
                 if eachActivity.activity_type == '5':
                     activiyJson = eachActivity.activity_JSON
                     userID = int(activiyJson.get("actor").get("url").split("/")[-1])
+                    articleID = int(activiyJson.get("object").get("url").split("/")[-1])
                     feedDownvote = {"userID": userID,
                                     "userName": activiyJson.get("actor").get("name"),
-                                    "objectURL": activiyJson.get("object").get("url")[29:],
+                                    "articleID": articleID,
                                     "articleName": activiyJson.get("object").get("name"),
                                     "sentence": "Downvoted",
                                     "published": activiyJson.get("published")[:10],
@@ -179,9 +182,10 @@ def homePage(request):
                 if eachActivity.activity_type == '6':
                     activiyJson = eachActivity.activity_JSON
                     userID = int(activiyJson.get("actor").get("url").split("/")[-1])
+                    articleID = int(activiyJson.get("object").get("url").split("/")[-1])
                     feedTagged = {"userID": userID,
                                   "userName": activiyJson.get("actor").get("name"),
-                                  "objectURL": "#",
+                                  "articleID": articleID,
                                   "articleName": activiyJson.get("object").get("name"),
                                   "sentence": "Tagged",
                                   "published": activiyJson.get("published")[:10],
