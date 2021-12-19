@@ -31,6 +31,7 @@ class Search:
                 annotate(a_rank=SearchRank(F('SearchIndex'), self.article_search_query)).\
                 values('id', 'Title', 'PublicationDate').\
                 order_by(F('a_rank').desc(nulls_last=True))
+
         elif order_by == 'date_desc':
             ordered_list = self.result_list. \
                 values('id', 'PMID', 'Title', 'PublicationDate').order_by('-PublicationDate')
@@ -83,6 +84,8 @@ class Search:
 
         main_tags = Tag.objects.filter(Q(searchIndex=self.tag_search_query))
         parent_tags = Tag.objects.filter(parentTags__in=main_tags)
+
+        # All children of found tags
         child_tags = Tag.objects.filter(childTags__in=main_tags)
         sibling_tags = Tag.objects.filter(childTags__in=parent_tags)
 
