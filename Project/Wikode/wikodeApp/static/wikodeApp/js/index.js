@@ -22,6 +22,12 @@ $(document).ready(function () {
         $(".searchContainer").toggle();
     });
 
+$(".feeditem").slice(4,-1).hide();
+
+    $("#viewMore").click(function () {
+        $(".feeditem:hidden").slice(3).show();
+//        $("#viewMore").hide();
+    });
 
 });
 

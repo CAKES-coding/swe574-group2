@@ -1,7 +1,8 @@
 import datetime
 
 # the manager that will handle all the activity stream savings to database
-from wikodeApp.models import Activity, Article, RegistrationApplication, Tag, Annotation
+from django.contrib.auth.models import User
+from wikodeApp.models import Activity, Article, Tag, Annotation
 
 
 # Activity Manager will handle all savings to database
@@ -12,7 +13,7 @@ class ActivityManager:
     baseUrl = "http://www.wikode.com/wikode/"
 
     def __init__(self, user_id):
-        owner = RegistrationApplication.objects.get(id=user_id)
+        owner = User.objects.get(id=user_id)
         self.user_id = user_id
         if owner:
             self.owner = owner
@@ -29,7 +30,7 @@ class ActivityManager:
             if target:
                 activity_target_type = 'Person'
                 activity_target_url = self.getProfileURL(id=target_id)
-                activity_target_name = target.name
+                activity_target_name = target.first_name + ' ' + target.last_name
         # elif target_type=='2':
         # TODO: when view tags finished, implement the correct tag url:
         #  activity_target_type = 'Tag'
@@ -77,7 +78,7 @@ class ActivityManager:
         if target:
             activity_target_type = 'Person'
             activity_target_url = self.getProfileURL(id=target_id)
-            activity_target_name = target.name
+            activity_target_name = target.first_name + ' ' + target.last_name
 
         json = {
             "@context": "https://www.w3.org/ns/activitystreams",
@@ -115,7 +116,7 @@ class ActivityManager:
         if target:
             activity_target_type = 'Person'
             activity_target_url = self.getProfileURL(id=target_id)
-            activity_target_name = target.name
+            activity_target_name = target.first_name + ' ' + target.last_name
 
         json = {
             "@context": "https://www.w3.org/ns/activitystreams",
@@ -276,7 +277,7 @@ class ActivityManager:
                 {
                     "type": "TextualBody",
                     "purpose": "tagging",
-                    "value": tag_object.tagName
+                    "value": tag_object.label
                 }
             ],
             "target": {
@@ -296,14 +297,14 @@ class ActivityManager:
         annotation.save()
 
     def getOwnerName(self):
-        return self.owner.name
+        return self.owner.first_name + ' ' + self.owner.last_name
 
     def getOwnerURL(self):
-        return self.baseUrl + ("/profile/{}".format(self.user_id))
+        return self.baseUrl + ("profile/{}".format(self.user_id))
 
     # returns target as user
     def getTargetAsUser(self, target_id):
-        target = RegistrationApplication.objects.get(id=target_id)
+        target = User.objects.get(id=target_id)
         if target:
             return target
 

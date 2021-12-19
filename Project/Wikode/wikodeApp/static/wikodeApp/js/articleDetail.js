@@ -1,5 +1,5 @@
 let abstractText = document.getElementById("abstract-text");
-let tagPieceButton = document.getElementById("tag-piece-button")
+let tagPieceButton = document.getElementById("tag-piece-button");
 
 let startIndex = 0;
 let endIndex = 0;
@@ -78,3 +78,75 @@ for (let i = 0; i < tagRows.length; i++) {
         unHighlightAbstract();
     })
 }
+
+function upVote(tagRelationId) {
+    sendVoteRequest(tagRelationId, "upVote")
+}
+
+function downVote(tagRelationId) {
+    sendVoteRequest(tagRelationId, "downVote")
+}
+
+function sendVoteRequest(tagRelationId, voteType) {
+    let token = document.getElementsByName("csrfmiddlewaretoken")[0].value
+    $.ajax({
+        url: '/wikode/vote/',
+        type: 'POST',
+        data: {
+            csrfmiddlewaretoken: token,
+            tagRelationId: tagRelationId,
+            voteType: voteType
+        },
+        success: function (vote) {
+            document.getElementById("totalVotes-" + tagRelationId).innerHTML = vote["voteSum"];
+            let userVote = vote["userVote"]
+            adjustVoteButtonColor(userVote, tagRelationId)
+        }
+    })
+}
+
+function getTagRelationIds() {
+    let tagRelationIds = [];
+    let tagRows = document.getElementsByClassName("tag_row");
+    for (let i = 0; i < tagRows.length; i++) {
+        tagRelationIds[i] = parseInt(tagRows[i].id);
+    }
+    return tagRelationIds
+}
+
+window.onload = function () {
+    let token = document.getElementsByName("csrfmiddlewaretoken")[0].value
+    $.ajax({
+        url: '/wikode/vote/',
+        type: 'GET',
+        data: {
+            csrfmiddlewaretoken: token,
+            tagRelationIds: getTagRelationIds().toString()
+        },
+        success: function (userVoteDict) {
+            userVoteDict = userVoteDict['userVoteDict']
+            for (let tagRelationId in userVoteDict) {
+                adjustVoteButtonColor(userVoteDict[tagRelationId], tagRelationId)
+            }
+        }
+    })
+}
+
+function adjustVoteButtonColor(userVote, tagRelationId) {
+    let upvoteButton = document.getElementById("upvote-button-" + tagRelationId);
+    let downvoteButton = document.getElementById("downvote-button-" + tagRelationId);
+    if (userVote === 1) {
+        upvoteButton.className = "btn btn-primary";
+        downvoteButton.className = "btn btn-outline-danger";
+    } else if (userVote === 0) {
+        upvoteButton.className = "btn btn-outline-primary";
+        downvoteButton.className = "btn btn-outline-danger";
+    } else if (userVote === -1) {
+        upvoteButton.className = "btn btn-outline-primary";
+        downvoteButton.className = "btn btn-danger";
+    }
+}
+
+
+
+
