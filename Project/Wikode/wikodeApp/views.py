@@ -2,18 +2,19 @@ from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-from wikodeApp.models import Author, Keyword, RegistrationApplication, Article, Tag, TagRelation, UserProfileInfo, FollowRelation
+from wikodeApp.models import Author, Keyword, RegistrationApplication, Article, Tag, TagRelation, UserProfileInfo, \
+    FollowRelation
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from wikodeApp.forms import ApplicationRegistrationForm, GetArticleForm, TagForm, FilterForm
 from wikodeApp.utils import followManager
 from wikodeApp.utils.activityManager import ActivityManager
 from wikodeApp.utils.fetchArticles import createArticles
+from wikodeApp.utils.voteManager import VoteManager
 import string
 import random
-import json
 from wikodeApp.utils.textSearch import Search
 from dal import autocomplete
 from wikodeApp.utils.wikiManager import getLabelSuggestion, WikiEntry
@@ -34,7 +35,6 @@ def homePage(request):
         paginator = Paginator(results_list, 25)
         search_str = request.POST.get('searchTerms')
         filter_params = filter_form.cleaned_data
-
 
         filter_params_str = '&'.join([filter_key + '=' + str(filter_params.get(filter_key))
                                       for filter_key in filter_params
@@ -78,7 +78,7 @@ def homePage(request):
             search.filterArticles(filter_params)
             results_list = search.getSearchResults(filter_params.get('order_by'))
 
-            order=str(filter_params.get('order_by'))
+            order = str(filter_params.get('order_by'))
 
             paginator = Paginator(results_list, 25)
             search_str = request.GET.get('term')
@@ -146,7 +146,8 @@ def articleDetail(request, pk):
             activity_manager = ActivityManager(user_id=request.user.id)
             print(fragment_end_index)
             if fragment_end_index != "-1":
-                activity_manager.saveAnnotationActivity(target_article_id=article.id, tag_id=tag.id, start_index=fragment_start_index, end_index=fragment_end_index)
+                activity_manager.saveAnnotationActivity(target_article_id=article.id, tag_id=tag.id,
+                                                        start_index=fragment_start_index, end_index=fragment_end_index)
             else:
                 activity_manager.saveTaggingActivityForArticle(target_id=article.id, tag_id=tag.id)
 
@@ -364,10 +365,28 @@ def followUser(request, pk):
         activityManager.saveFollowActivity(other_user.id)
         FollowRelation.objects.create(follower_id=session_user.id, followee_id=other_user.id)
 
-
     ## Return Follow/Unfollow button appearance is determined by is_followed value.
     ## If True don't show Follow button, show Unfollow instead.
     return redirect('wikodeApp:getProfilePageOfOtherUser', pk)
 
 
+@login_required()
+def vote(request):
+    vote_manager = VoteManager(user_id=request.user.id)
+    if request.method == 'POST':
+        tag_relation_id = request.POST.get('tagRelationId')
+        vote_type = request.POST.get('voteType')
 
+        if vote_type == 'upVote':
+            vote_manager.upVote(tag_relation_id)
+        else:
+            vote_manager.downVote(tag_relation_id)
+
+        vote_sum = vote_manager.getVoteSum(tag_relation_id)
+        TagRelation.objects.filter(id=tag_relation_id).update(vote_sum=vote_sum)
+        user_vote = vote_manager.getUserVote(tag_relation_id)
+        return JsonResponse({"voteSum": vote_sum, "userVote": user_vote}, status=200)
+    else:
+        tag_relation_ids = request.GET.get('tagRelationIds').split(',')
+        user_vote_dict = vote_manager.getUserVoteDict(tag_relation_ids)
+        return JsonResponse({"userVoteDict": user_vote_dict}, status=200)
