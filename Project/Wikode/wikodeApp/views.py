@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from wikodeApp.models import Author, Keyword, RegistrationApplication, Article, TagRelation, \
@@ -12,6 +12,7 @@ from wikodeApp.forms import ApplicationRegistrationForm, GetArticleForm, TagForm
 from wikodeApp.utils import followManager
 from wikodeApp.utils.activityManager import ActivityManager
 from wikodeApp.utils.fetchArticles import createArticles
+from wikodeApp.utils.voteManager import VoteManager
 import string
 import random
 from wikodeApp.utils.textSearch import Search
@@ -651,3 +652,25 @@ def followUser(request, pk):
     ## Return Follow/Unfollow button appearance is determined by is_followed value.
     ## If True don't show Follow button, show Unfollow instead.
     return redirect('wikodeApp:getProfilePageOfOtherUser', pk)
+
+
+@login_required()
+def vote(request):
+    vote_manager = VoteManager(user_id=request.user.id)
+    if request.method == 'POST':
+        tag_relation_id = request.POST.get('tagRelationId')
+        vote_type = request.POST.get('voteType')
+
+        if vote_type == 'upVote':
+            vote_manager.upVote(tag_relation_id)
+        else:
+            vote_manager.downVote(tag_relation_id)
+
+        vote_sum = vote_manager.getVoteSum(tag_relation_id)
+        TagRelation.objects.filter(id=tag_relation_id).update(vote_sum=vote_sum)
+        user_vote = vote_manager.getUserVote(tag_relation_id)
+        return JsonResponse({"voteSum": vote_sum, "userVote": user_vote}, status=200)
+    else:
+        tag_relation_ids = request.GET.get('tagRelationIds').split(',')
+        user_vote_dict = vote_manager.getUserVoteDict(tag_relation_ids)
+        return JsonResponse({"userVoteDict": user_vote_dict}, status=200)

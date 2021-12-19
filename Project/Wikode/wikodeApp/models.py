@@ -134,9 +134,17 @@ class TagRelation(models.Model):
     fragment = models.TextField(max_length=1024)
     start_index = models.IntegerField(null=True)
     end_index = models.IntegerField(null=True)
+    vote_sum = models.IntegerField(default=0)
+
+
+class Vote(models.Model):
+    tag_relation = models.ForeignKey(TagRelation, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    value = models.IntegerField(null=True)
 
 
 class FollowRelation(models.Model):
     follower = models.ForeignKey(User, related_name='follower', on_delete=models.CASCADE)
     followee = models.ForeignKey(User, related_name='followee', on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now_add=True)
+
