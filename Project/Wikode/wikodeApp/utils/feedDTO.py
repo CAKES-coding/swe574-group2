@@ -67,7 +67,7 @@ class Feed:
                               "userName": activiyJson.get("actor").get("name"),
                               "targetURL": target_url,
                               "targetName": activiyJson.get("object").get("name"),
-                              "sentence": "Upvoted",
+                              "sentence": sentence,
                               "published": activiyJson.get("published")[:10],
                               "publishedTime": activiyJson.get("published")[11:16]
                               }
