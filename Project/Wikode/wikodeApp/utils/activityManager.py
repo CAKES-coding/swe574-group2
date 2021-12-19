@@ -297,7 +297,7 @@ class ActivityManager:
         annotation.save()
 
     def getOwnerName(self):
-        return self.owner.first_name
+        return self.owner.first_name + ' ' + self.owner.last_name
 
     def getOwnerURL(self):
         return self.baseUrl + ("profile/{}".format(self.user_id))
