@@ -18,6 +18,7 @@ import random
 from wikodeApp.utils.textSearch import Search
 from dal import autocomplete
 from wikodeApp.utils.wikiManager import getLabelSuggestion, WikiEntry
+from wikodeApp.utils.feedDTO import Feed
 
 
 @login_required
@@ -103,11 +104,12 @@ def homePage(request):
 
         else:
             # In order to get recent activities we retrieve the last 50 activities entered to DB
-
+            recent_activities = Activity.objects.order_by('-id')[:50]
+            feed_list = Feed(recent_activities).getFeed()
 
             # Then here we show the send the activities frontend
             context = {"parent_template": "wikodeApp/homePage.html",
-                       "feedList": feedList,
+                       "feedList": feed_list,
                        "filter_form": FilterForm(initial={'order_by': 'relevance'})}
 
     return render(request, 'wikodeApp/searchAndFilterBox.html', context=context)

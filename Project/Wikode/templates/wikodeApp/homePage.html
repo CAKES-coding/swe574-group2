@@ -139,7 +139,7 @@
                         <div class="media-body">
                           <h4 class="media-heading">
 
-                            <a class="name" href="{% url 'wikodeApp:getProfilePageOfOtherUser' activity.userID %}">{{activity.userName}}</a> {{activity.sentence}} <a href="{% url 'wikodeApp:articleDetail' activity.articleID %}">{{activity.articleName}}</a>.
+                            <a class="name" href="{{ activity.userURL }}">{{activity.userName}}</a> {{activity.sentence}} <a href="{{ activity.targetURL }}">{{activity.targetName}}</a>. {% if activity.tagName %} with <a href="{{ activity.tagURL }}">{{activity.tagName}}</a> {% endif %}
                           </h4>
                           <small>Activity Date: {{activity.published}}</small>
                           <br>
