@@ -146,7 +146,7 @@
                         {% for activity in feedList %}
                         <tr>
                             <td>
-                                <a href="{% url 'wikodeApp:getProfilePageOfOtherUser' activity.userID %}">{{activity.userName}}</a> {{activity.sentence}} <a href="{% url 'wikodeApp:articleDetail' activity.articleID %}">{{activity.articleName}}</a>.
+                            <a class="name" href="{{ activity.userURL }}">{{activity.userName}}</a> {{activity.sentence}} <a href="{{ activity.targetURL }}">{{activity.targetName}}</a>. {% if activity.tagName %} with <a href="{{ activity.tagURL }}">{{activity.tagName}}</a> {% endif %}
                                 <div style="font-style: italic; font-size: 12px"> Activity Date: {{activity.published}}</div>
                                 <div style="font-style: italic; font-size: 12px"> Activity Time: {{activity.publishedTime}}</div>
                             </td>
