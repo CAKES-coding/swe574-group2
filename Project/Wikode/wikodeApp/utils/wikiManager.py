@@ -62,7 +62,7 @@ class WikiEntry:
     def getRelatedWikiQidList(self):
         related_wiki_id_list = []
         entry_data_claims = self.entry_data['claims']
-        wiki_property_list = ['P31', 'P279']
+        wiki_property_list = ['P31', 'P279', 'P361']
         for wikiProperty in wiki_property_list:
             if entry_data_claims.get(wikiProperty, None):
                 for entryDataClaim in entry_data_claims.get(wikiProperty, None):
