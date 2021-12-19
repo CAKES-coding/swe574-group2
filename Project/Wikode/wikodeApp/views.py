@@ -112,7 +112,8 @@ def homePage(request):
                 # activity type-1 (View activity)
                 if eachActivity.activity_type == '1':
                     activiyJson = eachActivity.activity_JSON
-                    feedView = {"userURL": activiyJson.get("actor").get("url")[22:],
+                    userID = int(activiyJson.get("actor").get("url").split("/")[-1])
+                    feedView = {"userURL": userID,
                             "userName": activiyJson.get("actor").get("name"),
                             "objectURL": activiyJson.get("object").get("url")[29:],
                             "articleName": activiyJson.get("object").get("name"),
@@ -230,6 +231,7 @@ def articleDetail(request, pk):
             if fragment_end_index != "-1":
                 activity_manager.saveAnnotationActivity(target_article_id=article.id, tag_id=tag.id,
                                                         start_index=fragment_start_index, end_index=fragment_end_index)
+                activity_manager.saveTaggingActivityForArticle(target_id=article.id, tag_id=tag.id)
             else:
                 activity_manager.saveTaggingActivityForArticle(target_id=article.id, tag_id=tag.id)
 
