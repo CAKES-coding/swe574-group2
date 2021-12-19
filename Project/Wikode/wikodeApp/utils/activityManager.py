@@ -2,7 +2,7 @@ import datetime
 
 # the manager that will handle all the activity stream savings to database
 from django.contrib.auth.models import User
-from wikodeApp.models import Activity, Article, RegistrationApplication, Tag, Annotation
+from wikodeApp.models import Activity, Article, Tag, Annotation
 
 
 # Activity Manager will handle all savings to database
@@ -30,7 +30,7 @@ class ActivityManager:
             if target:
                 activity_target_type = 'Person'
                 activity_target_url = self.getProfileURL(id=target_id)
-                activity_target_name = target.name
+                activity_target_name = target.first_name + ' ' + target.last_name
         # elif target_type=='2':
         # TODO: when view tags finished, implement the correct tag url:
         #  activity_target_type = 'Tag'
@@ -78,7 +78,7 @@ class ActivityManager:
         if target:
             activity_target_type = 'Person'
             activity_target_url = self.getProfileURL(id=target_id)
-            activity_target_name = target.name
+            activity_target_name = target.first_name + ' ' + target.last_name
 
         json = {
             "@context": "https://www.w3.org/ns/activitystreams",
@@ -116,7 +116,7 @@ class ActivityManager:
         if target:
             activity_target_type = 'Person'
             activity_target_url = self.getProfileURL(id=target_id)
-            activity_target_name = target.name
+            activity_target_name = target.first_name + ' ' + target.last_name
 
         json = {
             "@context": "https://www.w3.org/ns/activitystreams",
@@ -304,7 +304,7 @@ class ActivityManager:
 
     # returns target as user
     def getTargetAsUser(self, target_id):
-        target = RegistrationApplication.objects.get(id=target_id)
+        target = User.objects.get(id=target_id)
         if target:
             return target
 
