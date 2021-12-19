@@ -1,6 +1,7 @@
 import datetime
 
 # the manager that will handle all the activity stream savings to database
+from django.contrib.auth.models import User
 from wikodeApp.models import Activity, Article, RegistrationApplication, Tag, Annotation
 
 
@@ -12,7 +13,7 @@ class ActivityManager:
     baseUrl = "http://www.wikode.com/wikode/"
 
     def __init__(self, user_id):
-        owner = RegistrationApplication.objects.get(id=user_id)
+        owner = User.objects.get(id=user_id)
         self.user_id = user_id
         if owner:
             self.owner = owner
@@ -296,7 +297,7 @@ class ActivityManager:
         annotation.save()
 
     def getOwnerName(self):
-        return self.owner.name
+        return self.owner.first_name
 
     def getOwnerURL(self):
         return self.baseUrl + ("profile/{}".format(self.user_id))

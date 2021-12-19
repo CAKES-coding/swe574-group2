@@ -21,6 +21,10 @@
     background-color: yellow;
 }
 
+.hiddenfeed {
+    display: none;
+}
+
 #tagInput {
     width: 300px;
 }
@@ -32,3 +36,5 @@
 #fragment_info {
     display: none;
 }
+
+
