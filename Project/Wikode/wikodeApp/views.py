@@ -237,11 +237,15 @@ def articleDetail(request, pk):
             activity_manager = ActivityManager(user_id=request.user.id)
             print(fragment_end_index)
             if fragment_end_index != "-1":
-                activity_manager.saveAnnotationActivity(target_article_id=article.id, tag_id=tag.id,
-                                                        start_index=fragment_start_index, end_index=fragment_end_index)
-                activity_manager.saveTaggingActivityForArticle(target_id=article.id, tag_id=tag.id)
+                activity_manager.saveAnnotationActivity(target_article_id=article.id,
+                                                        tag_id=tag.id,
+                                                        start_index=fragment_start_index,
+                                                        end_index=fragment_end_index)
+                activity_manager.saveTaggingActivityForArticle(target_id=article.id,
+                                                               tag_id=tag.id)
             else:
-                activity_manager.saveTaggingActivityForArticle(target_id=article.id, tag_id=tag.id)
+                activity_manager.saveTaggingActivityForArticle(target_id=article.id,
+                                                               tag_id=tag.id)
 
         elif 'tag_relation_id' in request.POST:
             # Delete tag from an article
@@ -444,7 +448,6 @@ def myProfilePage(request):
                             "sentence": "Unfollowed",
                             "published": activiyJson.get("published")[:10],
                             "publishedTime": activiyJson.get("published")[11:16]
-
                             }
             feedList.append(feedUnFollow)
         # activity type-4 (Upvote activity)
@@ -567,7 +570,6 @@ def getProfilePageOfOtherUser(request, pk):
                             "sentence": "Unfollowed",
                             "published": activiyJson.get("published")[:10],
                             "publishedTime": activiyJson.get("published")[11:16]
-
                             }
             feedList.append(feedUnFollow)
         # activity type-4 (Upvote activity)
@@ -650,3 +652,4 @@ def followUser(request, pk):
     ## Return Follow/Unfollow button appearance is determined by is_followed value.
     ## If True don't show Follow button, show Unfollow instead.
     return redirect('wikodeApp:getProfilePageOfOtherUser', pk)
+Rev

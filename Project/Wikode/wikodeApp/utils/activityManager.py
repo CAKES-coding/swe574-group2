@@ -2,7 +2,6 @@ import datetime
 
 # the manager that will handle all the activity stream savings to database
 from django.contrib.auth.models import User
-
 from wikodeApp.models import Activity, Article, RegistrationApplication, Tag, Annotation
 
 

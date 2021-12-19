@@ -139,7 +139,6 @@
                         <div class="media-body">
                           <h4 class="media-heading">
 
-<!--                            <small class="pull-right">5m ago</small>-->
                             <a class="name" href="{% url 'wikodeApp:getProfilePageOfOtherUser' activity.userID %}">{{activity.userName}}</a> {{activity.sentence}} <a href="{% url 'wikodeApp:articleDetail' activity.articleID %}">{{activity.articleName}}</a>.
                           </h4>
                           <small>Activity Date: {{activity.published}}</small>

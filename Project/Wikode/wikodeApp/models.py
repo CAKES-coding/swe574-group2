@@ -124,7 +124,6 @@ class Activity(models.Model):
     activity_JSON = JSONField()
 
 
-
 class Annotation(models.Model):
     annotation_JSON = JSONField()
 
