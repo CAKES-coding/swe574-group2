@@ -14,4 +14,5 @@ urlpatterns = [
     path('getArticles/', views.getArticles, name='getArticles'),
     path('articleDetail/<int:pk>', views.articleDetail, name='articleDetail'),
     path('profile/<int:pk>/follow', views.followUser, name='followUser'),
+    path('vote/', views.vote, name='vote'),
 ]
