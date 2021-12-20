@@ -2,7 +2,6 @@ from wikodeApp.models import Article, Author, Tag
 from functools import reduce
 from django.contrib.postgres.search import SearchQuery, SearchRank
 from django.db.models import F, Q, Value, FloatField
-from django.db.models.aggregates import Max, Sum
 from collections import OrderedDict
 from django.db.models.functions import Concat, Cast
 
