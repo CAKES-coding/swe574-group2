@@ -234,8 +234,7 @@ def registrationRequests(request):
             user.set_password(user.password)
             user.save()
 
-            requests_list = RegistrationApplication.objects.filter(applicationStatus='1').order_by(
-                'applicationDate')
+            requests_list = RegistrationApplication.objects.filter(applicationStatus='1').order_by('applicationDate')
             requests_dict = {"registration_requests": requests_list, "password": random_password}
             return render(request, 'wikodeApp/registrationRequests.html', context=requests_dict)
 
