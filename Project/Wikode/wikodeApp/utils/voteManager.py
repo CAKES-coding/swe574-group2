@@ -65,6 +65,7 @@ class VoteManager:
             user_vote_dict[int(tag_relation_id)] = vote
         return user_vote_dict
 
+
 class VoteEnum(Enum):
     UPVOTED = 1
     NOTR = 0
