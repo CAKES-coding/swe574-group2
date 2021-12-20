@@ -148,3 +148,14 @@ class FollowRelation(models.Model):
     followee = models.ForeignKey(User, related_name='followee', on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now_add=True)
 
+
+class SuggestionRecord(models.Model):
+    suggestion_types = {
+        1: "Article",
+        2: "User"
+    }
+
+    suggestion_type = models.CharField(max_length=8, choices=suggestion_types)
+    suggestion_owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    article_id = models.ForeignKey(Article, on_delete=models.CASCADE, null=True)
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
