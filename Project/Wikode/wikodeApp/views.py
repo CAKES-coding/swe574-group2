@@ -416,3 +416,7 @@ def vote(request):
         tag_relation_ids = request.GET.get('tagRelationIds').split(',')
         user_vote_dict = vote_manager.getUserVoteDict(tag_relation_ids)
         return JsonResponse({"userVoteDict": user_vote_dict}, status=200)
+
+
+def error(request, *args, **argv):
+    return render(request, 'wikodeApp/error.html')
