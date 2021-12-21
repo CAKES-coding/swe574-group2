@@ -1,5 +1,6 @@
 let abstractText = document.getElementById("abstract-text");
 let tagPieceButton = document.getElementById("tag-piece-button");
+let clearFragmentButton = document.getElementById("clear-fragment-button")
 
 let startIndex = 0;
 let endIndex = 0;
@@ -41,14 +42,20 @@ rightClick = (e) => {
     tagContextMenu.style.top = e.clientY + window.pageYOffset + "px";
 }
 
+let fragmentInfoGroupDiv = document.getElementById("fragment_info")
+let fragmentTextLabel = document.getElementById("fragment_text")
+let fragmentStartIndexInput = document.getElementById("fragment_start_index")
+let fragmentEndIndexInput = document.getElementById("fragment_end_index");
+
 tagPieceButton.addEventListener("click", () => {
     console.log(startIndex);
     console.log(endIndex);
     document.getElementById("tagContextMenu").style.display = "none";
-    document.getElementById("fragment_info").style.display = "block";
-    document.getElementById("fragment_text").value = selectedText;
-    document.getElementById("fragment_start_index").value = startIndex;
-    document.getElementById("fragment_end_index").value = endIndex;
+    fragmentInfoGroupDiv.style.display = "block";
+    fragmentTextLabel.value = selectedText;
+    fragmentStartIndexInput.value = startIndex;
+    fragmentEndIndexInput.value = endIndex;
+    clearFragmentButton.style.display = "inline";
     highlightAbstract(startIndex, endIndex);
     startIndex = 0;
     endIndex = 0;
@@ -71,13 +78,21 @@ function unHighlightAbstract() {
 let tagRows = document.getElementsByClassName('tag_row');
 
 for (let i = 0; i < tagRows.length; i++) {
-    tagRows[i].addEventListener("mouseover", function (event) {
+    tagRows[i].addEventListener("mouseover", function () {
         highlightAbstract(tagRows[i].dataset.start, tagRows[i].dataset.end);
     });
     tagRows[i].addEventListener("mouseout", function () {
         unHighlightAbstract();
     })
 }
+
+clearFragmentButton.addEventListener('click', () => {
+    fragmentInfoGroupDiv.style.display = "none"
+    fragmentTextLabel.value = "";
+    fragmentStartIndexInput.value = 0;
+    fragmentEndIndexInput.value = -1;
+    clearFragmentButton.style.display = "none"
+})
 
 function upVote(tagRelationId) {
     sendVoteRequest(tagRelationId, "upVote")
