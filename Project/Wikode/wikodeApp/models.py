@@ -1,5 +1,3 @@
-import datetime
-
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
@@ -138,6 +136,7 @@ class TagRelation(models.Model):
     end_index = models.IntegerField(null=True)
     vote_sum = models.IntegerField(default=0)
     date = models.DateTimeField(default=timezone.now, blank=True)
+    tagger = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
 class Vote(models.Model):
@@ -150,4 +149,3 @@ class FollowRelation(models.Model):
     follower = models.ForeignKey(User, related_name='follower', on_delete=models.CASCADE)
     followee = models.ForeignKey(User, related_name='followee', on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now_add=True)
-

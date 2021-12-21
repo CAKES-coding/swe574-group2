@@ -122,7 +122,6 @@ def articleDetail(request, pk):
     if request.method == 'GET':
         activity_manager = ActivityManager(user_id=request.user.id)
         activity_manager.saveViewActivity('3', article.id)
-    # Begin: Get Tag
     if request.method == 'POST':
         print(request.POST)
         if 'get_tag' in request.POST:
@@ -136,17 +135,19 @@ def articleDetail(request, pk):
             # Tagging an article
             # end index of "-1" means tagging whole article, else is annotation
             tag_data = WikiEntry(request.POST['qid'])
-            fragment_text = request.POST['fragment_text']
-            fragment_start_index = request.POST['fragment_start_index']
-            fragment_end_index = request.POST['fragment_end_index']
             tag = tag_data.saveTag()
             tag_data.saveRelatedWikiItems()
 
+            fragment_text = request.POST['fragment_text']
+            fragment_start_index = request.POST['fragment_start_index']
+            fragment_end_index = request.POST['fragment_end_index']
+            user = User.objects.get(id=request.user.id)
             TagRelation.objects.get_or_create(article=article,
                                               tag=tag,
                                               fragment=fragment_text,
                                               start_index=fragment_start_index,
-                                              end_index=fragment_end_index
+                                              end_index=fragment_end_index,
+                                              tagger=user
                                               )
             activity_manager = ActivityManager(user_id=request.user.id)
             print(fragment_end_index)

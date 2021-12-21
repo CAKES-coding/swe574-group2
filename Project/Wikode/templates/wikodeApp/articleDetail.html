@@ -38,7 +38,7 @@
             <p class="fw-bold">Tags</p>
             <table class="table table-striped">
                 <tr>
-                    <th class="align-middle" style="text-align: center">Date and Time</th>
+                    <th class="align-middle" style="text-align: center">Time</th>
                     <th class="align-middle" style="text-align: center">Tagger</th>
                     <th class="align-middle" style="text-align: center">Tag Id</th>
                     <th class="align-middle" style="text-align: center">Tag Label</th>
@@ -51,7 +51,7 @@
                 {% for item in tags %}
                     <tr class="tag_row" data-start="{{ item.start_index }}" data-end="{{ item.end_index }}" id="{{ item.id }}">
                         <td class="align-middle" style="text-align: center">{{ item.date }}</td>
-                        <td class="align-middle" style="text-align: center">BLA BLA</td>
+                        <td class="align-middle" style="text-align: center">{{ item.tagger }}</td>
                         <td class="align-middle" style="text-align: center"><a
                                 href="https://www.wikidata.org/wiki/{{ item.tag.wikiId }}"
                                 target={"_blank"}>{{ item.tag.wikiId }}</a></td>
