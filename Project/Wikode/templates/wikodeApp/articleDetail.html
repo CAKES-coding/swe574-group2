@@ -38,25 +38,26 @@
             <p class="fw-bold">Tags</p>
             <table class="table table-striped">
                 <tr>
-                    <th class="align-middle" style="text-align: center">ID</th>
-                    <th class="align-middle" style="text-align: center">Q code</th>
-                    <th class="align-middle" style="text-align: center">Fragment Text</th>
-                    <th class="align-middle" style="text-align: center">Label</th>
+                    <th class="align-middle" style="text-align: center">Date and Time</th>
+                    <th class="align-middle" style="text-align: center">Tagger</th>
+                    <th class="align-middle" style="text-align: center">Tag Id</th>
+                    <th class="align-middle" style="text-align: center">Tag Label</th>
                     <th class="align-middle" style="text-align: center">Description</th>
+                    <th class="align-middle" style="text-align: center">Fragment Text</th>
                     <th class="align-middle" style="text-align: center">Total Votes</th>
                     <th class="align-middle" style="text-align: center">Remove</th>
 
                 </tr>
                 {% for item in tags %}
                     <tr class="tag_row" data-start="{{ item.start_index }}" data-end="{{ item.end_index }}" id="{{ item.id }}">
-                        <td class="align-middle" style="text-align: center"><a
-                                href="{% url 'wikodeApp:articleDetail' item.id %}">{{ item.tag.id }}</a></td>
+                        <td class="align-middle" style="text-align: center">{{ item.date }}</td>
+                        <td class="align-middle" style="text-align: center">BLA BLA</td>
                         <td class="align-middle" style="text-align: center"><a
                                 href="https://www.wikidata.org/wiki/{{ item.tag.wikiId }}"
                                 target={"_blank"}>{{ item.tag.wikiId }}</a></td>
-                        <td class="align-middle" style="text-align: center">{{ item.fragment }}</td>
                         <td class="align-middle" style="text-align: center">{{ item.tag.label }}</td>
                         <td class="align-middle" style="text-align: center">{{ item.tag.description }}</td>
+                        <td class="align-middle" style="text-align: center">{{ item.fragment }}</td>
                         <td class="align-middle" style="text-align: center">
                             <div class="btn-group" role="group" aria-label="Basic outlined example"
                                  style="display: table">
