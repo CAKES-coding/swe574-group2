@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from wikodeApp.views import homePage, userLogout, TagAutocomplete
+from django.conf.urls import handler400, handler403, handler404, handler500
 
 urlpatterns = [
     path('', homePage, name='home'),
@@ -24,3 +25,8 @@ urlpatterns = [
     path('logout/', userLogout, name='logout'),
     path('tag-autocomplete/', TagAutocomplete.as_view(), name='tag-autocomplete'),
 ]
+
+handler404 = 'wikodeApp.views.error'
+handler500 = 'wikodeApp.views.error'
+handler403 = 'wikodeApp.views.error'
+handler400 = 'wikodeApp.views.error'
