@@ -147,6 +147,15 @@ function adjustVoteButtonColor(userVote, tagRelationId) {
     }
 }
 
+// Reload the page when visited via browser go back button
+window.addEventListener( "pageshow", function ( event ) {
+  let historyTraversal = event.persisted ||
+                         ( typeof window.performance != "undefined" &&
+                              window.performance.getEntriesByType("navigation")[0].type === "back_forward" );
+  if ( historyTraversal ) {
+    window.location.reload();
+  }
+});
 
 
 
