@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from django.contrib.postgres.search import SearchVectorField, SearchVector
 from django.contrib.postgres.fields import JSONField
-
+from datetime import datetime
 
 class RegistrationApplication(models.Model):
     applicationStatuses = (
@@ -135,6 +135,8 @@ class TagRelation(models.Model):
     start_index = models.IntegerField(null=True)
     end_index = models.IntegerField(null=True)
     vote_sum = models.IntegerField(default=0)
+    date = models.DateTimeField(default=datetime.now(), blank=True)
+    tagger = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
 class Vote(models.Model):
@@ -159,3 +161,4 @@ class SuggestionRecord(models.Model):
     suggestion_owner = models.ForeignKey(User, on_delete=models.CASCADE)
     article_id = models.ForeignKey(Article, on_delete=models.CASCADE, null=True)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+
