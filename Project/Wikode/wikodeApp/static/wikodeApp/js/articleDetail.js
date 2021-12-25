@@ -149,12 +149,14 @@ function adjustVoteButtonColor(userVote, tagRelationId) {
 
 // Reload the page when visited via browser go back button
 window.addEventListener( "pageshow", function ( event ) {
-  let historyTraversal = event.persisted ||
+    let navigationType = window.performance.getEntriesByType("navigation")[0].type
+    console.log(navigationType)
+    let historyTraversal = event.persisted ||
                          ( typeof window.performance != "undefined" &&
-                              window.performance.getEntriesByType("navigation")[0].type === "back_forward" );
-  if ( historyTraversal ) {
-    window.location.reload();
-  }
+                              navigationType === "back_forward" );
+    if ( historyTraversal ) {
+        window.location.reload();
+    }
 });
 
 
