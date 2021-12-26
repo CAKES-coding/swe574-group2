@@ -57,9 +57,13 @@ tagPieceButton.addEventListener("click", () => {
     fragmentEndIndexInput.value = endIndex;
     clearFragmentButton.style.display = "inline";
     highlightAbstract(startIndex, endIndex);
+    initializeIndices();
+})
+
+function initializeIndices() {
     startIndex = 0;
     endIndex = 0;
-})
+}
 
 function highlightAbstract(startInd, endInd) {
     let abstract = document.getElementById("abstract-text");
@@ -92,7 +96,17 @@ clearFragmentButton.addEventListener('click', () => {
     fragmentStartIndexInput.value = 0;
     fragmentEndIndexInput.value = -1;
     clearFragmentButton.style.display = "none"
+    removeSelectedTextFromAbstract();
+    initializeIndices();
 })
+
+function removeSelectedTextFromAbstract() {
+    let abstractText = document.getElementById("abstract-text");
+    let spanInAbstractText = abstractText.getElementsByTagName("span")[0];
+    let abstractTextOriginal = abstractText.innerText;
+    abstractText.removeChild(spanInAbstractText);
+    abstractText.innerText = abstractTextOriginal;
+}
 
 function upVote(tagRelationId) {
     sendVoteRequest(tagRelationId, "upVote")
@@ -131,20 +145,22 @@ function getTagRelationIds() {
 
 window.onload = function () {
     let token = document.getElementsByName("csrfmiddlewaretoken")[0].value
-    $.ajax({
+    let tagRelationIds = getTagRelationIds().toString();
+    if  (tagRelationIds) {
+        $.ajax({
         url: '/wikode/vote/',
         type: 'GET',
         data: {
             csrfmiddlewaretoken: token,
-            tagRelationIds: getTagRelationIds().toString()
+            tagRelationIds: tagRelationIds
         },
         success: function (userVoteDict) {
             userVoteDict = userVoteDict['userVoteDict']
             for (let tagRelationId in userVoteDict) {
                 adjustVoteButtonColor(userVoteDict[tagRelationId], tagRelationId)
             }
-        }
-    })
+        }})
+    }
 }
 
 function adjustVoteButtonColor(userVote, tagRelationId) {
@@ -173,6 +189,3 @@ window.addEventListener( "pageshow", function ( event ) {
         window.location.reload();
     }
 });
-
-
-
