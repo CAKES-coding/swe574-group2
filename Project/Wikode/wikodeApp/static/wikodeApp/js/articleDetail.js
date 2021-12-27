@@ -2,7 +2,7 @@ let abstractText = document.getElementById("abstract-text");
 let tagPieceButton = document.getElementById("tag-piece-button");
 let freeTagButton = document.getElementById("free-tag-piece-button")
 let cancelWikitagButton = document.getElementById("cancel-wikitag")
-
+let cancelFreeButton = document.getElementById("cancel-freetag")
 let startIndex = 0;
 let endIndex = 0;
 let selectedText = "";
@@ -94,6 +94,16 @@ freeTagButton.addEventListener("click", () => {
         document.getElementById("free_fragment_end_index").value = endIndex;
         highlightAbstract(startIndex, endIndex);
     }
+    startIndex = 0;
+    endIndex = 0;
+})
+
+cancelFreeButton.addEventListener("click", () => {
+    document.getElementById("free_tag_form").hidden = true;
+    document.getElementById("free_fragment_text").value = "";
+    document.getElementById("free_fragment_start_index").value = 0;
+    document.getElementById("free_fragment_end_index").value = -1;
+    unHighlightAbstract();
     startIndex = 0;
     endIndex = 0;
 })
