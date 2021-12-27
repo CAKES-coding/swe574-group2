@@ -1,6 +1,7 @@
 let abstractText = document.getElementById("abstract-text");
 let tagPieceButton = document.getElementById("tag-piece-button");
 let freeTagButton = document.getElementById("free-tag-piece-button")
+let cancelWikitagButton = document.getElementById("cancel-wikitag")
 
 let startIndex = 0;
 let endIndex = 0;
@@ -64,6 +65,16 @@ tagPieceButton.addEventListener("click", () => {
         document.getElementById("fragment_end_index").value = endIndex;
         highlightAbstract(startIndex, endIndex);
     }
+    startIndex = 0;
+    endIndex = 0;
+})
+
+cancelWikitagButton.addEventListener("click", () => {
+    document.getElementById("wikitag_form").hidden = true;
+    document.getElementById("fragment_text").value = "";
+    document.getElementById("fragment_start_index").value = 0;
+    document.getElementById("fragment_end_index").value = -1;
+    unHighlightAbstract();
     startIndex = 0;
     endIndex = 0;
 })
