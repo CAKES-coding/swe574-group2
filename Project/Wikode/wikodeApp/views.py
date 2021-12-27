@@ -17,7 +17,7 @@ import string
 import random
 from wikodeApp.utils.textSearch import Search
 from dal import autocomplete
-from wikodeApp.utils.wikiManager import getLabelSuggestion, WikiEntry
+from wikodeApp.utils.wikiManager import getLabelSuggestion, WikiEntry, FreeTag
 from wikodeApp.utils.feedDTO import Feed
 
 
@@ -134,9 +134,16 @@ def articleDetail(request, pk):
         elif 'add_tag' in request.POST:
             # Tagging an article
             # end index of "-1" means tagging whole article, else is annotation
-            tag_data = WikiEntry(request.POST['qid'])
-            tag = tag_data.saveTag()
-            tag_data.saveRelatedWikiItems()
+            if request.POST.get('qid'):
+                tag_data = WikiEntry(request.POST['qid'])
+                tag = tag_data.saveTag()
+                tag_data.saveRelatedWikiItems()
+
+            elif request.POST.get('label'):
+                tag = FreeTag(request.POST['label'], request.POST['description']).save()
+
+            else:
+                tag = None
 
             fragment_text = request.POST['fragment_text']
             fragment_start_index = request.POST['fragment_start_index']
