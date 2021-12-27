@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  web:
+    image: semihsolmaz/574:latest
+    command: bash -c "while !</dev/tcp/db/5432; do sleep 3; done && python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    container_name: wikode
+    volumes:
+      - .:/wikode
+    ports:
+      - "8000:8000"
+    environment:
+      - SECRET_KEY={{ DJANGO_SECRET}}
+      - DATABASE_NAME={{ DB_NAME}}
+      - DATABASE_USER={{ DB_USER }}
+      - DATABASE_PASS={{ DB_PASSWORD}}
+      - DATABASE_HOST=db
+      - DATABASE_PORT=5432
+      - ENTREZ_API_KEY= {{ ENTREZ_API_KEY}}
+      - ENTREZ_EMAIL={{ ENTREZ_USER_EMAIL}}
+    depends_on:
+      - db
+  db:
+    image: postgres
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB={{ DB_NAME}}
+      - POSTGRES_USER={{ DB_USER }}
+      - POSTGRES_PASSWORD={{ DB_PASSWORD}}
+
