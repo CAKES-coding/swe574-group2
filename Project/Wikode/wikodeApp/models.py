@@ -131,7 +131,7 @@ class Annotation(models.Model):
 
 class TagRelation(models.Model):
     article = models.ForeignKey(Article, on_delete=models.CASCADE)
-    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE, null=True)
     fragment = models.TextField(max_length=1024)
     start_index = models.IntegerField(null=True)
     end_index = models.IntegerField(null=True)
