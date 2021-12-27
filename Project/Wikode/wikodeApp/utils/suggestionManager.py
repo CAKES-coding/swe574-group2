@@ -30,11 +30,15 @@ class SuggestionManager:
         return article_list
 
     def get_most_viewed_article(self):
-        most_common = Activity.objects.filter(target_type=3).annotate(mc=Count('target_id')).order_by('-mc')[0]
+        most_common = Activity.objects.filter(activity_type=1,target_type=3).annotate(mc=Count('target_id')).order_by('-mc')[0]
         if most_common:
-            article_id = most_common.target_id
-            article = Article.objects.get(id=article_id)
-            print(article)
+            viewed_article_id_list = self.get_my_viewed_id_list()
+            if most_common.target_id in viewed_article_id_list:
+                return
+            else:
+                article = Article.objects.get(id=most_common.target_id)
+                return article
+
 
     def get_tagged_articles_from_followee(self):
         article_list = self.get_article_id_list_from_followee(activity_type=6)
