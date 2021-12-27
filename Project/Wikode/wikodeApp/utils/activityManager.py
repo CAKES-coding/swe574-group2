@@ -153,7 +153,7 @@ class ActivityManager:
         if target:
             activity_target_type = 'Note'
             activity_target_url = self.getTagURL(id=target_id)
-            activity_target_name = target.tagName
+            activity_target_name = target.label
 
         json = {
             "@context": "https://www.w3.org/ns/activitystreams",
@@ -190,7 +190,7 @@ class ActivityManager:
         if target:
             activity_target_type = 'Note'
             activity_target_url = self.getTagURL(id=target_id)
-            activity_target_name = target.tagName
+            activity_target_name = target.label
 
         json = {
             "@context": "https://www.w3.org/ns/activitystreams",
