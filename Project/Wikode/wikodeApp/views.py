@@ -120,7 +120,7 @@ def articleDetail(request, pk):
     article = Article.objects.get(pk=pk)
     wiki_info = {}
     if request.method == 'GET':
-        activity_manager = ActivityManager(user_id=request.user.id)
+        activity_manager = ActivityManager(user=request.user)
         activity_manager.saveViewActivity('3', article.id)
     if request.method == 'POST':
         print(request.POST)
@@ -149,7 +149,7 @@ def articleDetail(request, pk):
                                               end_index=fragment_end_index,
                                               tagger=user
                                               )
-            activity_manager = ActivityManager(user_id=request.user.id)
+            activity_manager = ActivityManager(user=request.user)
             print(fragment_end_index)
             if fragment_end_index != "-1":
                 activity_manager.saveAnnotationActivity(target_article_id=article.id,
@@ -380,7 +380,7 @@ def followUser(request, pk):
     ## For development purpose, pk is hardcoded below.
     other_user = User.objects.get(id=pk)
     session_user = User.objects.get(id=request.user.id)
-    activityManager = ActivityManager(session_user.id)
+    activityManager = ActivityManager(session_user)
 
     is_followed = FollowRelation.objects.filter(followee_id=other_user.id, follower_id=session_user.id).exists()
 
@@ -404,7 +404,7 @@ def vote(request):
         tag_relation_id = request.POST.get('tagRelationId')
         vote_type = request.POST.get('voteType')
 
-        activity_manager = ActivityManager(user_id=request.user.id)
+        activity_manager = ActivityManager(user=request.user)
         tag_id = TagRelation.objects.get(id=tag_relation_id).tag_id
         if vote_type == 'upVote':
             vote_manager.upVote(tag_relation_id)
