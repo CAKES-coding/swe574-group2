@@ -268,18 +268,21 @@ class ActivityManager:
     # end_index: the finishing index of fragment inside the text
     def saveAnnotationActivity(self, target_article_id, tag_id, start_index, end_index):
         tag_object = self.getTargetAsTag(target_id=tag_id)
-        json = {
-            "@context": "http://www.w3.org/ns/anno.jsonld",
-            "id": self.getTagURL(id=tag_id),
-            "via": "https://www.wikidata.org/wiki/{}".format(tag_object.wikiId),
-            "type": "Annotation",
-            "body": [
+        if tag_object.wikiId:
+            body = "https://www.wikidata.org/wiki/{}".format(tag_object.wikiId)
+        else:
+            body = [
                 {
                     "type": "TextualBody",
                     "purpose": "tagging",
                     "value": tag_object.label
                 }
-            ],
+            ]
+        json = {
+            "@context": "http://www.w3.org/ns/anno.jsonld",
+            "id": self.getTagURL(id=tag_id),
+            "type": "Annotation",
+            "body": body,
             "target": {
                 "source": self.getArticleURL(id=target_article_id),
                 "selector": {

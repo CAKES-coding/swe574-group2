@@ -17,7 +17,7 @@ import string
 import random
 from wikodeApp.utils.textSearch import Search
 from dal import autocomplete
-from wikodeApp.utils.wikiManager import getLabelSuggestion, WikiEntry
+from wikodeApp.utils.wikiManager import getLabelSuggestion, WikiEntry, FreeTag
 from wikodeApp.utils.feedDTO import Feed
 
 
@@ -119,6 +119,7 @@ def homePage(request):
 def articleDetail(request, pk):
     article = Article.objects.get(pk=pk)
     wiki_info = {}
+    fragment_info = {}
     if request.method == 'GET':
         activity_manager = ActivityManager(user=request.user)
         activity_manager.saveViewActivity('3', article.id)
@@ -131,16 +132,33 @@ def articleDetail(request, pk):
             wiki_info['qid'] = tag_data.getID()
             wiki_info['label'] = tag_data.getLabel()
             wiki_info['description'] = tag_data.getDescription()
+            fragment_info['fragment_text'] = request.POST.get('fragment_text')
+            fragment_info['start_index'] = request.POST.get('fragment_start_index')
+            fragment_info['end_index'] = request.POST.get('fragment_end_index')
+
         elif 'add_tag' in request.POST:
             # Tagging an article
             # end index of "-1" means tagging whole article, else is annotation
-            tag_data = WikiEntry(request.POST['qid'])
-            tag = tag_data.saveTag()
-            tag_data.saveRelatedWikiItems()
+            if request.POST.get('qid'):
+                tag_data = WikiEntry(request.POST['qid'])
+                tag = tag_data.saveTag()
+                tag_data.saveRelatedWikiItems()
 
-            fragment_text = request.POST['fragment_text']
-            fragment_start_index = request.POST['fragment_start_index']
-            fragment_end_index = request.POST['fragment_end_index']
+            elif request.POST.get('label'):
+                tag = FreeTag(request.POST['label'], request.POST['description']).save()
+
+            else:
+                tag = None
+
+            if request.POST.get('fragment_text'):
+                fragment_text = request.POST['fragment_text']
+                fragment_start_index = request.POST['fragment_start_index']
+                fragment_end_index = request.POST['fragment_end_index']
+            else:
+                fragment_text = ''
+                fragment_start_index = 0
+                fragment_end_index = -1
+
             user = User.objects.get(id=request.user.id)
             TagRelation.objects.get_or_create(article=article,
                                               tag=tag,
@@ -150,7 +168,7 @@ def articleDetail(request, pk):
                                               tagger=user
                                               )
             activity_manager = ActivityManager(user=request.user)
-            print(fragment_end_index)
+
             if fragment_end_index != "-1":
                 activity_manager.saveAnnotationActivity(target_article_id=article.id,
                                                         tag_id=tag.id,
@@ -183,6 +201,7 @@ def articleDetail(request, pk):
                     }
 
     article_dict.update(wiki_info)
+    article_dict.update(fragment_info)
 
     return render(request, 'wikodeApp/articleDetail.html', context=article_dict)
 

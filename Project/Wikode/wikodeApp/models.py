@@ -56,7 +56,7 @@ class Keyword(models.Model):
 
 
 class Tag(models.Model):
-    wikiId = models.CharField(max_length=64)
+    wikiId = models.CharField(max_length=64, null=True)
     label = models.CharField(max_length=512)
     description = models.TextField(max_length=1024, null=True)
     aliases = models.TextField(max_length=1024, null=True)
@@ -131,7 +131,7 @@ class Annotation(models.Model):
 
 class TagRelation(models.Model):
     article = models.ForeignKey(Article, on_delete=models.CASCADE)
-    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE, null=True)
     fragment = models.TextField(max_length=1024)
     start_index = models.IntegerField(null=True)
     end_index = models.IntegerField(null=True)
