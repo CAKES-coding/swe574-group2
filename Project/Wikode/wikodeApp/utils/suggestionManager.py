@@ -44,6 +44,15 @@ class SuggestionManager:
         article_list = self.get_article_id_list_from_followee(activity_type=6)
         return article_list
 
+
+    def get_recently_tagged_article(self):
+        latest_tagged_article_list = []
+        tagged_article = Activity.objects.filter(activity_type=6,target_type=3).order_by('-id')
+        latest_tagged_article_list.append(tagged_article[0].target_id)
+        unique_list = self.substract_viewed_articles(id_list=list(latest_tagged_article_list))
+        print(unique_list)
+        return unique_list
+
     def get_article_id_list_from_followee(self, activity_type):
         article_id_list = []
         if self.followees:
@@ -54,7 +63,7 @@ class SuggestionManager:
                         if x:
                             article_id_list.append(x.target_id)
 
-        self.substrct_viewed_articles(id_list=article_id_list)
+        article_id_list = self.substract_viewed_articles(id_list=article_id_list)
 
         article_list = self.get_articles_from_id_list(id_list=article_id_list)
         return article_list
@@ -77,9 +86,9 @@ class SuggestionManager:
             article_list.append(article)
         return article_list
 
-    def substrct_viewed_articles(self, id_list):
+    def substract_viewed_articles(self, id_list):
         viewed_article_id_list = self.get_my_viewed_id_list()
-
         for viewed_id in viewed_article_id_list:
             if viewed_id in id_list:
                 id_list[:] = (value for value in id_list if value != viewed_id)
+        return id_list
