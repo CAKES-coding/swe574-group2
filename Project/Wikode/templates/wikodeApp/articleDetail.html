@@ -118,6 +118,7 @@
                             data-bs-toggle="tooltip"
                             title="Search for wikidata entry using labels or Q codes"
                     >
+                    <button type="button" id="cancel-wikientry" class="btn btn-primary mb-2">Cancel</button>
                 </form>
             </div>
             {% if qid %}
@@ -180,7 +181,6 @@
                         <input id="free_fragment_end_index" class="form-control" type="hidden" name="fragment_end_index"
                                value="-1">
                     </div>
-                    <p></p>
                     <p></p>
                     <div class="form-group">
                         <label for="label">Label:</label>

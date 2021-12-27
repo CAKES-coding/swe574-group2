@@ -150,9 +150,15 @@ def articleDetail(request, pk):
             else:
                 tag = None
 
-            fragment_text = request.POST['fragment_text']
-            fragment_start_index = request.POST['fragment_start_index']
-            fragment_end_index = request.POST['fragment_end_index']
+            if request.POST.get('fragment_text'):
+                fragment_text = request.POST['fragment_text']
+                fragment_start_index = request.POST['fragment_start_index']
+                fragment_end_index = request.POST['fragment_end_index']
+            else:
+                fragment_text = ''
+                fragment_start_index = 0
+                fragment_end_index = -1
+
             user = User.objects.get(id=request.user.id)
             TagRelation.objects.get_or_create(article=article,
                                               tag=tag,
