@@ -4,6 +4,7 @@ let freeTagButton = document.getElementById("free-tag-piece-button");
 let cancelWikitagButton = document.getElementById("cancel-wikitag");
 let cancelFreeButton = document.getElementById("cancel-freetag");
 let cancelWikiButton = document.getElementById("cancel-wikientry");
+let clearFragmentButton = document.getElementById("clear-fragment-button")
 let startIndex = 0;
 let endIndex = 0;
 let selectedText = "";
@@ -51,6 +52,11 @@ rightClick = (e) => {
     tagContextMenu.style.left = e.clientX + window.pageXOffset + "px";
     tagContextMenu.style.top = e.clientY + window.pageYOffset + "px";
 }
+
+let fragmentInfoGroupDiv = document.getElementById("fragment_info")
+let fragmentTextLabel = document.getElementById("fragment_text")
+let fragmentStartIndexInput = document.getElementById("fragment_start_index")
+let fragmentEndIndexInput = document.getElementById("fragment_end_index");
 
 tagPieceButton.addEventListener("click", () => {
     console.log(startIndex);
@@ -105,9 +111,10 @@ cancelFreeButton.addEventListener("click", () => {
     document.getElementById("free_fragment_start_index").value = 0;
     document.getElementById("free_fragment_end_index").value = -1;
     unHighlightAbstract();
+
     startIndex = 0;
     endIndex = 0;
-})
+}
 
 function highlightAbstract(startInd, endInd) {
     let abstract = document.getElementById("abstract-text");
@@ -126,12 +133,30 @@ function unHighlightAbstract() {
 let tagRows = document.getElementsByClassName('tag_row');
 
 for (let i = 0; i < tagRows.length; i++) {
-    tagRows[i].addEventListener("mouseover", function (event) {
+    tagRows[i].addEventListener("mouseover", function () {
         highlightAbstract(tagRows[i].dataset.start, tagRows[i].dataset.end);
     });
     tagRows[i].addEventListener("mouseout", function () {
         unHighlightAbstract();
     })
+}
+
+clearFragmentButton.addEventListener('click', () => {
+    fragmentInfoGroupDiv.style.display = "none"
+    fragmentTextLabel.value = "";
+    fragmentStartIndexInput.value = 0;
+    fragmentEndIndexInput.value = -1;
+    clearFragmentButton.style.display = "none"
+    removeSelectedTextFromAbstract();
+    initializeIndices();
+})
+
+function removeSelectedTextFromAbstract() {
+    let abstractText = document.getElementById("abstract-text");
+    let spanInAbstractText = abstractText.getElementsByTagName("span")[0];
+    let abstractTextOriginal = abstractText.innerText;
+    abstractText.removeChild(spanInAbstractText);
+    abstractText.innerText = abstractTextOriginal;
 }
 
 function upVote(tagRelationId) {
@@ -171,20 +196,22 @@ function getTagRelationIds() {
 
 window.onload = function () {
     let token = document.getElementsByName("csrfmiddlewaretoken")[0].value
-    $.ajax({
+    let tagRelationIds = getTagRelationIds().toString();
+    if  (tagRelationIds) {
+        $.ajax({
         url: '/wikode/vote/',
         type: 'GET',
         data: {
             csrfmiddlewaretoken: token,
-            tagRelationIds: getTagRelationIds().toString()
+            tagRelationIds: tagRelationIds
         },
         success: function (userVoteDict) {
             userVoteDict = userVoteDict['userVoteDict']
             for (let tagRelationId in userVoteDict) {
                 adjustVoteButtonColor(userVoteDict[tagRelationId], tagRelationId)
             }
-        }
-    })
+        }})
+    }
 }
 
 function adjustVoteButtonColor(userVote, tagRelationId) {
@@ -223,5 +250,3 @@ cancelWikitagButton.addEventListener("click", () => {
     startIndex = 0;
     endIndex = 0;
 })
-
-
