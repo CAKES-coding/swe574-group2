@@ -49,7 +49,8 @@
 
                 </tr>
                 {% for item in tags %}
-                    <tr class="tag_row" data-start="{{ item.start_index }}" data-end="{{ item.end_index }}" id="{{ item.id }}">
+                    <tr class="tag_row" data-start="{{ item.start_index }}" data-end="{{ item.end_index }}"
+                        id="{{ item.id }}">
                         <td class="align-middle" style="text-align: center">{{ item.date }}</td>
                         <td class="align-middle" style="text-align: center">
                             <a href="{% url 'wikodeApp:getProfilePageOfOtherUser' item.tagger.id %}">
@@ -96,62 +97,110 @@
                 {% endfor %}
             </table>
             <hr>
-            <div class="container-fluid py-4">
+            <div class="container-fluid py-4" id="wikientry_form" hidden>
                 <form class="tagForm" method="post">
                     {% csrf_token %}
                     {{ tag_form|crispy }}
+                    <div id="fragment_info" class="form-group">
+                        <label for="fragment_text">Fragment Text:</label>
+                        <input id="fragment_text" class="form-control" type="text" value="" name="fragment_text"
+                               readonly>
+                        <input id="fragment_start_index" class="form-control"
+                               name="fragment_start_index" value="0">
+                        <input id="fragment_end_index" class="form-control" name="fragment_end_index"
+                               value="-1">
+                    </div>
                     <input
                             class="register-button btn btn-primary mb-2"
                             type="submit"
                             name="get_tag"
-                            value="Get Wikidata Entry"
+                            value="Tag with Wikidata Entry"
                             data-bs-toggle="tooltip"
                             title="Search for wikidata entry using labels or Q codes"
                     >
                 </form>
-                <hr>
-                {% if qid %}
-                    <div class="container-fluid">
-                        <form method="post">
-                            {% csrf_token %}
+            </div>
+            {% if qid %}
+                <div class="container-fluid">
+                    <form class="form-popup" id="wikitag_form" method="post">
+                        {% csrf_token %}
+                        {% if fragment_text %}
                             <div id="fragment_info" class="form-group">
                                 <label for="fragment_text">Fragment Text:</label>
-                                <input id="fragment_text" class="form-control" type="text" value="" name="fragment_text" readonly>
-                                <input id="fragment_start_index" class="form-control" type="hidden" name="fragment_start_index" value="0">
-                                <input id="fragment_end_index" class="form-control" type="hidden" name="fragment_end_index" value="-1">
+                                <input id="fragment_text" class="form-control" type="text" value="{{ fragment_text }}"
+                                       name="fragment_text"
+                                       readonly>
+                                <input id="fragment_start_index" class="form-control" type="hidden"
+                                       name="fragment_start_index" value="{{ start_index }}">
+                                <input id="fragment_end_index" class="form-control" type="hidden"
+                                       name="fragment_end_index"
+                                       value="{{ end_index }}">
                             </div>
-                            <p></p>
-                            <div class="form-group">
-                                <label for="qid">Entry ID:</label>
-                                <input type="text" class="form-control" name="qid" value="{{ qid }}" readonly>
-                            </div>
-                            <p></p>
-                            <div class="form-group">
-                                <label for="label">Label:</label>
-                                <textarea type="text" class="form-control" name="label" cols="80" rows="1"
-                                          readonly>{{ label }}</textarea>
-                            </div>
-                            <p></p>
-                            <div class="form-group">
-                                <label for="description">Description:</label>
-                                <textarea type="text" class="form-control" name="description" cols="80" rows="5"
-                                          readonly>{{ description }}</textarea>
-                            </div>
-                            <p></p>
-                            <input
-                                    class="register-button btn btn-primary mb-2"
-                                    type="submit"
-                                    name="add_tag"
-                                    value="Tag Article"
-                                    data-bs-toggle="tooltip"
-                                    title="Save and add tag"
-                            >
-                        </form>
+                        {% endif %}
+                        <p></p>
+                        <div class="form-group">
+                            <label for="qid">Entry ID:</label>
+                            <input type="text" class="form-control" name="qid" value="{{ qid }}" readonly>
+                        </div>
+                        <p></p>
+                        <div class="form-group">
+                            <label for="label">Label:</label>
+                            <textarea type="text" class="form-control" name="label" cols="80" rows="1"
+                                      readonly>{{ label }}</textarea>
+                        </div>
+                        <p></p>
+                        <div class="form-group">
+                            <label for="description">Description:</label>
+                            <textarea type="text" class="form-control" name="description" cols="80" rows="5"
+                                      readonly>{{ description }}</textarea>
+                        </div>
+                        <p></p>
+                        <input
+                                class="register-button btn btn-primary mb-2"
+                                type="submit"
+                                name="add_tag"
+                                value="Confirm Tag"
+                                data-bs-toggle="tooltip"
+                                title="Save and add tag"
+                        >
+                    </form>
+                </div>
+
+            {% endif %}
+            <div class="container-fluid">
+                <form class="form-popup" id="free_tag_form" method="post" hidden>
+                    {% csrf_token %}
+                    <div id="free_tag_fragment_info" class="form-group">
+                        <label for="fragment_text">Fragment Text:</label>
+                        <input id="free_fragment_text" class="form-control" type="text" value="" name="fragment_text"
+                               readonly>
+                        <input id="free_fragment_start_index" class="form-control" type="hidden"
+                               name="fragment_start_index" value="0">
+                        <input id="free_fragment_end_index" class="form-control" type="hidden" name="fragment_end_index"
+                               value="-1">
                     </div>
-
-                {% endif %}
+                    <p></p>
+                    <p></p>
+                    <div class="form-group">
+                        <label for="label">Label:</label>
+                        <textarea type="text" class="form-control" name="label" cols="80" rows="1" required></textarea>
+                    </div>
+                    <p></p>
+                    <div class="form-group">
+                        <label for="description">Description:</label>
+                        <textarea type="text" class="form-control" name="description" cols="80" rows="5"></textarea>
+                    </div>
+                    <p></p>
+                    <input
+                            class="register-button btn btn-primary mb-2"
+                            type="submit"
+                            name="add_tag"
+                            value="Tag Article"
+                            data-bs-toggle="tooltip"
+                            title="Save and add tag"
+                    >
+                </form>
             </div>
-
             <script type="text/javascript" src="{% static 'admin/js/vendor/jquery/jquery.js' %}"></script>
 
             {{ tag_form.media }}
@@ -184,11 +233,19 @@
     <ul id="tagContextMenu"
         class="dropdown-menu"
         role="menu"
-        style="text-align:center; padding:0; min-width: 1rem"
+        style="text-align:left; padding:0; min-width: 1rem"
     >
-        <li><button tabindex="-1" id="tag-piece-button" class="btn btn-secondary">&nbsp Tag with wikidata entry &nbsp</button></li>
-        <li><button tabindex="-1" id="free-tag-piece-button" class="btn btn-secondary">&nbsp Tag with text &nbsp</button></li>
-        <li><button tabindex="-1" id="highlight-button" class="btn btn-secondary">&nbsp Highlight &nbsp</button></li>
+        <li>
+            <button tabindex="-1" id="tag-piece-button" class="btn btn-secondary">&nbsp Tag with wikidata entry &nbsp
+            </button>
+        </li>
+        <li>
+            <button tabindex="-1" id="free-tag-piece-button" class="btn btn-secondary">&nbsp Tag with text &nbsp
+            </button>
+        </li>
+        <li>
+            <button tabindex="-1" id="highlight-button" class="btn btn-secondary">&nbsp Highlight &nbsp</button>
+        </li>
     </ul>
     <!-- End: Right Click -->
 
@@ -197,6 +254,7 @@
             height: 40px;
             padding-left: 2px;
         }
+
         .select2-selection__clear {
             display: none;
         }

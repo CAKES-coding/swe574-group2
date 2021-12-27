@@ -119,6 +119,7 @@ def homePage(request):
 def articleDetail(request, pk):
     article = Article.objects.get(pk=pk)
     wiki_info = {}
+    fragment_info = {}
     if request.method == 'GET':
         activity_manager = ActivityManager(user=request.user)
         activity_manager.saveViewActivity('3', article.id)
@@ -131,6 +132,10 @@ def articleDetail(request, pk):
             wiki_info['qid'] = tag_data.getID()
             wiki_info['label'] = tag_data.getLabel()
             wiki_info['description'] = tag_data.getDescription()
+            fragment_info['fragment_text'] = request.POST.get('fragment_text')
+            fragment_info['start_index'] = request.POST.get('fragment_start_index')
+            fragment_info['end_index'] = request.POST.get('fragment_end_index')
+
         elif 'add_tag' in request.POST:
             # Tagging an article
             # end index of "-1" means tagging whole article, else is annotation
@@ -190,6 +195,7 @@ def articleDetail(request, pk):
                     }
 
     article_dict.update(wiki_info)
+    article_dict.update(fragment_info)
 
     return render(request, 'wikodeApp/articleDetail.html', context=article_dict)
 
