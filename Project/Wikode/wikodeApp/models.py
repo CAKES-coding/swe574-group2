@@ -2,8 +2,9 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.contrib.postgres.search import SearchVectorField, SearchVector
-from django.contrib.postgres.fields import JSONField
+from django.db.models import JSONField
 from datetime import datetime
+
 
 class RegistrationApplication(models.Model):
     applicationStatuses = (
@@ -115,11 +116,11 @@ class Activity(models.Model):
                     ('2', 'Tag'),
                     ('3', 'Article'))
 
-    user_id = models.IntegerField(max_length=8)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     activity_type = models.CharField(max_length=8, choices=activity_types)
     target_type = models.CharField(max_length=8, choices=target_types)
 
-    target_id = models.IntegerField(max_length=8)
+    target_id = models.IntegerField()
 
     activity_JSON = JSONField()
 
