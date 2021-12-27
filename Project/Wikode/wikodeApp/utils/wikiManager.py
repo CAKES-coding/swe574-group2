@@ -90,6 +90,15 @@ def getLabelSuggestion(term):
 
 class FreeTag:
 
-    def __init__(self, label= None, description= None):
+    def __init__(self, label=None, description=None):
         self.label = label
         self.description = description
+
+    def save(self):
+        tag, created = Tag.objects.get_or_create(label=self.label, description=self.description)
+
+        if created:
+            tag.save()
+            tag.createTSvector()
+
+        return tag
