@@ -86,3 +86,10 @@ def getLabelSuggestion(term):
             suggestions.append(page)
 
     return suggestions
+
+
+class FreeTag:
+
+    def __init__(self, label= None, description= None):
+        self.label = label
+        self.description = description
