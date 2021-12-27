@@ -20,3 +20,4 @@ class ArticleSuggestionDTO:
             author_as_string = author.ForeName + " " + author.LastName
             author_as_string_list.append(author_as_string)
         return ", ".join(author_as_string_list)
+

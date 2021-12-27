@@ -109,13 +109,7 @@ def homePage(request):
             feed_list = Feed(recent_activities).getFeed()
 
             suggestion_manager = SuggestionManager(request.user.id)
-            suggested_articles = suggestion_manager.get_article_suggestion()
-            article_suggestionDTO_list = []
-            for article in suggested_articles:
-                if article:
-                    authors = Author.objects.filter(article=article)
-                    article_suggestionDTO_list.append(
-                        ArticleSuggestionDTO(article.id, article.Title, article.PublicationDate, authors))
+            article_suggestionDTO_list = suggestion_manager.get_article_suggestionDTO_list()
 
             # Then here we show the send the activities frontend
             context = {"parent_template": "wikodeApp/homePage.html",
