@@ -150,7 +150,7 @@ def articleDetail(request, pk):
                                               tagger=user
                                               )
             activity_manager = ActivityManager(user=request.user)
-            print(fragment_end_index)
+
             if fragment_end_index != "-1":
                 activity_manager.saveAnnotationActivity(target_article_id=article.id,
                                                         tag_id=tag.id,
