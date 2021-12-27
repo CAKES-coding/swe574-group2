@@ -212,3 +212,18 @@ class SuggestionManager:
                     continue
                 else:
                     self.article_list.append(article)
+
+
+    def get_followees_of_followees(self):
+        followees_of_followees = []
+        for followee in self.followees:
+            users_followees = getFolloweeList(followee[0])
+            for followee2 in users_followees:
+                followee2_user = User.objects.get(id=followee2[0])
+                if followee2_user in followees_of_followees:
+                    continue
+                else:
+                    followees_of_followees.append(followee2_user)
+
+                    
+
