@@ -36,19 +36,19 @@
             <p>{{ keywords }}</p>
             <hr>
             <p class="fw-bold">Tags</p>
-            <table class="table table-striped">
-                <tr>
-                    <th class="align-middle" style="text-align: center">Time</th>
-                    <th class="align-middle" style="text-align: center">Tagger</th>
-                    <th class="align-middle" style="text-align: center">Tag ID</th>
-                    <th class="align-middle" style="text-align: center">Tag Label</th>
-                    <th class="align-middle" style="text-align: center">Tag Description</th>
-                    <th class="align-middle" style="text-align: center">Fragment Text</th>
-                    <th class="align-middle" style="text-align: center">Votes</th>
-                    <th class="align-middle" style="text-align: center">Remove</th>
-
-                </tr>
-                {% for item in tags %}
+            <div class="tag_list">
+                <table class="table table-striped">
+                    <tr>
+                        <th class="align-middle" style="text-align: center">Time</th>
+                        <th class="align-middle" style="text-align: center">Tagger</th>
+                        <th class="align-middle" style="text-align: center">Tag ID</th>
+                        <th class="align-middle" style="text-align: center">Tag Label</th>
+                        <th class="align-middle" style="text-align: center">Tag Description</th>
+                        <th class="align-middle" style="text-align: center">Fragment Text</th>
+                        <th class="align-middle" style="text-align: center">Votes</th>
+                        <th class="align-middle" style="text-align: center">Remove</th>
+                    </tr>
+                    {% for item in tags %}
                     <tr class="tag_row" data-start="{{ item.start_index }}" data-end="{{ item.end_index }}" id="{{ item.id }}">
                         <td class="align-middle" style="text-align: center">{{ item.date }}</td>
                         <td class="align-middle" style="text-align: center">
@@ -93,8 +93,9 @@
                             </form>
                         </td>
                     </tr>
-                {% endfor %}
-            </table>
+                    {% endfor %}
+                </table>
+            </div>
             <hr>
             <div class="container-fluid py-4">
                 <form class="tagForm" method="post">
