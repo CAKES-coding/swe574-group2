@@ -96,46 +96,23 @@
                             <th scope="col">#</th>
                             <th scope="col">Article Name</th>
                             <th scope="col">PMID</th>
-                            <th scope="col">Keywords</th>
                             <th scope="col">Tags</th>
                         </tr>
                         </thead>
                         <tbody>
+                        {% for tags in tag_list %}
                         <tr>
-                            <th scope="row">1</th>
-                            <td><a href="#">Mechanisms of SARS-CoV-2 Transmission and Pathogenesis</a></td>
-                            <td><a href="https://pubmed.ncbi.nlm.nih.gov/33132005/">33132005</a></td>
-                            <td><p>COVID-19; SARS, SARS-CoV-2; coronavirus; severe acute respiratory syndrome.</p></td>
+                            <th scope="row"></th>
+                            <td><a href="{{tags.articleid_url}}">{{tags.articletitle}}</a></td>
+                            <td><a href="#">{{tags.PM_id}}</a></td>
+                            {% for tagnames in tags %}
                             <td>
-                                <a href="#">SARS-CoV-2</a>
+                                <a href="#">{{tagnames.label}}</a>
                                 <br>
-                                <a href="#">covid</a>
-                                <br>
-                                <a href="#">virus</a>
                             </td>
+                            {% endfor %}
                         </tr>
-                        <tr>
-                            <th scope="row">2</th>
-                            <td><a href="#">Susceptibility and Attenuated Transmissibility of SARS-CoV-2 in Domestic Cats</a></td>
-                            <td><a href="https://pubmed.ncbi.nlm.nih.gov/33605423/">33605423</a></td>
-                            <td>COVID-19; SARS-CoV-2; cats; pathogenesis; susceptibility; transmissibility.</td>
-                            <td>
-                                <a href="#">cats and sars</a>
-                                <br>
-                                <a href="#">covid effect</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row">3</th>
-                            <td><a href="#">Experimental re-infected cats do not transmit SARS-CoV-2</a></td>
-                            <td><a href="https://pubmed.ncbi.nlm.nih.gov/33704016/">33704016</a></td>
-                            <td>COVID-19; SARS-CoV-2; cats; re-infection; transmission.</td>
-                            <td>
-                                <a href="#">cat infections</a>
-                                <br>
-                                <a href="#">sars and covid</a>
-                            </td>
-                        </tr>
+                        {% endfor %}
                         </tbody>
                     </table>
                 </div>
