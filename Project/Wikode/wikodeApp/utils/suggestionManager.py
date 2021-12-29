@@ -78,7 +78,9 @@ class SuggestionManager:
         self.get_random_article()
         return self.article_list
 
-
+    # Ultimate method for user suggestion
+    # Returns at least 'user_limit' value
+    # gets random user if the logic is not sufficient
     def get_user_suggestion(self):
 
         users_viewed_same_article = self.get_users_viewed_same_article()
@@ -257,7 +259,8 @@ class SuggestionManager:
                 else:
                     self.article_list.append(article)
 
-
+    # Returns followees of a user
+    # who owner follows
     def get_followees_of_followees(self):
         followees_of_followees = []
         for followee in self.followees:
@@ -273,7 +276,7 @@ class SuggestionManager:
 
         return followees_of_followees
 
-
+    # Returns followers that owner not follows
     def get_followers_that_is_not_followed(self):
         followers_that_is_not_followed_list = []
         user_list = []
@@ -293,6 +296,7 @@ class SuggestionManager:
         return user_list
 
 
+    # Returns the most followed user
     def get_most_followed_user(self):
         most_followed = FollowRelation.objects.all().annotate(mc=Count('followee_id')).order_by('-mc')[0]
         if most_followed:
@@ -305,7 +309,7 @@ class SuggestionManager:
                 return user_object
 
 
-
+    # Returns users that viewed same articles as owner
     def get_users_viewed_same_article(self):
         viewed_articles = Activity.objects.filter(activity_type=1, target_type=3, user_id=self.user_id)
         viewed_article_ids = []
@@ -325,6 +329,8 @@ class SuggestionManager:
 
         return users
 
+
+    # Checks if a user is in the known user list
     def check_if_user_is_followee(self, user_id):
         if user_id in self.user_id_list:
             return True
@@ -332,6 +338,8 @@ class SuggestionManager:
             return False
 
 
+
+    # Returns a random user, that is not known
     def get_random_user(self):
         while (len(self.user_list) < self.user_limit):
             user = random.choice(User.objects.all().exclude(id=self.user_id))
