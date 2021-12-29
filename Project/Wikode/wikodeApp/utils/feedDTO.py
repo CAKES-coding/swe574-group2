@@ -77,7 +77,10 @@ class Feed:
                 activiyJson = eachActivity.activity_JSON
                 tag_id = int(activiyJson.get('tag').get('id').split('/')[-1])
                 tag_name = Tag.objects.get(pk=tag_id).label
-                tag_url = 'https://www.wikidata.org/wiki/' + Tag.objects.get(pk=tag_id).wikiId
+                if Tag.objects.get(pk=tag_id).wikiId:
+                    tag_url = 'https://www.wikidata.org/wiki/' + Tag.objects.get(pk=tag_id).wikiId
+                else:
+                    tag_url = '#'
                 userID = int(activiyJson.get("actor").get("url").split("/")[-1])
                 user_url = reverse('wikodeApp:getProfilePageOfOtherUser', args=(userID,))
                 articleID = int(activiyJson.get("object").get("url").split("/")[-1])
