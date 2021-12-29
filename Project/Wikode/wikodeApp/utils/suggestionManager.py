@@ -8,6 +8,12 @@ from wikodeApp.utils.activityManager import ActivityManager
 from wikodeApp.utils.followManager import getFollowerList, getFolloweeList
 
 
+class UserSeggestionRagings(Enum):
+    follower_of_followee = 5
+    followers_not_followee = 6
+    most_followed = 3
+    user_seen_same_article = 7
+
 class ArticleSuggestionRatings(Enum):
     viewed_by_followee = 6
     most_viewed_article = 4
@@ -21,21 +27,28 @@ class SuggestionManager:
     # Limit for suggestion list
     # Upon reach, the manger will stop finding more suggestions
     suggestion_limit = 3
+    user_limit = 3
 
     def __init__(self, user_id):
         owner = User.objects.get(id=user_id)
         self.user_id = user_id
         self.article_list = []
         self.article_id_list = []
+        self.user_list = []
+        self.user_id_list = []
         if owner:
             self.owner = owner
             self.followers = getFollowerList(owner)
             self.followees = getFolloweeList(owner)
 
+        for followee in self.followees:
+            self.user_id_list.append(followee[0])
+
     # Ultimate method to get article suggestions
     # returns until "suggestion_limit" is reached.
     # gets random articles if the logic is not sufficient
     def get_article_suggestion(self):
+        
         self.article_list.append(self.get_other_tagged_articles())
         if len(self.article_list) >= self.suggestion_limit:
             return self.article_list
@@ -64,6 +77,37 @@ class SuggestionManager:
 
         self.get_random_article()
         return self.article_list
+
+
+    def get_user_suggestion(self):
+
+        users_viewed_same_article = self.get_users_viewed_same_article()
+        if users_viewed_same_article:
+            self.user_list.append(users_viewed_same_article)
+            if len(self.user_list) >= self.user_limit:
+                return self.user_list
+
+        followees_of_followees = self.get_followees_of_followees()
+        if followees_of_followees:
+            self.user_list.append(self.followees_of_followees)
+            if len(self.user_list) >= self.user_limit:
+                return self.user_list
+
+        followers_that_is_not_followed = self.get_followers_that_is_not_followed()
+        if followers_that_is_not_followed:
+            self.user_list.append(followers_that_is_not_followed)
+            if len(self.user_list) >= self.user_limit:
+                return self.user_list
+
+        most_followed_user = self.get_most_followed_user()
+        if most_followed_user:
+            self.user_list.append(self.get_most_followed_user())
+            if len(self.user_list) >= self.user_limit:
+                return self.user_list
+
+        self.get_random_user()
+        return self.user_list
+
 
 
     # Gets viewed articles from followee
@@ -217,13 +261,87 @@ class SuggestionManager:
     def get_followees_of_followees(self):
         followees_of_followees = []
         for followee in self.followees:
-            users_followees = getFolloweeList(followee[0])
+            user = User.objects.get(id=followee[0])
+            users_followees = getFolloweeList(user)
             for followee2 in users_followees:
                 followee2_user = User.objects.get(id=followee2[0])
                 if followee2_user in followees_of_followees:
                     continue
                 else:
+                    self.user_id_list.append(followee2[0])
                     followees_of_followees.append(followee2_user)
 
-                    
+        return followees_of_followees
+
+
+    def get_followers_that_is_not_followed(self):
+        followers_that_is_not_followed_list = []
+        user_list = []
+        for follower in self.followers:
+            if follower not in self.followees:
+                followers_that_is_not_followed_list.append(followers_that_is_not_followed_list)
+
+        for user in followers_that_is_not_followed_list:
+            id = user[0]
+            if id in self.user_id_list:
+                continue
+            else:
+                self.user_id_list.append(id)
+                user_object = User.objects.get(id=id)
+                user_list.append(user_object)
+
+        return user_list
+
+
+    def get_most_followed_user(self):
+        most_followed = FollowRelation.objects.all().annotate(mc=Count('followee_id')).order_by('-mc')[0]
+        if most_followed:
+            id = most_followed.followee_id
+            if id in self.user_id_list:
+                return
+            else:
+                self.user_id_list.append(id)
+                user_object = User.objects.get(id=id)
+                return user_object
+
+
+
+    def get_users_viewed_same_article(self):
+        viewed_articles = Activity.objects.filter(activity_type=1, target_type=3, user_id=self.user_id)
+        viewed_article_ids = []
+        users = []
+        for viewed_article in viewed_articles:
+            viewed_article_ids.append(viewed_article.target_id)
+
+        other_views=Activity.objects.filter(activity_type=1, target_type=3, target_id__in=viewed_article_ids).exclude(user_id=self.user_id)
+        for view in other_views:
+            id = view.user_id
+            if self.check_if_user_is_followee(user_id=id):
+                continue
+            else:
+                self.user_id_list.append(id)
+                user_object = User.objects.get(id=id)
+                users.append(user_object)
+
+        return users
+
+    def check_if_user_is_followee(self, user_id):
+        if user_id in self.user_id_list:
+            return True
+        else:
+            return False
+
+
+    def get_random_user(self):
+        while (len(self.user_list) < self.user_limit):
+            user = random.choice(User.objects.all().exclude(id=self.user_id))
+            print(user.id)
+            if user.id in self.user_id_list:
+                continue
+            else:
+                self.user_id_list.append(user.id)
+                self.user_list.append(user)
+
+
+
 
