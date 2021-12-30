@@ -344,20 +344,25 @@ def myProfilePage(request):
     # In order to get tagged articles of the user we filter the articles with user id
     taggedArticles = TagRelation.objects.filter(tagger_id = user.id)
     tagged_articlelist = []
+    tagged_article_idlist =[]
     for tags in taggedArticles:
         tag_article_id=tags.article_id
         articleid_url=reverse('wikodeApp:articleDetail', args=(tag_article_id,))
         article=Article.objects.get(id=tag_article_id)
+        if (tag_article_id in tagged_article_idlist):
+            continue
         article_tags= TagRelation.objects.filter(article_id=tag_article_id)
-        tagnames=[]
+        tagnames=""
         for taginArticles in article_tags:
-            tagnames.append(taginArticles.tag.label)
+            tagnames += taginArticles.tag.label + ", "
+        tagnames = tagnames[:-2]
         tagged_articles={"articletitle": article.Title,
                          "PM_id": article.PMID,
                          "tagnames":tagnames,
                          "articleid_url": articleid_url
                          }
 
+        tagged_article_idlist.append(tag_article_id)
         tagged_articlelist.append(tagged_articles)
 
     # Then here we show the send the activities frontend
@@ -369,7 +374,6 @@ def myProfilePage(request):
         "parent_template": "wikodeApp/profilePage.html",
         "feedList": feed_list,
         "tag_list": tagged_articlelist,
-        "tagnames":tagnames,
     }
 
     return render(request, 'wikodeApp/profilePage.html', context)
@@ -401,20 +405,24 @@ def getProfilePageOfOtherUser(request, pk):
     # In order to get tagged articles of the user we filter the articles with user id
     taggedArticles = TagRelation.objects.filter(tagger_id=other_user.id)
     tagged_articlelist = []
+    tagged_article_idlist = []
     for tags in taggedArticles:
         tag_article_id = tags.article_id
         articleid_url = reverse('wikodeApp:articleDetail', args=(tag_article_id,))
+        if (tag_article_id in tagged_article_idlist):
+            continue
         article = Article.objects.get(id=tag_article_id)
         article_tags = TagRelation.objects.filter(article_id=tag_article_id)
-        tagnames = []
+        tagnames = ""
         for taginArticles in article_tags:
-            tagnames.append(taginArticles.tag.label)
+            tagnames += taginArticles.tag.label + ", "
+        tagnames = tagnames[:-2]
         tagged_articles = {"articletitle": article.Title,
                            "PM_id": article.PMID,
                            "tagnames": tagnames,
                            "articleid_url": articleid_url
                            }
-
+        tagged_article_idlist.append(tag_article_id)
         tagged_articlelist.append(tagged_articles)
 
     # Then here we show the send the activities frontend

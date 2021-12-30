@@ -47,7 +47,7 @@
                                         <li class="twPc-ArrangeSizeFit">
                                             <a href="#" title="tags">
                                                 <span class="twPc-StatLabel twPc-block">Tagged Articles</span>
-                                                <span class="twPc-StatValue">3</span>
+                                                <span class="twPc-StatValue">{{tag_list|length}}</span>
                                             </a>
                                         </li>
                                         <li class="twPc-ArrangeSizeFit">
@@ -107,10 +107,10 @@
                             <td><a href="#">{{tags.PM_id}}</a></td>
 
                             <td>
-                                {% for taglabels in tagnames %}
-                                <a>{{taglabels}},</a>
+
+                                <a>{{tags.tagnames}}</a>
                                 <br>
-                                {% endfor %}
+
                             </td>
 
                         </tr>
