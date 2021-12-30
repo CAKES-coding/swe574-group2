@@ -93,7 +93,7 @@
                     <table class="table table-striped">
                         <thead>
                         <tr>
-                            <th scope="col">#</th>
+
                             <th scope="col">Article Name</th>
                             <th scope="col">PMID</th>
                             <th scope="col">Tags</th>
@@ -102,15 +102,17 @@
                         <tbody>
                         {% for tags in tag_list %}
                         <tr>
-                            <th scope="row"></th>
+
                             <td><a href="{{tags.articleid_url}}">{{tags.articletitle}}</a></td>
                             <td><a href="#">{{tags.PM_id}}</a></td>
-                            {% for taglabels in tagnames %}
+
                             <td>
-                                <a href="#">{{taglabels}}</a>
+                                {% for taglabels in tagnames %}
+                                <a>{{taglabels}},</a>
                                 <br>
+                                {% endfor %}
                             </td>
-                            {% endfor %}
+
                         </tr>
                         {% endfor %}
                         </tbody>

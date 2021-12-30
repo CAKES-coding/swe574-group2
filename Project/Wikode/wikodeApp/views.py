@@ -351,8 +351,7 @@ def myProfilePage(request):
         article_tags= TagRelation.objects.filter(article_id=tag_article_id)
         tagnames=[]
         for taginArticles in article_tags:
-            tagnames.append(taginArticles)
-            print(taginArticles.label)
+            tagnames.append(taginArticles.tag.label)
         tagged_articles={"articletitle": article.Title,
                          "PM_id": article.PMID,
                          "tagnames":tagnames,
