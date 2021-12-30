@@ -3,8 +3,7 @@ import random
 from django.contrib.auth.models import User
 from django.db.models import Count
 from enum import Enum
-from wikodeApp.models import Activity, Article, Tag, Annotation, FollowRelation, TagRelation, Author
-from wikodeApp.utils.activityManager import ActivityManager
+from wikodeApp.models import Activity, Article, FollowRelation, TagRelation, Author
 from wikodeApp.utils.articleSuggestionDTO import ArticleSuggestionDTO
 from wikodeApp.utils.userSuggestionDTO import UserSuggestionDTO
 from wikodeApp.utils.followManager import getFollowerList, getFolloweeList
@@ -80,6 +79,9 @@ class SuggestionManager:
         self.get_random_article()
         return self.article_list
 
+    # Ultimate method for user suggestion
+    # Returns at least 'user_limit' value
+    # gets random user if the logic is not sufficient
     def get_user_suggestion(self):
 
         users_viewed_same_article = self.get_users_viewed_same_article()
@@ -106,7 +108,9 @@ class SuggestionManager:
             if len(self.user_list) >= self.user_limit:
                 return self.user_list
 
-        self.get_random_user()
+        if len(User.objects.all()) > 5:
+            self.get_random_user()
+
         return self.user_list
 
     # Gets viewed articles from followee
@@ -249,6 +253,8 @@ class SuggestionManager:
                 else:
                     self.article_list.append(article)
 
+    # Returns followees of a user
+    # who owner follows
     def get_followees_of_followees(self):
         followees_of_followees = []
         for followee in self.followees:
@@ -264,6 +270,7 @@ class SuggestionManager:
 
         return followees_of_followees
 
+    # Returns followers that owner not follows
     def get_followers_that_is_not_followed(self):
         followers_that_is_not_followed_list = []
         user_list = []
@@ -282,6 +289,7 @@ class SuggestionManager:
 
         return user_list
 
+    # Returns the most followed user
     def get_most_followed_user(self):
         most_followed = FollowRelation.objects.all().annotate(mc=Count('followee_id')).order_by('-mc')[0]
         if most_followed:
@@ -293,6 +301,7 @@ class SuggestionManager:
                 user_object = User.objects.get(id=id)
                 return user_object
 
+    # Returns users that viewed same articles as owner
     def get_users_viewed_same_article(self):
         viewed_articles = Activity.objects.filter(activity_type=1, target_type=3, user_id=self.user_id)
         viewed_article_ids = []
@@ -313,16 +322,18 @@ class SuggestionManager:
 
         return users
 
+    # Checks if a user is in the known user list
     def check_if_user_is_followee(self, user_id):
         if user_id in self.user_id_list:
             return True
         else:
             return False
 
+    # Returns a random user, that is not known
     def get_random_user(self):
         while (len(self.user_list) < self.user_limit):
             user = random.choice(User.objects.all().exclude(id=self.user_id))
-            print(user.id)
+            print("get_random_user = " + str(user.id))
             if user.id in self.user_id_list:
                 continue
             else:
@@ -349,8 +360,10 @@ class SuggestionManager:
             user_suggestionDTO_list = []
             for user in suggested_users:
                 if user:
+                    user_id = user.id
+                    follower_count = FollowRelation.objects.filter(followee_id=user_id).count()
                     user_suggestionDTO_list.append(
-                        UserSuggestionDTO(user.id, user.first_name, user.last_name, 10)
+                        UserSuggestionDTO(user_id, user.first_name, user.last_name, follower_count)
                     )
             return user_suggestionDTO_list
         except IndexError as error:

@@ -84,40 +84,15 @@
                                                 <li class="list-group-item">
                                                     <div class="media-body">
                                                         <p>
-                                                            <a href="{% url 'wikodeApp:getProfilePageOfOtherUser' 3 %}">
+                                                            <a href="{{ userSuggestionDTO.url }}">
                                                                 {{ userSuggestionDTO.first_name }} {{ userSuggestionDTO.last_name }}
                                                                 </a> - <a>
-                                                                14 followers
+                                                                {{ userSuggestionDTO.follower_count }} followers
                                                             </a>
                                                         </p>
                                                     </div>
                                                 </li>
                                             {% endfor %}
-
-                                            <li class="list-group-item">
-                                                <div class="media-body">
-                                                    <p>
-                                                        <a href="{% url 'wikodeApp:getProfilePageOfOtherUser' 3 %}">Kenan
-                                                            Kural</a> - <a>14 followers</a>
-                                                    </p>
-                                                </div>
-                                            </li>
-                                            <li class="list-group-item">
-                                                <div class="media-body">
-                                                    <p>
-                                                        <a href="{% url 'wikodeApp:getProfilePageOfOtherUser' 2 %}">Can
-                                                            Dayan</a> - <a>8 followers</a>
-                                                    </p>
-                                                </div>
-                                            </li>
-                                            <li class="list-group-item">
-                                                <div class="media-body">
-                                                    <p>
-                                                        <a href="{% url 'wikodeApp:getProfilePageOfOtherUser' 4 %}">Emre
-                                                            Çalık</a> - <a>9 followers</a>
-                                                    </p>
-                                                </div>
-                                            </li>
                                         </ul>
                                     </div>
                                 </div>
