@@ -107,7 +107,9 @@ class SuggestionManager:
             if len(self.user_list) >= self.user_limit:
                 return self.user_list
 
-        self.get_random_user()
+        if len(User.objects.all()) > 5:
+            self.get_random_user()
+
         return self.user_list
 
 
