@@ -405,6 +405,7 @@ def getProfilePageOfOtherUser(request, pk):
     # In order to get tagged articles of the user we filter the articles with user id
     taggedArticles = TagRelation.objects.filter(tagger_id=other_user.id)
     tagged_articlelist = []
+    #we gather ids here
     tagged_article_idlist = []
     for tags in taggedArticles:
         tag_article_id = tags.article_id
@@ -417,6 +418,7 @@ def getProfilePageOfOtherUser(request, pk):
         for taginArticles in article_tags:
             tagnames += taginArticles.tag.label + ", "
         tagnames = tagnames[:-2]
+        #create json for the html
         tagged_articles = {"articletitle": article.Title,
                            "PM_id": article.PMID,
                            "tagnames": tagnames,
@@ -435,7 +437,6 @@ def getProfilePageOfOtherUser(request, pk):
         "parent_template": "wikodeApp/profilePage.html",
         "feedList": feed_list,
         "tag_list": tagged_articlelist,
-        "tagnames": tagnames,
     }
 
     return render(request, 'wikodeApp/profilePage.html', context)
