@@ -6,6 +6,7 @@ from enum import Enum
 from wikodeApp.models import Activity, Article, Tag, Annotation, FollowRelation, TagRelation, Author
 from wikodeApp.utils.activityManager import ActivityManager
 from wikodeApp.utils.articleSuggestionDTO import ArticleSuggestionDTO
+from wikodeApp.utils.userSuggestionDTO import UserSuggestionDTO
 from wikodeApp.utils.followManager import getFollowerList, getFolloweeList
 
 
@@ -329,11 +330,30 @@ class SuggestionManager:
                 self.user_list.append(user)
 
     def get_article_suggestionDTO_list(self):
-        suggested_articles = self.get_article_suggestion()
-        article_suggestionDTO_list = []
-        for article in suggested_articles:
-            if article:
-                authors = Author.objects.filter(article=article)
-                article_suggestionDTO_list.append(
-                    ArticleSuggestionDTO(article.id, article.Title, article.PublicationDate, authors))
-        return article_suggestionDTO_list
+        try:
+            suggested_articles = self.get_article_suggestion()
+            article_suggestionDTO_list = []
+            for article in suggested_articles:
+                if article:
+                    authors = Author.objects.filter(article=article)
+                    article_suggestionDTO_list.append(
+                        ArticleSuggestionDTO(article.id, article.Title, article.PublicationDate, authors))
+            return article_suggestionDTO_list
+        except IndexError as error:
+            print("Article Suggestion Error = " + str(error))
+            return {}
+
+    def get_user_suggestionDTO_list(self):
+        try:
+            suggested_users = self.get_user_suggestion()
+            user_suggestionDTO_list = []
+            for user in suggested_users:
+                if user:
+                    user_suggestionDTO_list.append(
+                        UserSuggestionDTO(user.id, user.first_name, user.last_name, 10)
+                    )
+            return user_suggestionDTO_list
+        except IndexError as error:
+            print("User Suggestion Error = " + str(error))
+            return {}
+

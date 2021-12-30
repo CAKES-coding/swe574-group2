@@ -114,7 +114,7 @@ cancelFreeButton.addEventListener("click", () => {
 
     startIndex = 0;
     endIndex = 0;
-}
+})
 
 function highlightAbstract(startInd, endInd) {
     let abstract = document.getElementById("abstract-text");

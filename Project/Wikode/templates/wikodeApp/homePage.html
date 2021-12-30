@@ -80,6 +80,20 @@
                                         <br>
                                         <h5>Suggested Users</h5>
                                         <ul class="list-group list-group-dividered list-group-full">
+                                            {% for userSuggestionDTO in userSuggestionDTOList %}
+                                                <li class="list-group-item">
+                                                    <div class="media-body">
+                                                        <p>
+                                                            <a href="{% url 'wikodeApp:getProfilePageOfOtherUser' 3 %}">
+                                                                {{ userSuggestionDTO.first_name }} {{ userSuggestionDTO.last_name }}
+                                                                </a> - <a>
+                                                                14 followers
+                                                            </a>
+                                                        </p>
+                                                    </div>
+                                                </li>
+                                            {% endfor %}
+
                                             <li class="list-group-item">
                                                 <div class="media-body">
                                                     <p>

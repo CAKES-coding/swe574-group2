@@ -20,7 +20,7 @@ from wikodeApp.utils.textSearch import Search
 from dal import autocomplete
 from wikodeApp.utils.wikiManager import getLabelSuggestion, WikiEntry, FreeTag
 from wikodeApp.utils.feedDTO import Feed
-from wikodeApp.utils.articleSuggestionDTO import ArticleSuggestionDTO
+
 
 @login_required
 def homePage(request):
@@ -110,11 +110,13 @@ def homePage(request):
 
             suggestion_manager = SuggestionManager(request.user.id)
             article_suggestionDTO_list = suggestion_manager.get_article_suggestionDTO_list()
+            user_suggestionDTO_list = suggestion_manager.get_user_suggestionDTO_list()
 
             # Then here we show the send the activities frontend
             context = {"parent_template": "wikodeApp/homePage.html",
                        "feedList": feed_list,
                        "articleSuggestionDTOList": article_suggestionDTO_list,
+                       "userSuggestionDTOList": user_suggestionDTO_list,
                        "filter_form": FilterForm(initial={'order_by': 'relevance'})}
 
     return render(request, 'wikodeApp/searchAndFilterBox.html', context=context)
