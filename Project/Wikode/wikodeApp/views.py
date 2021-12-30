@@ -349,13 +349,13 @@ def myProfilePage(request):
         articleid_url=reverse('wikodeApp:articleDetail', args=(tag_article_id,))
         article=Article.objects.get(id=tag_article_id)
         article_tags= TagRelation.objects.filter(article_id=tag_article_id)
-        tags=[]
+        tagnames=[]
         for taginArticles in article_tags:
-            tags.append(taginArticles)
-
+            tagnames.append(taginArticles)
+            print(taginArticles.label)
         tagged_articles={"articletitle": article.Title,
                          "PM_id": article.PMID,
-                         "tags":tags,
+                         "tagnames":tagnames,
                          "articleid_url": articleid_url
                          }
 
@@ -369,7 +369,8 @@ def myProfilePage(request):
         'followee_list': followee_list,
         "parent_template": "wikodeApp/profilePage.html",
         "feedList": feed_list,
-        "tag_list": tagged_articlelist
+        "tag_list": tagged_articlelist,
+        "tagnames":tagnames,
     }
 
     return render(request, 'wikodeApp/profilePage.html', context)
