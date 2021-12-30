@@ -398,6 +398,25 @@ def getProfilePageOfOtherUser(request, pk):
     recentActivities = Activity.objects.filter(user_id=other_user.id)
     feed_list = Feed(recentActivities).getFeed()
 
+    # In order to get tagged articles of the user we filter the articles with user id
+    taggedArticles = TagRelation.objects.filter(tagger_id=other_user.id)
+    tagged_articlelist = []
+    for tags in taggedArticles:
+        tag_article_id = tags.article_id
+        articleid_url = reverse('wikodeApp:articleDetail', args=(tag_article_id,))
+        article = Article.objects.get(id=tag_article_id)
+        article_tags = TagRelation.objects.filter(article_id=tag_article_id)
+        tagnames = []
+        for taginArticles in article_tags:
+            tagnames.append(taginArticles.tag.label)
+        tagged_articles = {"articletitle": article.Title,
+                           "PM_id": article.PMID,
+                           "tagnames": tagnames,
+                           "articleid_url": articleid_url
+                           }
+
+        tagged_articlelist.append(tagged_articles)
+
     # Then here we show the send the activities frontend
 
     context = {
@@ -406,7 +425,9 @@ def getProfilePageOfOtherUser(request, pk):
         'follower_list': follower_list,
         'followee_list': followee_list,
         "parent_template": "wikodeApp/profilePage.html",
-        "feedList": feed_list
+        "feedList": feed_list,
+        "tag_list": tagged_articlelist,
+        "tagnames": tagnames,
     }
 
     return render(request, 'wikodeApp/profilePage.html', context)
