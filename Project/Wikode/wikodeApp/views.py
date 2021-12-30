@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from wikodeApp.models import Author, Keyword, RegistrationApplication, Article, TagRelation, \
-    FollowRelation, Activity
+    FollowRelation, Activity,Tag
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from wikodeApp.forms import ApplicationRegistrationForm, GetArticleForm, TagForm, FilterForm
 from wikodeApp.utils import followManager
@@ -341,6 +341,30 @@ def myProfilePage(request):
     recentActivities = Activity.objects.filter(user_id=user.id)
     feed_list = Feed(recentActivities).getFeed()
 
+    # In order to get tagged articles of the user we filter the articles with user id
+    taggedArticles = TagRelation.objects.filter(tagger_id = user.id)
+    tagged_articlelist = []
+    tagged_article_idlist =[]
+    for tags in taggedArticles:
+        tag_article_id=tags.article_id
+        articleid_url=reverse('wikodeApp:articleDetail', args=(tag_article_id,))
+        article=Article.objects.get(id=tag_article_id)
+        if (tag_article_id in tagged_article_idlist):
+            continue
+        article_tags= TagRelation.objects.filter(article_id=tag_article_id)
+        tagnames=""
+        for taginArticles in article_tags:
+            tagnames += taginArticles.tag.label + ", "
+        tagnames = tagnames[:-2]
+        tagged_articles={"articletitle": article.Title,
+                         "PM_id": article.PMID,
+                         "tagnames":tagnames,
+                         "articleid_url": articleid_url
+                         }
+
+        tagged_article_idlist.append(tag_article_id)
+        tagged_articlelist.append(tagged_articles)
+
     # Then here we show the send the activities frontend
 
     context = {
@@ -348,7 +372,8 @@ def myProfilePage(request):
         'follower_list': follower_list,
         'followee_list': followee_list,
         "parent_template": "wikodeApp/profilePage.html",
-        "feedList": feed_list
+        "feedList": feed_list,
+        "tag_list": tagged_articlelist,
     }
 
     return render(request, 'wikodeApp/profilePage.html', context)
@@ -377,6 +402,31 @@ def getProfilePageOfOtherUser(request, pk):
     recentActivities = Activity.objects.filter(user_id=other_user.id)
     feed_list = Feed(recentActivities).getFeed()
 
+    # In order to get tagged articles of the user we filter the articles with user id
+    taggedArticles = TagRelation.objects.filter(tagger_id=other_user.id)
+    tagged_articlelist = []
+    #we gather ids here
+    tagged_article_idlist = []
+    for tags in taggedArticles:
+        tag_article_id = tags.article_id
+        articleid_url = reverse('wikodeApp:articleDetail', args=(tag_article_id,))
+        if (tag_article_id in tagged_article_idlist):
+            continue
+        article = Article.objects.get(id=tag_article_id)
+        article_tags = TagRelation.objects.filter(article_id=tag_article_id)
+        tagnames = ""
+        for taginArticles in article_tags:
+            tagnames += taginArticles.tag.label + ", "
+        tagnames = tagnames[:-2]
+        #create json for the html
+        tagged_articles = {"articletitle": article.Title,
+                           "PM_id": article.PMID,
+                           "tagnames": tagnames,
+                           "articleid_url": articleid_url
+                           }
+        tagged_article_idlist.append(tag_article_id)
+        tagged_articlelist.append(tagged_articles)
+
     # Then here we show the send the activities frontend
 
     context = {
@@ -385,7 +435,8 @@ def getProfilePageOfOtherUser(request, pk):
         'follower_list': follower_list,
         'followee_list': followee_list,
         "parent_template": "wikodeApp/profilePage.html",
-        "feedList": feed_list
+        "feedList": feed_list,
+        "tag_list": tagged_articlelist,
     }
 
     return render(request, 'wikodeApp/profilePage.html', context)
