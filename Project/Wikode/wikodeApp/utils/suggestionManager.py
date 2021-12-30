@@ -50,9 +50,11 @@ class SuggestionManager:
     # gets random articles if the logic is not sufficient
     def get_article_suggestion(self):
 
-        self.article_list.append(self.get_other_tagged_articles())
-        if len(self.article_list) >= self.suggestion_limit:
-            return self.article_list
+        other_tagged_articles = self.get_other_tagged_articles()
+        if other_tagged_articles:
+            self.article_list.append(other_tagged_articles)
+            if len(self.article_list) >= self.suggestion_limit:
+                return self.article_list
 
         tagged_articles_from_followee = self.get_tagged_articles_from_followee()
         if tagged_articles_from_followee:
@@ -333,7 +335,6 @@ class SuggestionManager:
     def get_random_user(self):
         while (len(self.user_list) < self.user_limit):
             user = random.choice(User.objects.all().exclude(id=self.user_id))
-            print("get_random_user = " + str(user.id))
             if user.id in self.user_id_list:
                 continue
             else:
