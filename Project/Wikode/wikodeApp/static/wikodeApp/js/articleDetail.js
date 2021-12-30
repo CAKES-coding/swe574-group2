@@ -141,24 +141,6 @@ for (let i = 0; i < tagRows.length; i++) {
     })
 }
 
-clearFragmentButton.addEventListener('click', () => {
-    fragmentInfoGroupDiv.style.display = "none"
-    fragmentTextLabel.value = "";
-    fragmentStartIndexInput.value = 0;
-    fragmentEndIndexInput.value = -1;
-    clearFragmentButton.style.display = "none"
-    removeSelectedTextFromAbstract();
-    initializeIndices();
-})
-
-function removeSelectedTextFromAbstract() {
-    let abstractText = document.getElementById("abstract-text");
-    let spanInAbstractText = abstractText.getElementsByTagName("span")[0];
-    let abstractTextOriginal = abstractText.innerText;
-    abstractText.removeChild(spanInAbstractText);
-    abstractText.innerText = abstractTextOriginal;
-}
-
 function upVote(tagRelationId) {
     sendVoteRequest(tagRelationId, "upVote")
 }
