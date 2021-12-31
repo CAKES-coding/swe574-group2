@@ -48,7 +48,7 @@ class SuggestionManager:
     # returns until "suggestion_limit" is reached.
     # gets random articles if the logic is not sufficient
     def get_article_suggestion(self):
-        
+
         self.article_list.append(self.get_other_tagged_articles())
         if len(self.article_list) >= self.suggestion_limit:
             return self.article_list
@@ -74,6 +74,7 @@ class SuggestionManager:
         recently_tagged_article = self.get_recently_tagged_article()
         if recently_tagged_article:
             self.article_list.append(self.get_recently_tagged_article())
+
 
         self.get_random_article()
         return self.article_list
@@ -107,7 +108,7 @@ class SuggestionManager:
             if len(self.user_list) >= self.user_limit:
                 return self.user_list
 
-        if len(User.objects.all()) > 5:
+        if len(User.objects.all()) - len(self.user_id_list) > 2:
             self.get_random_user()
 
         return self.user_list
