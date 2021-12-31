@@ -1,3 +1,5 @@
+import json
+
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
@@ -315,8 +317,8 @@ def getArticles(request):
 def myProfilePage(request):
     user = request.user
 
-    follower_list = followManager.getFollowerList(user)
-    followee_list = followManager.getFolloweeList(user)
+    follower_list = json.dumps(followManager.getFollowerList(user))
+    followee_list = json.dumps(followManager.getFolloweeList(user))
 
     # In order to get recent activities of a user we retrieve the activities of the current user
     recentActivities = Activity.objects.filter(user_id=user.id)
@@ -339,10 +341,6 @@ def myProfilePage(request):
 ## Navigates to /profile/# url.
 @login_required
 def getProfilePageOfOtherUser(request, pk):
-    ## TODO
-    ## pk arguement may be a unique random 6 digit number that represents the requested user.
-    ## Here we need to convert the unique random number to user id. Or have another number that represents user.
-    ## For development purpose, pk is hardcoded below.
     other_user = User.objects.get(id=pk)
     session_user = User.objects.get(id=request.user.id)
 
@@ -351,8 +349,8 @@ def getProfilePageOfOtherUser(request, pk):
 
     is_followed = FollowRelation.objects.filter(followee_id=other_user.id, follower_id=session_user.id).exists()
 
-    follower_list = followManager.getFollowerList(other_user)
-    followee_list = followManager.getFolloweeList(other_user)
+    follower_list = json.dumps(followManager.getFollowerList(other_user))
+    followee_list = json.dumps(followManager.getFolloweeList(other_user))
 
     # In order to get recent activities of a user we retrieve the activities of the current user
     recentActivities = Activity.objects.filter(user_id=other_user.id)
@@ -371,17 +369,18 @@ def getProfilePageOfOtherUser(request, pk):
 
     return render(request, 'wikodeApp/profilePage.html', context)
 
-
+## Adds the other_user to session user's followee list.
+## If already following, unfollows it.
+## 'Can follows Kenan'
+## Can = Follower
+## Kenan = Followee
 @login_required
 def followUser(request, pk):
-    ## TODO
-    ## pk arguement may be a unique random 6 digit number that represents the requested user.
-    ## Here we need to convert the unique random number to user id. Or have another number that represents user.
-    ## For development purpose, pk is hardcoded below.
     other_user = User.objects.get(id=pk)
     session_user = User.objects.get(id=request.user.id)
     activityManager = ActivityManager(session_user.id)
 
+    ## is_followed is True when the session user is already following the other user.
     is_followed = FollowRelation.objects.filter(followee_id=other_user.id, follower_id=session_user.id).exists()
 
     if is_followed:
