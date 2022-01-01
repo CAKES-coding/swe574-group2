@@ -78,6 +78,7 @@ class SuggestionManager:
         if recently_tagged_article:
             self.article_list.append(self.get_recently_tagged_article())
 
+
         self.get_random_article()
         return self.article_list
 
@@ -110,7 +111,7 @@ class SuggestionManager:
             if len(self.user_list) >= self.user_limit:
                 return self.user_list
 
-        if len(User.objects.all()) > 5:
+        if len(User.objects.all()) - len(self.user_id_list) > 2:
             self.get_random_user()
 
         return self.user_list
