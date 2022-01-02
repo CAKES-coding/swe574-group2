@@ -152,6 +152,8 @@ class FollowRelation(models.Model):
     date = models.DateTimeField(auto_now_add=True)
 
 
+# Will be used if suggestionManager is required
+# to save suggestions on a specified time interval.
 class SuggestionRecord(models.Model):
     suggestion_types = (
         ('1', 'Article'),
