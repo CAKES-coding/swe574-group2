@@ -8,7 +8,7 @@ from wikodeApp.utils.activityManager import ActivityManager
 from wikodeApp.utils.followManager import getFollowerList, getFolloweeList
 
 
-class UserSeggestionRagings(Enum):
+class UserSuggestionRatings(Enum):
     follower_of_followee = 5
     followers_not_followee = 6
     most_followed = 3
