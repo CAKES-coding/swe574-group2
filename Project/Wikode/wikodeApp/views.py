@@ -15,6 +15,7 @@ from wikodeApp.utils import followManager
 from wikodeApp.utils.activityManager import ActivityManager
 from wikodeApp.utils.fetchArticles import createArticles
 from wikodeApp.utils.voteManager import VoteManager
+from wikodeApp.utils.suggestionManager import SuggestionManager
 import string
 import random
 from wikodeApp.utils.textSearch import Search
@@ -109,9 +110,15 @@ def homePage(request):
             recent_activities = Activity.objects.order_by('-id')[:50]
             feed_list = Feed(recent_activities).getFeed()
 
+            suggestion_manager = SuggestionManager(request.user.id)
+            article_suggestionDTO_list = suggestion_manager.get_article_suggestionDTO_list()
+            user_suggestionDTO_list = suggestion_manager.get_user_suggestionDTO_list()
+
             # Then here we show the send the activities frontend
             context = {"parent_template": "wikodeApp/homePage.html",
                        "feedList": feed_list,
+                       "articleSuggestionDTOList": article_suggestionDTO_list,
+                       "userSuggestionDTOList": user_suggestionDTO_list,
                        "filter_form": FilterForm(initial={'order_by': 'relevance'})}
 
     return render(request, 'wikodeApp/searchAndFilterBox.html', context=context)
