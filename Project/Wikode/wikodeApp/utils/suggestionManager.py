@@ -45,7 +45,6 @@ class SuggestionManager:
 
         for followee in self.followees:
             self.user_id_list.append(followee[0])
-
     # Ultimate method to get article suggestions
     # returns until "suggestion_limit" is reached.
     # gets random articles if the logic is not sufficient
@@ -352,10 +351,16 @@ class SuggestionManager:
             suggested_articles = self.get_article_suggestion()
             article_suggestionDTO_list = []
             for article in suggested_articles:
-                if article:
+                if article and not isinstance(article, list):
                     authors = Author.objects.filter(article=article)
                     article_suggestionDTO_list.append(
                         ArticleSuggestionDTO(article.id, article.Title, article.PublicationDate, authors))
+                elif isinstance(article, list):
+                    for article_item in article:
+                        authors = Author.objects.filter(article=article_item)
+                        article_suggestionDTO_list.append(
+                            ArticleSuggestionDTO(article_item.id, article_item.Title, article_item.PublicationDate, authors))
+
             return article_suggestionDTO_list
         except IndexError as error:
             print("Article Suggestion Error = " + str(error))
@@ -366,12 +371,19 @@ class SuggestionManager:
             suggested_users = self.get_user_suggestion()
             user_suggestionDTO_list = []
             for user in suggested_users:
-                if user:
+                if user and not isinstance(user, list):
                     user_id = user.id
                     follower_count = FollowRelation.objects.filter(followee_id=user_id).count()
                     user_suggestionDTO_list.append(
                         UserSuggestionDTO(user_id, user.first_name, user.last_name, follower_count)
                     )
+                elif isinstance(user, list):
+                    for user_item in user:
+                        user_id = user_item.id
+                        follower_count = FollowRelation.objects.filter(followee_id=user_id).count()
+                        user_suggestionDTO_list.append(
+                            UserSuggestionDTO(user_id, user_item.first_name, user_item.last_name, follower_count)
+                        )
             return user_suggestionDTO_list
         except IndexError as error:
             print("User Suggestion Error = " + str(error))
