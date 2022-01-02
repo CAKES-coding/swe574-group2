@@ -1,9 +1,21 @@
 let abstractText = document.getElementById("abstract-text");
 let tagPieceButton = document.getElementById("tag-piece-button");
-
+let freeTagButton = document.getElementById("free-tag-piece-button");
+let cancelWikitagButton = document.getElementById("cancel-wikitag");
+let cancelFreeButton = document.getElementById("cancel-freetag");
+let cancelWikiButton = document.getElementById("cancel-wikientry");
+let clearFragmentButton = document.getElementById("clear-fragment-button")
 let startIndex = 0;
 let endIndex = 0;
 let selectedText = "";
+
+function openWikiForm() {
+    document.getElementById("wikitag_form").style.display = "block";
+}
+
+function closeWikiForm() {
+    document.getElementById("wikitag_form").style.display = "none";
+}
 
 abstractText.addEventListener("mouseup", () => {
     if (window.getSelection) {
@@ -41,15 +53,65 @@ rightClick = (e) => {
     tagContextMenu.style.top = e.clientY + window.pageYOffset + "px";
 }
 
+let fragmentInfoGroupDiv = document.getElementById("fragment_info")
+let fragmentTextLabel = document.getElementById("fragment_text")
+let fragmentStartIndexInput = document.getElementById("fragment_start_index")
+let fragmentEndIndexInput = document.getElementById("fragment_end_index");
+
 tagPieceButton.addEventListener("click", () => {
     console.log(startIndex);
     console.log(endIndex);
+    document.getElementById("wikientry_form").hidden = false;
     document.getElementById("tagContextMenu").style.display = "none";
-    document.getElementById("fragment_info").style.display = "block";
     document.getElementById("fragment_text").value = selectedText;
-    document.getElementById("fragment_start_index").value = startIndex;
-    document.getElementById("fragment_end_index").value = endIndex;
-    highlightAbstract(startIndex, endIndex);
+    if (startIndex === endIndex) {
+        document.getElementById("fragment_info").style.display = "none";
+    } else {
+        document.getElementById("fragment_info").style.display = "block";
+        document.getElementById("fragment_start_index").value = startIndex;
+        document.getElementById("fragment_end_index").value = endIndex;
+        highlightAbstract(startIndex, endIndex);
+    }
+    startIndex = 0;
+    endIndex = 0;
+})
+
+cancelWikiButton.addEventListener("click", () => {
+    document.getElementById("wikientry_form").hidden = true;
+    document.getElementById("fragment_text").value = "";
+    document.getElementById("fragment_start_index").value = 0;
+    document.getElementById("fragment_end_index").value = -1;
+    unHighlightAbstract();
+    startIndex = 0;
+    endIndex = 0;
+})
+
+freeTagButton.addEventListener("click", () => {
+    console.log(startIndex);
+    console.log(endIndex);
+    document.getElementById("free_tag_form").hidden = false;
+    document.getElementById("tagContextMenu").style.display = "none";
+    document.getElementById("free_tag_fragment_info").style.display = "block";
+    document.getElementById("free_fragment_text").value = selectedText;
+    if (startIndex === endIndex) {
+        document.getElementById("free_tag_fragment_info").style.display = "none";
+    } else {
+        document.getElementById("free_tag_fragment_info").style.display = "block";
+        document.getElementById("free_fragment_start_index").value = startIndex;
+        document.getElementById("free_fragment_end_index").value = endIndex;
+        highlightAbstract(startIndex, endIndex);
+    }
+    startIndex = 0;
+    endIndex = 0;
+})
+
+cancelFreeButton.addEventListener("click", () => {
+    document.getElementById("free_tag_form").hidden = true;
+    document.getElementById("free_fragment_text").value = "";
+    document.getElementById("free_fragment_start_index").value = 0;
+    document.getElementById("free_fragment_end_index").value = -1;
+    unHighlightAbstract();
+
     startIndex = 0;
     endIndex = 0;
 })
@@ -71,7 +133,7 @@ function unHighlightAbstract() {
 let tagRows = document.getElementsByClassName('tag_row');
 
 for (let i = 0; i < tagRows.length; i++) {
-    tagRows[i].addEventListener("mouseover", function (event) {
+    tagRows[i].addEventListener("mouseover", function () {
         highlightAbstract(tagRows[i].dataset.start, tagRows[i].dataset.end);
     });
     tagRows[i].addEventListener("mouseout", function () {
@@ -116,20 +178,22 @@ function getTagRelationIds() {
 
 window.onload = function () {
     let token = document.getElementsByName("csrfmiddlewaretoken")[0].value
-    $.ajax({
+    let tagRelationIds = getTagRelationIds().toString();
+    if  (tagRelationIds) {
+        $.ajax({
         url: '/wikode/vote/',
         type: 'GET',
         data: {
             csrfmiddlewaretoken: token,
-            tagRelationIds: getTagRelationIds().toString()
+            tagRelationIds: tagRelationIds
         },
         success: function (userVoteDict) {
             userVoteDict = userVoteDict['userVoteDict']
             for (let tagRelationId in userVoteDict) {
                 adjustVoteButtonColor(userVoteDict[tagRelationId], tagRelationId)
             }
-        }
-    })
+        }})
+    }
 }
 
 function adjustVoteButtonColor(userVote, tagRelationId) {
@@ -147,6 +211,24 @@ function adjustVoteButtonColor(userVote, tagRelationId) {
     }
 }
 
+// Reload the page when visited via browser go back button
+window.addEventListener("pageshow", function (event) {
+    let navigationType = window.performance.getEntriesByType("navigation")[0].type
+    console.log(navigationType)
+    let historyTraversal = event.persisted ||
+        (typeof window.performance != "undefined" &&
+            navigationType === "back_forward");
+    if (historyTraversal) {
+        window.location.reload();
+    }
+});
 
-
-
+cancelWikitagButton.addEventListener("click", () => {
+    document.getElementById("wikitag_form").hidden = true;
+    document.getElementById("fragment_text").value = "";
+    document.getElementById("fragment_start_index").value = 0;
+    document.getElementById("fragment_end_index").value = -1;
+    unHighlightAbstract();
+    startIndex = 0;
+    endIndex = 0;
+})

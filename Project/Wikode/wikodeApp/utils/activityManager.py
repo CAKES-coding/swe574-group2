@@ -2,7 +2,7 @@ import datetime
 
 # the manager that will handle all the activity stream savings to database
 from django.contrib.auth.models import User
-from wikodeApp.models import Activity, Article, RegistrationApplication, Tag, Annotation
+from wikodeApp.models import Activity, Article, Tag, Annotation
 
 
 # Activity Manager will handle all savings to database
@@ -12,14 +12,14 @@ from wikodeApp.models import Activity, Article, RegistrationApplication, Tag, An
 class ActivityManager:
     baseUrl = "http://www.wikode.com/wikode/"
 
-    def __init__(self, user_id):
-        owner = User.objects.get(id=user_id)
-        self.user_id = user_id
+    def __init__(self, user):
+        owner = user
+        self.user = user
         if owner:
             self.owner = owner
 
     # This method saves the 'View' activity to the database.
-    # user_id: the id of the user who makes the activity
+    # user: the user who makes the activity
     # target_type: the type of the target, depends on if the target
     #              is a user, article or tag
     # target_id: the id of the target, correlated with target_type
@@ -30,7 +30,7 @@ class ActivityManager:
             if target:
                 activity_target_type = 'Person'
                 activity_target_url = self.getProfileURL(id=target_id)
-                activity_target_name = target.name
+                activity_target_name = target.first_name + ' ' + target.last_name
         # elif target_type=='2':
         # TODO: when view tags finished, implement the correct tag url:
         #  activity_target_type = 'Tag'
@@ -62,7 +62,7 @@ class ActivityManager:
         }
 
         activity = Activity(
-            user_id=self.user_id,
+            user=self.user,
             activity_type=1,
             target_type=target_type,
             target_id=target_id,
@@ -78,7 +78,7 @@ class ActivityManager:
         if target:
             activity_target_type = 'Person'
             activity_target_url = self.getProfileURL(id=target_id)
-            activity_target_name = target.name
+            activity_target_name = target.first_name + ' ' + target.last_name
 
         json = {
             "@context": "https://www.w3.org/ns/activitystreams",
@@ -100,7 +100,7 @@ class ActivityManager:
         }
 
         activity = Activity(
-            user_id=self.user_id,
+            user=self.user,
             activity_type=2,
             target_type=1,
             target_id=target_id,
@@ -116,7 +116,7 @@ class ActivityManager:
         if target:
             activity_target_type = 'Person'
             activity_target_url = self.getProfileURL(id=target_id)
-            activity_target_name = target.name
+            activity_target_name = target.first_name + ' ' + target.last_name
 
         json = {
             "@context": "https://www.w3.org/ns/activitystreams",
@@ -138,7 +138,7 @@ class ActivityManager:
         }
 
         activity = Activity(
-            user_id=self.user_id,
+            user=self.user,
             activity_type=3,
             target_type=1,
             target_id=target_id,
@@ -153,7 +153,7 @@ class ActivityManager:
         if target:
             activity_target_type = 'Note'
             activity_target_url = self.getTagURL(id=target_id)
-            activity_target_name = target.tagName
+            activity_target_name = target.label
 
         json = {
             "@context": "https://www.w3.org/ns/activitystreams",
@@ -175,7 +175,7 @@ class ActivityManager:
         }
 
         activity = Activity(
-            user_id=self.user_id,
+            user=self.user,
             activity_type=4,
             target_type=2,
             target_id=target_id,
@@ -190,7 +190,7 @@ class ActivityManager:
         if target:
             activity_target_type = 'Note'
             activity_target_url = self.getTagURL(id=target_id)
-            activity_target_name = target.tagName
+            activity_target_name = target.label
 
         json = {
             "@context": "https://www.w3.org/ns/activitystreams",
@@ -212,7 +212,7 @@ class ActivityManager:
         }
 
         activity = Activity(
-            user_id=self.user_id,
+            user=self.user,
             activity_type=5,
             target_type=2,
             target_id=target_id,
@@ -253,7 +253,7 @@ class ActivityManager:
         }
 
         activity = Activity(
-            user_id=self.user_id,
+            user=self.user,
             activity_type=6,
             target_type=3,
             target_id=target_id,
@@ -268,18 +268,21 @@ class ActivityManager:
     # end_index: the finishing index of fragment inside the text
     def saveAnnotationActivity(self, target_article_id, tag_id, start_index, end_index):
         tag_object = self.getTargetAsTag(target_id=tag_id)
-        json = {
-            "@context": "http://www.w3.org/ns/anno.jsonld",
-            "id": self.getTagURL(id=tag_id),
-            "via": "https://www.wikidata.org/wiki/{}".format(tag_object.wikiId),
-            "type": "Annotation",
-            "body": [
+        if tag_object.wikiId:
+            body = "https://www.wikidata.org/wiki/{}".format(tag_object.wikiId)
+        else:
+            body = [
                 {
                     "type": "TextualBody",
                     "purpose": "tagging",
                     "value": tag_object.label
                 }
-            ],
+            ]
+        json = {
+            "@context": "http://www.w3.org/ns/anno.jsonld",
+            "id": self.getTagURL(id=tag_id),
+            "type": "Annotation",
+            "body": body,
             "target": {
                 "source": self.getArticleURL(id=target_article_id),
                 "selector": {
@@ -297,14 +300,14 @@ class ActivityManager:
         annotation.save()
 
     def getOwnerName(self):
-        return self.owner.first_name
+        return self.owner.first_name + ' ' + self.owner.last_name
 
     def getOwnerURL(self):
-        return self.baseUrl + ("profile/{}".format(self.user_id))
+        return self.baseUrl + ("profile/{}".format(self.user.id))
 
     # returns target as user
     def getTargetAsUser(self, target_id):
-        target = RegistrationApplication.objects.get(id=target_id)
+        target = User.objects.get(id=target_id)
         if target:
             return target
 

@@ -1,3 +1,5 @@
+import json
+
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
@@ -6,18 +8,20 @@ from django.http import HttpResponseRedirect, HttpResponse, JsonResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from wikodeApp.models import Author, Keyword, RegistrationApplication, Article, TagRelation, \
-    FollowRelation, Activity
+    FollowRelation, Activity,Tag
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from wikodeApp.forms import ApplicationRegistrationForm, GetArticleForm, TagForm, FilterForm
 from wikodeApp.utils import followManager
 from wikodeApp.utils.activityManager import ActivityManager
 from wikodeApp.utils.fetchArticles import createArticles
 from wikodeApp.utils.voteManager import VoteManager
+from wikodeApp.utils.suggestionManager import SuggestionManager
 import string
 import random
 from wikodeApp.utils.textSearch import Search
 from dal import autocomplete
-from wikodeApp.utils.wikiManager import getLabelSuggestion, WikiEntry
+from wikodeApp.utils.wikiManager import getLabelSuggestion, WikiEntry, FreeTag
+from wikodeApp.utils.feedDTO import Feed
 
 
 @login_required
@@ -103,99 +107,18 @@ def homePage(request):
 
         else:
             # In order to get recent activities we retrieve the last 50 activities entered to DB
-            recentActivities = Activity.objects.order_by('-id')[:50]
-            feedList = []
-            # Here we are creating feeds by considering the activity type
-            for eachActivity in recentActivities:
-                # activity type-1 (View activity)
-                if eachActivity.activity_type == '1':
-                    activiyJson = eachActivity.activity_JSON
-                    userID = int(activiyJson.get("actor").get("url").split("/")[-1])
-                    articleID = int(activiyJson.get("object").get("url").split("/")[-1])
-                    feedView = {"userID": userID,
-                                "userName": activiyJson.get("actor").get("name"),
-                                "articleID": articleID,
-                                "articleName": activiyJson.get("object").get("name"),
-                                "sentence": "Viewed",
-                                "published": activiyJson.get("published")[:10],
-                                "publishedTime": activiyJson.get("published")[11:16]
-                                }
-                    feedList.append(feedView)
-                # activity type-2 (follow activity)
-                if eachActivity.activity_type == '2':
-                    activiyJson = eachActivity.activity_JSON
-                    userID = int(activiyJson.get("actor").get("url").split("/")[-1])
-                    articleID = int(activiyJson.get("object").get("url").split("/")[-1])
-                    feedFollow = {"userID": userID,
-                                  "userName": activiyJson.get("actor").get("name"),
-                                  "articleID": articleID,
-                                  "articleName": activiyJson.get("object").get("name"),
-                                  "sentence": "Followed",
-                                  "published": activiyJson.get("published")[:10],
-                                  "publishedTime": activiyJson.get("published")[11:16]
-                                  }
-                    feedList.append(feedFollow)
-                # activity type-3 (Unfollow activity)
-                if eachActivity.activity_type == '3':
-                    activiyJson = eachActivity.activity_JSON
-                    userID = int(activiyJson.get("actor").get("url").split("/")[-1])
-                    articleID = int(activiyJson.get("object").get("url").split("/")[-1])
-                    feedUnFollow = {"userID": userID,
-                                    "userName": activiyJson.get("actor").get("name"),
-                                    "articleID": articleID,
-                                    "articleName": activiyJson.get("object").get("name"),
-                                    "sentence": "Unfollowed",
-                                    "published": activiyJson.get("published")[:10],
-                                    "publishedTime": activiyJson.get("published")[11:16]
+            recent_activities = Activity.objects.order_by('-id')[:50]
+            feed_list = Feed(recent_activities).getFeed()
 
-                                    }
-                    feedList.append(feedUnFollow)
-                # activity type-4 (Upvote activity)
-                if eachActivity.activity_type == '4':
-                    activiyJson = eachActivity.activity_JSON
-                    userID = int(activiyJson.get("actor").get("url").split("/")[-1])
-                    articleID = int(activiyJson.get("object").get("url").split("/")[-1])
-                    feedUpvote = {"userID": userID,
-                                  "userName": activiyJson.get("actor").get("name"),
-                                  "articleID": articleID,
-                                  "articleName": activiyJson.get("object").get("name"),
-                                  "sentence": "Upvoted",
-                                  "published": activiyJson.get("published")[:10],
-                                  "publishedTime": activiyJson.get("published")[11:16]
-                                  }
-                    feedList.append(feedUpvote)
-                # activity type-5 (Downvote activity)
-                if eachActivity.activity_type == '5':
-                    activiyJson = eachActivity.activity_JSON
-                    userID = int(activiyJson.get("actor").get("url").split("/")[-1])
-                    articleID = int(activiyJson.get("object").get("url").split("/")[-1])
-                    feedDownvote = {"userID": userID,
-                                    "userName": activiyJson.get("actor").get("name"),
-                                    "articleID": articleID,
-                                    "articleName": activiyJson.get("object").get("name"),
-                                    "sentence": "Downvoted",
-                                    "published": activiyJson.get("published")[:10],
-                                    "publishedTime": activiyJson.get("published")[11:16]
-                                    }
-                    feedList.append(feedDownvote)
-                # activity type-6 (Tag activity)
-                if eachActivity.activity_type == '6':
-                    activiyJson = eachActivity.activity_JSON
-                    userID = int(activiyJson.get("actor").get("url").split("/")[-1])
-                    articleID = int(activiyJson.get("object").get("url").split("/")[-1])
-                    feedTagged = {"userID": userID,
-                                  "userName": activiyJson.get("actor").get("name"),
-                                  "articleID": articleID,
-                                  "articleName": activiyJson.get("object").get("name"),
-                                  "sentence": "Tagged",
-                                  "published": activiyJson.get("published")[:10],
-                                  "publishedTime": activiyJson.get("published")[11:16]
-                                  }
-                    feedList.append(feedTagged)
+            suggestion_manager = SuggestionManager(request.user.id)
+            article_suggestionDTO_list = suggestion_manager.get_article_suggestionDTO_list()
+            user_suggestionDTO_list = suggestion_manager.get_user_suggestionDTO_list()
 
             # Then here we show the send the activities frontend
             context = {"parent_template": "wikodeApp/homePage.html",
-                       "feedList": feedList,
+                       "feedList": feed_list,
+                       "articleSuggestionDTOList": article_suggestionDTO_list,
+                       "userSuggestionDTOList": user_suggestionDTO_list,
                        "filter_form": FilterForm(initial={'order_by': 'relevance'})}
 
     return render(request, 'wikodeApp/searchAndFilterBox.html', context=context)
@@ -205,10 +128,10 @@ def homePage(request):
 def articleDetail(request, pk):
     article = Article.objects.get(pk=pk)
     wiki_info = {}
+    fragment_info = {}
     if request.method == 'GET':
-        activity_manager = ActivityManager(user_id=request.user.id)
+        activity_manager = ActivityManager(user=request.user)
         activity_manager.saveViewActivity('3', article.id)
-    # Begin: Get Tag
     if request.method == 'POST':
         print(request.POST)
         if 'get_tag' in request.POST:
@@ -218,23 +141,42 @@ def articleDetail(request, pk):
             wiki_info['qid'] = tag_data.getID()
             wiki_info['label'] = tag_data.getLabel()
             wiki_info['description'] = tag_data.getDescription()
+            fragment_info['fragment_text'] = request.POST.get('fragment_text')
+            fragment_info['start_index'] = request.POST.get('fragment_start_index')
+            fragment_info['end_index'] = request.POST.get('fragment_end_index')
+
         elif 'add_tag' in request.POST:
             # Tagging an article
             # end index of "-1" means tagging whole article, else is annotation
-            tag_data = WikiEntry(request.POST['qid'])
-            fragment_text = request.POST['fragment_text']
-            fragment_start_index = request.POST['fragment_start_index']
-            fragment_end_index = request.POST['fragment_end_index']
-            tag = tag_data.saveTag()
-            tag_data.saveRelatedWikiItems()
+            if request.POST.get('qid'):
+                tag_data = WikiEntry(request.POST['qid'])
+                tag = tag_data.saveTag()
+                tag_data.saveRelatedWikiItems()
 
+            elif request.POST.get('label'):
+                tag = FreeTag(request.POST['label'], request.POST['description']).save()
+
+            else:
+                tag = None
+
+            if request.POST.get('fragment_text'):
+                fragment_text = request.POST['fragment_text']
+                fragment_start_index = request.POST['fragment_start_index']
+                fragment_end_index = request.POST['fragment_end_index']
+            else:
+                fragment_text = ''
+                fragment_start_index = 0
+                fragment_end_index = -1
+
+            user = User.objects.get(id=request.user.id)
             TagRelation.objects.get_or_create(article=article,
                                               tag=tag,
                                               fragment=fragment_text,
                                               start_index=fragment_start_index,
-                                              end_index=fragment_end_index
+                                              end_index=fragment_end_index,
+                                              tagger=user
                                               )
-            activity_manager = ActivityManager(user_id=request.user.id)
+            activity_manager = ActivityManager(user=request.user)
 
             if fragment_end_index != "-1":
                 activity_manager.saveAnnotationActivity(target_article_id=article.id,
@@ -268,6 +210,7 @@ def articleDetail(request, pk):
                     }
 
     article_dict.update(wiki_info)
+    article_dict.update(fragment_info)
 
     return render(request, 'wikodeApp/articleDetail.html', context=article_dict)
 
@@ -400,98 +343,36 @@ def getArticles(request):
 def myProfilePage(request):
     user = request.user
 
-    follower_list = followManager.getFollowerList(user)
-    followee_list = followManager.getFolloweeList(user)
+    follower_list = json.dumps(followManager.getFollowerList(user))
+    followee_list = json.dumps(followManager.getFolloweeList(user))
 
     # In order to get recent activities of a user we retrieve the activities of the current user
     recentActivities = Activity.objects.filter(user_id=user.id)
-    feedList = []
-    # Here we are creating feeds by considering the activity type
-    for eachActivity in recentActivities:
-        # activity type-1 (View activity)
-        if eachActivity.activity_type == '1':
-            activiyJson = eachActivity.activity_JSON
-            userID = int(activiyJson.get("actor").get("url").split("/")[-1])
-            articleID = int(activiyJson.get("object").get("url").split("/")[-1])
-            feedView = {"userID": userID,
-                        "userName": activiyJson.get("actor").get("name"),
-                        "articleID": articleID,
-                        "articleName": activiyJson.get("object").get("name"),
-                        "sentence": "Viewed",
-                        "published": activiyJson.get("published")[:10],
-                        "publishedTime": activiyJson.get("published")[11:16]
-                        }
-            feedList.append(feedView)
-        # activity type-2 (follow activity)
-        if eachActivity.activity_type == '2':
-            activiyJson = eachActivity.activity_JSON
-            userID = int(activiyJson.get("actor").get("url").split("/")[-1])
-            articleID = int(activiyJson.get("object").get("url").split("/")[-1])
-            feedFollow = {"userID": userID,
-                          "userName": activiyJson.get("actor").get("name"),
-                          "articleID": articleID,
-                          "articleName": activiyJson.get("object").get("name"),
-                          "sentence": "Followed",
-                          "published": activiyJson.get("published")[:10],
-                          "publishedTime": activiyJson.get("published")[11:16]
-                          }
-            feedList.append(feedFollow)
-        # activity type-3 (Unfollow activity)
-        if eachActivity.activity_type == '3':
-            activiyJson = eachActivity.activity_JSON
-            userID = int(activiyJson.get("actor").get("url").split("/")[-1])
-            articleID = int(activiyJson.get("object").get("url").split("/")[-1])
-            feedUnFollow = {"userID": userID,
-                            "userName": activiyJson.get("actor").get("name"),
-                            "articleID": articleID,
-                            "articleName": activiyJson.get("object").get("name"),
-                            "sentence": "Unfollowed",
-                            "published": activiyJson.get("published")[:10],
-                            "publishedTime": activiyJson.get("published")[11:16]
-                            }
-            feedList.append(feedUnFollow)
-        # activity type-4 (Upvote activity)
-        if eachActivity.activity_type == '4':
-            activiyJson = eachActivity.activity_JSON
-            userID = int(activiyJson.get("actor").get("url").split("/")[-1])
-            articleID = int(activiyJson.get("object").get("url").split("/")[-1])
-            feedUpvote = {"userID": userID,
-                          "userName": activiyJson.get("actor").get("name"),
-                          "articleID": articleID,
-                          "articleName": activiyJson.get("object").get("name"),
-                          "sentence": "Upvoted",
-                          "published": activiyJson.get("published")[:10],
-                          "publishedTime": activiyJson.get("published")[11:16]
-                          }
-            feedList.append(feedUpvote)
-        # activity type-5 (Downvote activity)
-        if eachActivity.activity_type == '5':
-            activiyJson = eachActivity.activity_JSON
-            userID = int(activiyJson.get("actor").get("url").split("/")[-1])
-            articleID = int(activiyJson.get("object").get("url").split("/")[-1])
-            feedDownvote = {"userID": userID,
-                            "userName": activiyJson.get("actor").get("name"),
-                            "articleID": articleID,
-                            "articleName": activiyJson.get("object").get("name"),
-                            "sentence": "Downvoted",
-                            "published": activiyJson.get("published")[:10],
-                            "publishedTime": activiyJson.get("published")[11:16]
-                            }
-            feedList.append(feedDownvote)
-        # activity type-6 (Tag activity)
-        if eachActivity.activity_type == '6':
-            activiyJson = eachActivity.activity_JSON
-            userID = int(activiyJson.get("actor").get("url").split("/")[-1])
-            articleID = int(activiyJson.get("object").get("url").split("/")[-1])
-            feedTagged = {"userID": userID,
-                          "userName": activiyJson.get("actor").get("name"),
-                          "articleID": articleID,
-                          "articleName": activiyJson.get("object").get("name"),
-                          "sentence": "Tagged",
-                          "published": activiyJson.get("published")[:10],
-                          "publishedTime": activiyJson.get("published")[11:16]
-                          }
-            feedList.append(feedTagged)
+    feed_list = Feed(recentActivities).getFeed()
+
+    # In order to get tagged articles of the user we filter the articles with user id
+    taggedArticles = TagRelation.objects.filter(tagger_id = user.id)
+    tagged_articlelist = []
+    tagged_article_idlist =[]
+    for tags in taggedArticles:
+        tag_article_id=tags.article_id
+        articleid_url=reverse('wikodeApp:articleDetail', args=(tag_article_id,))
+        article=Article.objects.get(id=tag_article_id)
+        if (tag_article_id in tagged_article_idlist):
+            continue
+        article_tags= TagRelation.objects.filter(article_id=tag_article_id)
+        tagnames=""
+        for taginArticles in article_tags:
+            tagnames += taginArticles.tag.label + ", "
+        tagnames = tagnames[:-2]
+        tagged_articles={"articletitle": article.Title,
+                         "PM_id": article.PMID,
+                         "tagnames":tagnames,
+                         "articleid_url": articleid_url
+                         }
+
+        tagged_article_idlist.append(tag_article_id)
+        tagged_articlelist.append(tagged_articles)
 
     # Then here we show the send the activities frontend
 
@@ -500,7 +381,8 @@ def myProfilePage(request):
         'follower_list': follower_list,
         'followee_list': followee_list,
         "parent_template": "wikodeApp/profilePage.html",
-        "feedList": feedList
+        "feedList": feed_list,
+        "tag_list": tagged_articlelist,
     }
 
     return render(request, 'wikodeApp/profilePage.html', context)
@@ -510,10 +392,6 @@ def myProfilePage(request):
 ## Navigates to /profile/# url.
 @login_required
 def getProfilePageOfOtherUser(request, pk):
-    ## TODO
-    ## pk arguement may be a unique random 6 digit number that represents the requested user.
-    ## Here we need to convert the unique random number to user id. Or have another number that represents user.
-    ## For development purpose, pk is hardcoded below.
     other_user = User.objects.get(id=pk)
     session_user = User.objects.get(id=request.user.id)
 
@@ -522,98 +400,37 @@ def getProfilePageOfOtherUser(request, pk):
 
     is_followed = FollowRelation.objects.filter(followee_id=other_user.id, follower_id=session_user.id).exists()
 
-    follower_list = followManager.getFollowerList(other_user)
-    followee_list = followManager.getFolloweeList(other_user)
+    follower_list = json.dumps(followManager.getFollowerList(other_user))
+    followee_list = json.dumps(followManager.getFolloweeList(other_user))
 
     # In order to get recent activities of a user we retrieve the activities of the current user
     recentActivities = Activity.objects.filter(user_id=other_user.id)
-    feedList = []
-    # Here we are creating feeds by considering the activity type
-    for eachActivity in recentActivities:
-        # activity type-1 (View activity)
-        if eachActivity.activity_type == '1':
-            activiyJson = eachActivity.activity_JSON
-            userID = int(activiyJson.get("actor").get("url").split("/")[-1])
-            articleID = int(activiyJson.get("object").get("url").split("/")[-1])
-            feedView = {"userID": userID,
-                        "userName": activiyJson.get("actor").get("name"),
-                        "articleID": articleID,
-                        "articleName": activiyJson.get("object").get("name"),
-                        "sentence": "Viewed",
-                        "published": activiyJson.get("published")[:10],
-                        "publishedTime": activiyJson.get("published")[11:16]
-                        }
-            feedList.append(feedView)
-        # activity type-2 (follow activity)
-        if eachActivity.activity_type == '2':
-            activiyJson = eachActivity.activity_JSON
-            userID = int(activiyJson.get("actor").get("url").split("/")[-1])
-            articleID = int(activiyJson.get("object").get("url").split("/")[-1])
-            feedFollow = {"userID": userID,
-                          "userName": activiyJson.get("actor").get("name"),
-                          "articleID": articleID,
-                          "articleName": activiyJson.get("object").get("name"),
-                          "sentence": "Followed",
-                          "published": activiyJson.get("published")[:10],
-                          "publishedTime": activiyJson.get("published")[11:16]
-                          }
-            feedList.append(feedFollow)
-        # activity type-3 (Unfollow activity)
-        if eachActivity.activity_type == '3':
-            activiyJson = eachActivity.activity_JSON
-            userID = int(activiyJson.get("actor").get("url").split("/")[-1])
-            articleID = int(activiyJson.get("object").get("url").split("/")[-1])
-            feedUnFollow = {"userID": userID,
-                            "userName": activiyJson.get("actor").get("name"),
-                            "articleID": articleID,
-                            "articleName": activiyJson.get("object").get("name"),
-                            "sentence": "Unfollowed",
-                            "published": activiyJson.get("published")[:10],
-                            "publishedTime": activiyJson.get("published")[11:16]
-                            }
-            feedList.append(feedUnFollow)
-        # activity type-4 (Upvote activity)
-        if eachActivity.activity_type == '4':
-            activiyJson = eachActivity.activity_JSON
-            userID = int(activiyJson.get("actor").get("url").split("/")[-1])
-            articleID = int(activiyJson.get("object").get("url").split("/")[-1])
-            feedUpvote = {"userID": userID,
-                          "userName": activiyJson.get("actor").get("name"),
-                          "articleID": articleID,
-                          "articleName": activiyJson.get("object").get("name"),
-                          "sentence": "Upvoted",
-                          "published": activiyJson.get("published")[:10],
-                          "publishedTime": activiyJson.get("published")[11:16]
-                          }
-            feedList.append(feedUpvote)
-        # activity type-5 (Downvote activity)
-        if eachActivity.activity_type == '5':
-            activiyJson = eachActivity.activity_JSON
-            userID = int(activiyJson.get("actor").get("url").split("/")[-1])
-            articleID = int(activiyJson.get("object").get("url").split("/")[-1])
-            feedDownvote = {"userID": userID,
-                            "userName": activiyJson.get("actor").get("name"),
-                            "articleID": articleID,
-                            "articleName": activiyJson.get("object").get("name"),
-                            "sentence": "Downvoted",
-                            "published": activiyJson.get("published")[:10],
-                            "publishedTime": activiyJson.get("published")[11:16]
-                            }
-            feedList.append(feedDownvote)
-        # activity type-6 (Tag activity)
-        if eachActivity.activity_type == '6':
-            activiyJson = eachActivity.activity_JSON
-            userID = int(activiyJson.get("actor").get("url").split("/")[-1])
-            articleID = int(activiyJson.get("object").get("url").split("/")[-1])
-            feedTagged = {"userID": userID,
-                          "userName": activiyJson.get("actor").get("name"),
-                          "articleID": articleID,
-                          "articleName": activiyJson.get("object").get("name"),
-                          "sentence": "Tagged",
-                          "published": activiyJson.get("published")[:10],
-                          "publishedTime": activiyJson.get("published")[11:16]
-                          }
-            feedList.append(feedTagged)
+    feed_list = Feed(recentActivities).getFeed()
+
+    # In order to get tagged articles of the user we filter the articles with user id
+    taggedArticles = TagRelation.objects.filter(tagger_id=other_user.id)
+    tagged_articlelist = []
+    #we gather ids here
+    tagged_article_idlist = []
+    for tags in taggedArticles:
+        tag_article_id = tags.article_id
+        articleid_url = reverse('wikodeApp:articleDetail', args=(tag_article_id,))
+        if (tag_article_id in tagged_article_idlist):
+            continue
+        article = Article.objects.get(id=tag_article_id)
+        article_tags = TagRelation.objects.filter(article_id=tag_article_id)
+        tagnames = ""
+        for taginArticles in article_tags:
+            tagnames += taginArticles.tag.label + ", "
+        tagnames = tagnames[:-2]
+        #create json for the html
+        tagged_articles = {"articletitle": article.Title,
+                           "PM_id": article.PMID,
+                           "tagnames": tagnames,
+                           "articleid_url": articleid_url
+                           }
+        tagged_article_idlist.append(tag_article_id)
+        tagged_articlelist.append(tagged_articles)
 
     # Then here we show the send the activities frontend
 
@@ -623,12 +440,17 @@ def getProfilePageOfOtherUser(request, pk):
         'follower_list': follower_list,
         'followee_list': followee_list,
         "parent_template": "wikodeApp/profilePage.html",
-        "feedList": feedList
+        "feedList": feed_list,
+        "tag_list": tagged_articlelist,
     }
 
     return render(request, 'wikodeApp/profilePage.html', context)
 
-
+## Adds the other_user to session user's followee list.
+## If already following, unfollows it.
+## 'Can follows Kenan'
+## Can = Follower
+## Kenan = Followee
 @login_required
 def followUser(request, pk):
     ## TODO
@@ -637,8 +459,9 @@ def followUser(request, pk):
     ## For development purpose, pk is hardcoded below.
     other_user = User.objects.get(id=pk)
     session_user = User.objects.get(id=request.user.id)
-    activityManager = ActivityManager(session_user.id)
+    activityManager = ActivityManager(session_user)
 
+    ## is_followed is True when the session user is already following the other user.
     is_followed = FollowRelation.objects.filter(followee_id=other_user.id, follower_id=session_user.id).exists()
 
     if is_followed:
@@ -661,10 +484,14 @@ def vote(request):
         tag_relation_id = request.POST.get('tagRelationId')
         vote_type = request.POST.get('voteType')
 
+        activity_manager = ActivityManager(user=request.user)
+        tag_id = TagRelation.objects.get(id=tag_relation_id).tag_id
         if vote_type == 'upVote':
             vote_manager.upVote(tag_relation_id)
+            activity_manager.saveUpvoteActivity(tag_id)
         else:
             vote_manager.downVote(tag_relation_id)
+            activity_manager.saveDownvoteActivity(tag_id)
 
         vote_sum = vote_manager.getVoteSum(tag_relation_id)
         TagRelation.objects.filter(id=tag_relation_id).update(vote_sum=vote_sum)
@@ -674,3 +501,7 @@ def vote(request):
         tag_relation_ids = request.GET.get('tagRelationIds').split(',')
         user_vote_dict = vote_manager.getUserVoteDict(tag_relation_ids)
         return JsonResponse({"userVoteDict": user_vote_dict}, status=200)
+
+
+def error(request, *args, **argv):
+    return render(request, 'wikodeApp/error.html')
