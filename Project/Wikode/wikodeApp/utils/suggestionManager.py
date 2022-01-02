@@ -58,25 +58,25 @@ class SuggestionManager:
 
         tagged_articles_from_followee = self.get_tagged_articles_from_followee()
         if tagged_articles_from_followee:
-            self.article_list.append(self.get_tagged_articles_from_followee())
+            self.article_list.append(tagged_articles_from_followee)
             if len(self.article_list) >= self.suggestion_limit:
                 return self.article_list
 
         viewed_article_suggestion_from_followee = self.get_viewed_article_suggestion_from_followee()
         if viewed_article_suggestion_from_followee:
-            self.article_list.append(self.get_viewed_article_suggestion_from_followee())
+            self.article_list.append(viewed_article_suggestion_from_followee)
             if len(self.article_list) >= self.suggestion_limit:
                 return self.article_list
 
         most_viewed_article = self.get_most_viewed_article()
         if most_viewed_article:
-            self.article_list.append(self.get_most_viewed_article())
+            self.article_list.append(most_viewed_article)
             if len(self.article_list) >= self.suggestion_limit:
                 return self.article_list
 
         recently_tagged_article = self.get_recently_tagged_article()
         if recently_tagged_article:
-            self.article_list.append(self.get_recently_tagged_article())
+            self.article_list.append(recently_tagged_article)
 
 
         self.get_random_article()
@@ -351,6 +351,7 @@ class SuggestionManager:
     def get_article_suggestionDTO_list(self):
         try:
             suggested_articles = self.get_article_suggestion()
+            print(suggested_articles)
             article_suggestionDTO_list = []
             for article in suggested_articles:
                 if article and not isinstance(article, list):
