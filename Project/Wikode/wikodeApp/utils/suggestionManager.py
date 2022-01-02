@@ -95,7 +95,7 @@ class SuggestionManager:
 
         followees_of_followees = self.get_followees_of_followees()
         if followees_of_followees:
-            self.user_list.append(self.followees_of_followees)
+            self.user_list.append(followees_of_followees)
             if len(self.user_list) >= self.user_limit:
                 return self.user_list
 
@@ -107,7 +107,7 @@ class SuggestionManager:
 
         most_followed_user = self.get_most_followed_user()
         if most_followed_user:
-            self.user_list.append(self.get_most_followed_user())
+            self.user_list.append(most_followed_user)
             if len(self.user_list) >= self.user_limit:
                 return self.user_list
 
@@ -279,7 +279,7 @@ class SuggestionManager:
         user_list = []
         for follower in self.followers:
             if follower not in self.followees:
-                followers_that_is_not_followed_list.append(followers_that_is_not_followed_list)
+                followers_that_is_not_followed_list.append(follower)
 
         for user in followers_that_is_not_followed_list:
             id = user[0]
