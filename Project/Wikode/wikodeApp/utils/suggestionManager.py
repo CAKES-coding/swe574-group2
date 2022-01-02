@@ -52,21 +52,35 @@ class SuggestionManager:
 
         other_tagged_articles = self.get_other_tagged_articles()
         if other_tagged_articles:
-            self.article_list.append(other_tagged_articles)
-            if len(self.article_list) >= self.suggestion_limit:
-                return self.article_list
+            if isinstance(other_tagged_articles, list):
+                for item in other_tagged_articles:
+                    self.article_list.append(item)
+                    if len(self.article_list) >= self.suggestion_limit:
+                        return self.article_list
+            else:
+                self.article_list.append(other_tagged_articles)
+
 
         tagged_articles_from_followee = self.get_tagged_articles_from_followee()
         if tagged_articles_from_followee:
-            self.article_list.append(tagged_articles_from_followee)
-            if len(self.article_list) >= self.suggestion_limit:
-                return self.article_list
+            if isinstance(tagged_articles_from_followee, list):
+                for item in tagged_articles_from_followee:
+                    self.article_list.append(item)
+                    if len(self.article_list) >= self.suggestion_limit:
+                        return self.article_list
+            else:
+                self.article_list.append(tagged_articles_from_followee)
 
         viewed_article_suggestion_from_followee = self.get_viewed_article_suggestion_from_followee()
         if viewed_article_suggestion_from_followee:
-            self.article_list.append(viewed_article_suggestion_from_followee)
-            if len(self.article_list) >= self.suggestion_limit:
-                return self.article_list
+            if isinstance(viewed_article_suggestion_from_followee, list):
+                for item in viewed_article_suggestion_from_followee:
+                    self.article_list.append(item)
+                    if len(self.article_list) >= self.suggestion_limit:
+                        return self.article_list
+            else:
+                self.article_list.append(viewed_article_suggestion_from_followee)
+
 
         most_viewed_article = self.get_most_viewed_article()
         if most_viewed_article:
