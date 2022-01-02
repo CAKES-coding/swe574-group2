@@ -36,6 +36,7 @@ class SuggestionManager:
         self.article_id_list = []
         self.user_list = []
         self.user_id_list = []
+        self.user_id_list.append(user_id)
         if owner:
             self.owner = owner
             self.followers = getFollowerList(owner)
@@ -292,12 +293,16 @@ class SuggestionManager:
             user = User.objects.get(id=followee[0])
             users_followees = getFolloweeList(user)
             for followee2 in users_followees:
-                followee2_user = User.objects.get(id=followee2[0])
-                if followee2_user in followees_of_followees:
-                    continue
+                id = followee2[0]
+                if id not in self.user_id_list:
+                    followee2_user = User.objects.get(id=id)
+                    if followee2_user in followees_of_followees:
+                        continue
+                    else:
+                        self.user_id_list.append(followee2[0])
+                        followees_of_followees.append(followee2_user)
                 else:
-                    self.user_id_list.append(followee2[0])
-                    followees_of_followees.append(followee2_user)
+                    continue
 
         return followees_of_followees
 
