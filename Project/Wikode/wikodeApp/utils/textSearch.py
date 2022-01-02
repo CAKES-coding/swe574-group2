@@ -105,10 +105,13 @@ class Search:
         articles_from_child_tags = Article.objects.prefetch_related('Tags') \
             .filter(Tags__childTags__in=main_tags, *self.filter_queries) \
             .annotate(a_rank=Cast(0.99, FloatField()))
+
+        # All siblings of found tags
         articles_from_sibling_tags = Article.objects.prefetch_related('Tags') \
             .filter(Tags__childTags__in=parent_tags, *self.filter_queries) \
             .annotate(a_rank=Cast(0.98, FloatField()))
 
+        # Union results
         related_articles_from_all_tags = (articles_from_main_tags
                                           .union(articles_from_child_tags)
                                           .union(articles_from_sibling_tags)) \
