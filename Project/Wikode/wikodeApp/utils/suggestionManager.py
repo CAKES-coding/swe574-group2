@@ -125,8 +125,9 @@ class SuggestionManager:
     # Gets the most viewed article (1)
     # chekcs if the owner has already seen it
     def get_most_viewed_article(self):
-        most_common = \
-            Activity.objects.filter(activity_type=1, target_type=3).annotate(mc=Count('target_id')).order_by('-mc')[0]
+        most_common = Activity.objects.filter(activity_type=1, target_type=3)\
+            .annotate(mc=Count('target_id'))\
+            .order_by('-mc')[0]
         if most_common:
             viewed_article_id_list = self.get_my_viewed_id_list()
             if most_common.target_id in viewed_article_id_list:
@@ -199,7 +200,8 @@ class SuggestionManager:
         if self.followees:
             for followee in self.followees:
                 if followee:
-                    followee_list = Activity.objects.filter(user_id=followee[0], activity_type=activity_type,
+                    followee_list = Activity.objects.filter(user_id=followee[0],
+                                                            activity_type=activity_type,
                                                             target_type=3)
                     for x in followee_list:
                         if x:
@@ -316,8 +318,8 @@ class SuggestionManager:
         for viewed_article in viewed_articles:
             viewed_article_ids.append(viewed_article.target_id)
 
-        other_views = Activity.objects.filter(activity_type=1, target_type=3, target_id__in=viewed_article_ids).exclude(
-            user_id=self.user_id)
+        other_views = Activity.objects.filter(activity_type=1, target_type=3, target_id__in=viewed_article_ids)\
+            .exclude(user_id=self.user_id)
         for view in other_views:
             id = view.user_id
             if self.check_if_user_is_followee(user_id=id):
@@ -359,7 +361,9 @@ class SuggestionManager:
                     for article_item in article:
                         authors = Author.objects.filter(article=article_item)
                         article_suggestionDTO_list.append(
-                            ArticleSuggestionDTO(article_item.id, article_item.Title, article_item.PublicationDate, authors))
+                            ArticleSuggestionDTO(
+                                article_item.id, article_item.Title, article_item.PublicationDate, authors
+                            ))
 
             return article_suggestionDTO_list
         except IndexError as error:
