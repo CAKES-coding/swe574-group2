@@ -49,31 +49,53 @@ class SuggestionManager:
     # gets random articles if the logic is not sufficient
     def get_article_suggestion(self):
 
-        self.article_list.append(self.get_other_tagged_articles())
-        if len(self.article_list) >= self.suggestion_limit:
-            return self.article_list
+        get_other_tagged_articles = self.get_other_tagged_articles()
+        if get_other_tagged_articles:
+            if isinstance(get_other_tagged_articles, list):
+                for item in get_other_tagged_articles:
+                    self.article_list.append(item)
+                if len(self.article_list) >= self.suggestion_limit:
+                    return self.article_list
+            else:
+                self.article_list.append(get_other_tagged_articles)
+                if len(self.article_list) >= self.suggestion_limit:
+                    return self.article_list
 
         tagged_articles_from_followee = self.get_tagged_articles_from_followee()
         if tagged_articles_from_followee:
-            self.article_list.append(self.get_tagged_articles_from_followee())
-            if len(self.article_list) >= self.suggestion_limit:
-                return self.article_list
+            if isinstance(get_other_tagged_articles, list):
+                for item in tagged_articles_from_followee:
+                    self.article_list.append(item)
+                if len(self.article_list) >= self.suggestion_limit:
+                    return self.article_list
+            else:
+                self.article_list.append(tagged_articles_from_followee)
+                if len(self.article_list) >= self.suggestion_limit:
+                    return self.article_list
 
         viewed_article_suggestion_from_followee = self.get_viewed_article_suggestion_from_followee()
         if viewed_article_suggestion_from_followee:
-            self.article_list.append(self.get_viewed_article_suggestion_from_followee())
-            if len(self.article_list) >= self.suggestion_limit:
-                return self.article_list
+            if isinstance(viewed_article_suggestion_from_followee, list):
+                for item in viewed_article_suggestion_from_followee:
+                    self.article_list.append(item)
+                if len(self.article_list) >= self.suggestion_limit:
+                    return self.article_list
+            else:
+                self.article_list.append(viewed_article_suggestion_from_followee)
+                if len(self.article_list) >= self.suggestion_limit:
+                    return self.article_list
 
         most_viewed_article = self.get_most_viewed_article()
         if most_viewed_article:
-            self.article_list.append(self.get_most_viewed_article())
+            self.article_list.append(most_viewed_article)
             if len(self.article_list) >= self.suggestion_limit:
                 return self.article_list
 
         recently_tagged_article = self.get_recently_tagged_article()
         if recently_tagged_article:
-            self.article_list.append(self.get_recently_tagged_article())
+            self.article_list.append(recently_tagged_article)
+            if len(self.article_list) >= self.suggestion_limit:
+                return self.article_list
 
 
         self.get_random_article()
