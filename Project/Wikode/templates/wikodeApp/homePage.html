@@ -61,69 +61,37 @@
                                         <!--In this part we are showing the user some articles that she or he might be insterested in-->
                                         <h5>Suggested Articles</h5>
                                         <ul class="list-group list-group-dividered list-group-full">
-                                            <li class="list-group-item">
-                                                <div class="media-body">
-                                                    <!--This redirection here is dummy for now, we will map it to real articles-->
-                                                    <p><a href="#">Current situation of COVID-19 in South America</a>
-                                                        <small>12.04.2020</small>
-                                                    <p class="no-border">
-                                                        <small>Rodriguez-Morales AJ, Gallego V, Escalera-Antezana
-                                                            JP </small>
-                                                    </p>
-                                                </div>
-                                            </li>
-                                            <hr>
-                                            <li class="list-group-item">
-                                                <div class="media-body">
-                                                    <p><a href="#">Genetic variants and source of introduction of
-                                                        SARS-CoV-2 in South America.</a>
-                                                        <small>01.10.2020</small>
-                                                    <p class="no-border">
-                                                        <small>Poterico JA, Mestanza O. </small>
-                                                    </p>
-                                                </div>
-                                            </li>
-                                            <hr>
-                                            <li class="list-group-item">
-                                                <div class="media-body">
-                                                    <p><a href="#">COVID-19 in Latin America: The implications of the
-                                                        first confirmed case in Brazil.</a>
-                                                        <small>01.02.2020</small>
-                                                    <p class="no-border">
-                                                        <small> Rodriguez-Morales AJ, Gallego V, Escalera-Antezana
-                                                            JP </small>
-                                                    </p>
-                                                </div>
-                                            </li>
+                                            {% for articleSuggestionDTO in articleSuggestionDTOList %}
+                                                <li class="list-group-item">
+                                                    <div class="media-body">
+                                                        <p>
+                                                            <a href="{{ articleSuggestionDTO.url }}">{{ articleSuggestionDTO.title }}</a>
+                                                            <small>{{ articleSuggestionDTO.published_date }}</small>
+                                                        <p class="no-border">
+                                                            <small>{{ articleSuggestionDTO.authors }}</small>
+                                                        </p>
+                                                    </div>
+                                                </li>
+                                                <hr>
+                                            {% endfor %}
                                         </ul>
                                         <!--In this part we are showing the user some users that she or he might be insterested in as a suggestion-->
                                         <br>
                                         <h5>Suggested Users</h5>
                                         <ul class="list-group list-group-dividered list-group-full">
-                                            <li class="list-group-item">
-                                                <div class="media-body">
-                                                    <p>
-                                                        <a href="{% url 'wikodeApp:getProfilePageOfOtherUser' 3 %}">Kenan
-                                                            Kural</a> - <a>14 followers</a>
-                                                    </p>
-                                                </div>
-                                            </li>
-                                            <li class="list-group-item">
-                                                <div class="media-body">
-                                                    <p>
-                                                        <a href="{% url 'wikodeApp:getProfilePageOfOtherUser' 2 %}">Can
-                                                            Dayan</a> - <a>8 followers</a>
-                                                    </p>
-                                                </div>
-                                            </li>
-                                            <li class="list-group-item">
-                                                <div class="media-body">
-                                                    <p>
-                                                        <a href="{% url 'wikodeApp:getProfilePageOfOtherUser' 4 %}">Emre
-                                                            Çalık</a> - <a>9 followers</a>
-                                                    </p>
-                                                </div>
-                                            </li>
+                                            {% for userSuggestionDTO in userSuggestionDTOList %}
+                                                <li class="list-group-item">
+                                                    <div class="media-body">
+                                                        <p>
+                                                            <a href="{{ userSuggestionDTO.url }}">
+                                                                {{ userSuggestionDTO.first_name }} {{ userSuggestionDTO.last_name }}
+                                                                </a> - <a>
+                                                                {{ userSuggestionDTO.follower_count }} followers
+                                                            </a>
+                                                        </p>
+                                                    </div>
+                                                </li>
+                                            {% endfor %}
                                         </ul>
                                     </div>
                                 </div>

@@ -59,3 +59,8 @@
     background-color: #5bc0de;
     padding: 3px;
 }
+
+div.tag_list {
+  height: 400px;
+  overflow: scroll;
+}

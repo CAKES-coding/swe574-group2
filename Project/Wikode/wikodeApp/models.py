@@ -2,7 +2,8 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.contrib.postgres.search import SearchVectorField, SearchVector
-from django.contrib.postgres.fields import JSONField
+from django.db.models import JSONField
+from datetime import datetime
 
 
 class RegistrationApplication(models.Model):
@@ -55,7 +56,7 @@ class Keyword(models.Model):
 
 
 class Tag(models.Model):
-    wikiId = models.CharField(max_length=64)
+    wikiId = models.CharField(max_length=64, null=True)
     label = models.CharField(max_length=512)
     description = models.TextField(max_length=1024, null=True)
     aliases = models.TextField(max_length=1024, null=True)
@@ -115,11 +116,11 @@ class Activity(models.Model):
                     ('2', 'Tag'),
                     ('3', 'Article'))
 
-    user_id = models.IntegerField(max_length=8)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     activity_type = models.CharField(max_length=8, choices=activity_types)
     target_type = models.CharField(max_length=8, choices=target_types)
 
-    target_id = models.IntegerField(max_length=8)
+    target_id = models.IntegerField()
 
     activity_JSON = JSONField()
 
@@ -130,11 +131,13 @@ class Annotation(models.Model):
 
 class TagRelation(models.Model):
     article = models.ForeignKey(Article, on_delete=models.CASCADE)
-    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE, null=True)
     fragment = models.TextField(max_length=1024)
     start_index = models.IntegerField(null=True)
     end_index = models.IntegerField(null=True)
     vote_sum = models.IntegerField(default=0)
+    date = models.DateTimeField(default=datetime.now(), blank=True)
+    tagger = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
 class Vote(models.Model):
@@ -147,4 +150,18 @@ class FollowRelation(models.Model):
     follower = models.ForeignKey(User, related_name='follower', on_delete=models.CASCADE)
     followee = models.ForeignKey(User, related_name='followee', on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now_add=True)
+
+
+# Will be used if suggestionManager is required
+# to save suggestions on a specified time interval.
+class SuggestionRecord(models.Model):
+    suggestion_types = (
+        ('1', 'Article'),
+        ('2', 'User')
+    )
+
+    suggestion_type = models.CharField(max_length=8, choices=suggestion_types)
+    suggestion_owner = models.ForeignKey(User, related_name='owner', on_delete=models.CASCADE)
+    article_id = models.ForeignKey(Article, on_delete=models.CASCADE, null=True)
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
