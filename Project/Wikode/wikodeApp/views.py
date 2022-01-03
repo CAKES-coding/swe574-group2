@@ -453,10 +453,6 @@ def getProfilePageOfOtherUser(request, pk):
 ## Kenan = Followee
 @login_required
 def followUser(request, pk):
-    ## TODO
-    ## pk arguement may be a unique random 6 digit number that represents the requested user.
-    ## Here we need to convert the unique random number to user id. Or have another number that represents user.
-    ## For development purpose, pk is hardcoded below.
     other_user = User.objects.get(id=pk)
     session_user = User.objects.get(id=request.user.id)
     activityManager = ActivityManager(session_user)
