@@ -95,7 +95,6 @@ class Search:
     def getRelatedArticlesByTags(self):
 
         main_tags = Tag.objects.filter(Q(searchIndex=self.tag_search_query))
-        # Todo: Find dynamic way to rank articles from tags
         articles_from_main_tags = Article.objects.prefetch_related('Tags') \
             .filter(Q(Tags__searchIndex=self.tag_search_query, *self.filter_queries)) \
             .annotate(a_rank=Cast(1, FloatField()))
