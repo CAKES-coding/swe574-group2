@@ -148,11 +148,11 @@ class ActivityManager:
 
     # This method saves an upvote activity
     # target_id: the id of the tag which is being upvoted
-    def saveUpvoteActivity(self, target_id):
+    def saveUpvoteActivity(self, target_id, article_id):
         target = self.getTargetAsTag(target_id)
         if target:
             activity_target_type = 'Note'
-            activity_target_url = self.getTagURL(id=target_id)
+            activity_target_url = self.getTagURL(id=article_id)
             activity_target_name = target.label
 
         json = {
@@ -185,11 +185,11 @@ class ActivityManager:
 
     # This method saves a downvote activity
     # target_id: the id of the tag which is being downvoted
-    def saveDownvoteActivity(self, target_id):
+    def saveDownvoteActivity(self, target_id, article_id):
         target = self.getTargetAsTag(target_id)
         if target:
             activity_target_type = 'Note'
-            activity_target_url = self.getTagURL(id=target_id)
+            activity_target_url = self.getTagURL(id=article_id)
             activity_target_name = target.label
 
         json = {
