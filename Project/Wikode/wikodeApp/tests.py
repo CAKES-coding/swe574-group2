@@ -186,34 +186,34 @@ class Test(TestCase):
 
     def test_article_manager_get_target_as_user(self):
         self.create_user()
-        activity_manager = ActivityManager(user_id=1)
+        activity_manager = ActivityManager(self.user)
         target_user = activity_manager.getTargetAsUser(target_id=1)
         self.assertTrue(isinstance(target_user, RegistrationApplication))
 
     def test_article_manager_get_target_as_article(self):
         self.create_user()
         Article.objects.create(id=3)
-        activity_manager = ActivityManager(user_id=1)
+        activity_manager = ActivityManager(self.user)
         target_article = activity_manager.getTargetAsArticle(target_id=3)
         self.assertTrue(isinstance(target_article, Article))
 
     def test_article_manager_get_target_as_tag(self):
         self.create_user()
         Tag.objects.create(id=4)
-        activity_manager = ActivityManager(user_id=1)
+        activity_manager = ActivityManager(self.user)
         target_tag = activity_manager.getTargetAsTag(target_id=4)
         self.assertTrue(isinstance(target_tag, Tag))
 
     def test_save_view_activity_for_user(self):
         self.create_user()
-        activity_manager = ActivityManager(user_id=1)
+        activity_manager = ActivityManager(self.user)
         activity_manager.saveViewActivity(target_type='1', target_id=1)
         test_activity = Activity.objects.get(target_id=1)
         self.assertTrue(isinstance(test_activity, Activity))
 
     def test_save_view_activity_for_article(self):
         self.create_user()
-        activity_manager = ActivityManager(user_id=1)
+        activity_manager = ActivityManager(self.user)
         Article.objects.create(id=7, Title='test title')
         activity_manager.saveViewActivity(target_type='3', target_id=7)
         test_activity = Activity.objects.get(target_id=7)
@@ -221,7 +221,7 @@ class Test(TestCase):
 
     def test_get_owner_name(self):
         self.create_user()
-        activity_manager = ActivityManager(user_id=1)
+        activity_manager = ActivityManager(self.user)
         name = activity_manager.getOwnerName()
         owner = RegistrationApplication.objects.get(id=1)
         self.assertTrue(isinstance(owner, RegistrationApplication))
@@ -229,7 +229,7 @@ class Test(TestCase):
 
     def test_save_annotation_activity(self):
         self.create_user()
-        activity_manager = ActivityManager(user_id=1)
+        activity_manager = ActivityManager(self.user)
         Tag.objects.create(id=17)
         Article.objects.create(id=123, Title='test title')
         activity_manager.saveAnnotationActivity(target_article_id=123, tag_id=17, start_index=32, end_index=56)
@@ -237,7 +237,7 @@ class Test(TestCase):
 
     def test_save_tagging_activity_for_article(self):
         self.create_user()
-        activity_manager = ActivityManager(user_id=1)
+        activity_manager = ActivityManager(self.user)
         Tag.objects.create(id=12)
         Article.objects.create(id=134, Title='test title')
         activity_manager.saveTaggingActivityForArticle(target_id=134, tag_id=12)
@@ -245,26 +245,26 @@ class Test(TestCase):
 
     def test_save_follow_activity(self):
         self.create_user()
-        activity_manager = ActivityManager(user_id=1)
+        activity_manager = ActivityManager(self.user)
         activity_manager.saveFollowActivity(target_id=1)
         self.assertTrue(isinstance(Activity.objects.get(target_id=1), Activity))
 
     def test_save_unfollow_activity(self):
         self.create_user()
-        activity_manager = ActivityManager(user_id=1)
+        activity_manager = ActivityManager(self.user)
         activity_manager.saveUnfollowActivity(target_id=1)
         self.assertTrue(isinstance(Activity.objects.get(target_id=1), Activity))
 
     def test_save_upvote_activity(self):
         self.create_user()
-        activity_manager = ActivityManager(user_id=1)
+        activity_manager = ActivityManager(self.user)
         Tag.objects.create(id=55)
         activity_manager.saveUpvoteActivity(target_id=55)
         self.assertTrue(isinstance(Activity.objects.get(target_id=55), Activity))
 
     def test_save_downvote_activity(self):
         self.create_user()
-        activity_manager = ActivityManager(user_id=1)
+        activity_manager = ActivityManager(self.user)
         Tag.objects.create(id=88)
         activity_manager.saveDownvoteActivity(target_id=88)
         self.assertTrue(isinstance(Activity.objects.get(target_id=88), Activity))
