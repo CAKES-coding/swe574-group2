@@ -100,7 +100,7 @@
             {% endif %}
             <hr>
             <div class="container-fluid py-4" id="wikientry_form" hidden>
-                <form class="tagForm" method="post">
+                <form class="tagForm form-popup" method="post">
                     {% csrf_token %}
                     {{ tag_form|crispy }}
                     <div id="fragment_info" class="form-group">
