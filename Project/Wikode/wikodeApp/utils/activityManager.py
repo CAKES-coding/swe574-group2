@@ -285,9 +285,13 @@ class ActivityManager:
             "target": {
                 "source": self.getArticleURL(id=target_article_id),
                 "selector": {
-                    "type": "TextPositionSelector",
-                    "start": start_index,
-                    "end": end_index
+                    "type": "XPathSelector",
+                    "value": "//*[@id=\"abstract-text\"]/text()",
+                    "refinedBy": {
+                        "type": "TextPositionSelector",
+                        "start": start_index,
+                        "end": end_index
+                    }
                 }
             }
         }
