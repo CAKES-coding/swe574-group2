@@ -226,8 +226,8 @@ class ActivityManager:
     def saveTaggingActivityForArticle(self, target_id, tag_id):
         target = self.getTargetAsArticle(target_id)
         if target:
-            activity_target_type = 'Article'
-            activity_target_url = self.getTagURL(id=target_id)
+            activity_target_type = 'Page'
+            activity_target_url = self.getArticleURL(id=target_id)
             activity_target_name = target.Title
             used_tag = Tag.objects.get(pk=tag_id)
 
@@ -241,9 +241,6 @@ class ActivityManager:
                 "id": self.getOwnerURL(),
                 "name": self.getOwnerName(),
                 "url": self.getOwnerURL()
-            },
-            "tag": {
-                "id": self.getTagURL(tag_id)
             },
             "object": {
                 "id": activity_target_url,
