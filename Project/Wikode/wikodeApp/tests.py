@@ -21,6 +21,7 @@ class Test(TestCase):
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user('bugs', 'bugs@wikode.com', '123456')
+        self.other_user = User.objects.create_user('other_bugs', 'other_bugs@wikode.com', '123456')
 
     def create_author(self, LastName="Testsurname", ForeName="Testname", Initials="tt"):
         return Author.objects.create(LastName=LastName, ForeName=ForeName, Initials=Initials)
@@ -183,6 +184,7 @@ class Test(TestCase):
 
     def create_user(self):
         RegistrationApplication.objects.create(id=1, name='test_user')
+        RegistrationApplication.objects.create(id=2, name='other_test_user')
 
     def test_article_manager_get_target_as_user(self):
         self.create_user()
@@ -207,8 +209,8 @@ class Test(TestCase):
     def test_save_view_activity_for_user(self):
         self.create_user()
         activity_manager = ActivityManager(self.user)
-        activity_manager.saveViewActivity(target_type='1', target_id=1)
-        test_activity = Activity.objects.get(target_id=1)
+        activity_manager.saveViewActivity(target_type='1', target_id=2)
+        test_activity = Activity.objects.get(target_id=2)
         self.assertTrue(isinstance(test_activity, Activity))
 
     def test_save_view_activity_for_article(self):
@@ -246,14 +248,14 @@ class Test(TestCase):
     def test_save_follow_activity(self):
         self.create_user()
         activity_manager = ActivityManager(self.user)
-        activity_manager.saveFollowActivity(target_id=1)
-        self.assertTrue(isinstance(Activity.objects.get(target_id=1), Activity))
+        activity_manager.saveFollowActivity(target_id=2)
+        self.assertTrue(isinstance(Activity.objects.get(target_id=2), Activity))
 
     def test_save_unfollow_activity(self):
         self.create_user()
         activity_manager = ActivityManager(self.user)
-        activity_manager.saveUnfollowActivity(target_id=1)
-        self.assertTrue(isinstance(Activity.objects.get(target_id=1), Activity))
+        activity_manager.saveUnfollowActivity(target_id=self.other_user.id)
+        self.assertTrue(isinstance(Activity.objects.get(target_id=self.other_user.id), Activity))
 
     def test_save_upvote_activity(self):
         self.create_user()
@@ -265,17 +267,17 @@ class Test(TestCase):
 
     def test_save_downvote_activity(self):
         self.create_user()
+        article = self.create_article()
         activity_manager = ActivityManager(self.user)
         Tag.objects.create(id=88)
-        activity_manager.saveDownvoteActivity(target_id=88)
+        activity_manager.saveDownvoteActivity(target_id=88, article_id=article.id)
         self.assertTrue(isinstance(Activity.objects.get(target_id=88), Activity))
 
     def test_get_other_profile(self):
         self.create_user()
-        other_user = RegistrationApplication.objects.create(id=3, name='test_user_2')
 
         self.client.login(username='bugs', password='123456')
-        url = reverse("wikodeApp:getProfilePageOfOtherUser", args=[3])
+        url = reverse("wikodeApp:getProfilePageOfOtherUser", args=[2])
 
         resp = self.client.get(url)
 
