@@ -229,11 +229,12 @@ class ActivityManager:
             activity_target_type = 'Article'
             activity_target_url = self.getTagURL(id=target_id)
             activity_target_name = target.Title
+            used_tag = Tag.objects.get(pk=tag_id)
 
         json = {
             "@context": "https://www.w3.org/ns/activitystreams",
             "summary": "{} tagged {}".format(self.getOwnerName(), activity_target_name),
-            "type": "Add",
+            "type": "Update",
             "published": self.getCurrentTimeAsISO(),
             "actor": {
                 "type": "Person",
@@ -257,6 +258,7 @@ class ActivityManager:
             activity_type=6,
             target_type=3,
             target_id=target_id,
+            tag=used_tag,
             activity_JSON=json
         )
         activity.save()
