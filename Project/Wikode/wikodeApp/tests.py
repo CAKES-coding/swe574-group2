@@ -223,8 +223,8 @@ class Test(TestCase):
         self.create_user()
         activity_manager = ActivityManager(self.user)
         name = activity_manager.getOwnerName()
-        owner = RegistrationApplication.objects.get(id=1)
-        self.assertTrue(isinstance(owner, RegistrationApplication))
+        owner = User.objects.get(id=1)
+        self.assertTrue(isinstance(owner, User))
         self.assertEqual(owner.name, name)
 
     def test_save_annotation_activity(self):
@@ -257,9 +257,10 @@ class Test(TestCase):
 
     def test_save_upvote_activity(self):
         self.create_user()
+        article = self.create_article()
         activity_manager = ActivityManager(self.user)
         Tag.objects.create(id=55)
-        activity_manager.saveUpvoteActivity(target_id=55)
+        activity_manager.saveUpvoteActivity(target_id=55, article_id=article.id)
         self.assertTrue(isinstance(Activity.objects.get(target_id=55), Activity))
 
     def test_save_downvote_activity(self):
