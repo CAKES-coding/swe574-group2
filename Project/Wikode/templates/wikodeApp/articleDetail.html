@@ -34,9 +34,10 @@
             <p id="abstract-text">{{ abstract }}</p>
             <p class="fw-bold">Keywords</p>
             <p>{{ keywords }}</p>
+            {% if tags %}
             <hr>
             <p class="fw-bold">Tags</p>
-            <div class="tag_list">
+            <div class="tag_list" >
                 <table class="table table-striped">
                     <tr>
                         <th class="align-middle" style="text-align: center">Time</th>
@@ -96,6 +97,7 @@
                     {% endfor %}
                 </table>
             </div>
+            {% endif %}
             <hr>
             <div class="container-fluid py-4" id="wikientry_form" hidden>
                 <form class="tagForm" method="post">
