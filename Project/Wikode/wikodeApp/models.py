@@ -136,7 +136,7 @@ class TagRelation(models.Model):
     start_index = models.IntegerField(null=True)
     end_index = models.IntegerField(null=True)
     vote_sum = models.IntegerField(default=0)
-    date = models.DateTimeField(default=datetime.now(), blank=True)
+    date = models.DateTimeField(default=timezone.now(), blank=True)
     tagger = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
