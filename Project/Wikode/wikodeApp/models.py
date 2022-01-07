@@ -121,6 +121,7 @@ class Activity(models.Model):
     target_type = models.CharField(max_length=8, choices=target_types)
 
     target_id = models.IntegerField()
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE, null=True)
 
     activity_JSON = JSONField()
 

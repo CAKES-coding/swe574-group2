@@ -75,10 +75,10 @@ class Feed:
             # activity type-6 (Tag activity)
             if eachActivity.activity_type == '6':
                 activiyJson = eachActivity.activity_JSON
-                tag_id = int(activiyJson.get('tag').get('id').split('/')[-1])
-                tag_name = Tag.objects.get(pk=tag_id).label
-                if Tag.objects.get(pk=tag_id).wikiId:
-                    tag_url = 'https://www.wikidata.org/wiki/' + Tag.objects.get(pk=tag_id).wikiId
+                tag = eachActivity.tag
+                tag_name = tag.label
+                if tag.wikiId:
+                    tag_url = 'https://www.wikidata.org/wiki/' + str(tag.wikiId)
                 else:
                     tag_url = '#'
                 userID = int(activiyJson.get("actor").get("url").split("/")[-1])
