@@ -481,13 +481,15 @@ def vote(request):
         vote_type = request.POST.get('voteType')
 
         activity_manager = ActivityManager(user=request.user)
-        tag_id = TagRelation.objects.get(id=tag_relation_id).tag_id
+        tag_relation = TagRelation.objects.get(id=tag_relation_id)
+        tag_id = tag_relation.tag_id
+        article_id = tag_relation.article_id
         if vote_type == 'upVote':
             vote_manager.upVote(tag_relation_id)
-            activity_manager.saveUpvoteActivity(tag_id)
+            activity_manager.saveUpvoteActivity(tag_id, article_id)
         else:
             vote_manager.downVote(tag_relation_id)
-            activity_manager.saveDownvoteActivity(tag_id)
+            activity_manager.saveDownvoteActivity(tag_id, article_id)
 
         vote_sum = vote_manager.getVoteSum(tag_relation_id)
         TagRelation.objects.filter(id=tag_relation_id).update(vote_sum=vote_sum)

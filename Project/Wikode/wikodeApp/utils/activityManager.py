@@ -148,11 +148,11 @@ class ActivityManager:
 
     # This method saves an upvote activity
     # target_id: the id of the tag which is being upvoted
-    def saveUpvoteActivity(self, target_id):
+    def saveUpvoteActivity(self, target_id, article_id):
         target = self.getTargetAsTag(target_id)
         if target:
             activity_target_type = 'Note'
-            activity_target_url = self.getTagURL(id=target_id)
+            activity_target_url = self.getTagURL(id=article_id)
             activity_target_name = target.label
 
         json = {
@@ -185,11 +185,11 @@ class ActivityManager:
 
     # This method saves a downvote activity
     # target_id: the id of the tag which is being downvoted
-    def saveDownvoteActivity(self, target_id):
+    def saveDownvoteActivity(self, target_id, article_id):
         target = self.getTargetAsTag(target_id)
         if target:
             activity_target_type = 'Note'
-            activity_target_url = self.getTagURL(id=target_id)
+            activity_target_url = self.getTagURL(id=article_id)
             activity_target_name = target.label
 
         json = {
@@ -226,23 +226,21 @@ class ActivityManager:
     def saveTaggingActivityForArticle(self, target_id, tag_id):
         target = self.getTargetAsArticle(target_id)
         if target:
-            activity_target_type = 'Article'
-            activity_target_url = self.getTagURL(id=target_id)
+            activity_target_type = 'Page'
+            activity_target_url = self.getArticleURL(id=target_id)
             activity_target_name = target.Title
+            used_tag = Tag.objects.get(pk=tag_id)
 
         json = {
             "@context": "https://www.w3.org/ns/activitystreams",
             "summary": "{} tagged {}".format(self.getOwnerName(), activity_target_name),
-            "type": "Add",
+            "type": "Update",
             "published": self.getCurrentTimeAsISO(),
             "actor": {
                 "type": "Person",
                 "id": self.getOwnerURL(),
                 "name": self.getOwnerName(),
                 "url": self.getOwnerURL()
-            },
-            "tag": {
-                "id": self.getTagURL(tag_id)
             },
             "object": {
                 "id": activity_target_url,
@@ -257,6 +255,7 @@ class ActivityManager:
             activity_type=6,
             target_type=3,
             target_id=target_id,
+            tag=used_tag,
             activity_JSON=json
         )
         activity.save()
@@ -286,9 +285,13 @@ class ActivityManager:
             "target": {
                 "source": self.getArticleURL(id=target_article_id),
                 "selector": {
-                    "type": "TextPositionSelector",
-                    "start": start_index,
-                    "end": end_index
+                    "type": "XPathSelector",
+                    "value": "//*[@id=\"abstract-text\"]/text()",
+                    "refinedBy": {
+                        "type": "TextPositionSelector",
+                        "start": start_index,
+                        "end": end_index
+                    }
                 }
             }
         }

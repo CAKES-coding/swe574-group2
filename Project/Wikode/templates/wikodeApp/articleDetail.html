@@ -31,12 +31,13 @@
             </div>
             <hr>
             <p class="fw-bold">Abstract</p>
-            <p id="abstract-text">{{ abstract }}</p>
+            <p id="abstract-text" aria-label="Select the text and right click to annotate. Right click without selecting to annotate whole text." data-balloon-length="medium" data-balloon-pos="left">{{ abstract }}</p>
             <p class="fw-bold">Keywords</p>
             <p>{{ keywords }}</p>
+            {% if tags %}
             <hr>
             <p class="fw-bold">Tags</p>
-            <div class="tag_list">
+            <div class="tag_list" >
                 <table class="table table-striped">
                     <tr>
                         <th class="align-middle" style="text-align: center">Time</th>
@@ -96,19 +97,21 @@
                     {% endfor %}
                 </table>
             </div>
+            {% endif %}
             <hr>
             <div class="container-fluid py-4" id="wikientry_form" hidden>
-                <form class="tagForm" method="post">
+                <form class="tagForm form-popup" method="post">
                     {% csrf_token %}
                     {{ tag_form|crispy }}
                     <div id="fragment_info" class="form-group">
                         <label for="fragment_text">Fragment Text:</label>
                         <input id="fragment_text" class="form-control" type="text" value="" name="fragment_text"
                                readonly>
+                        <div class="form-text">Text fragment that will be annotated.</div>
                         <input id="fragment_start_index" class="form-control"
-                               name="fragment_start_index" value="0">
+                               name="fragment_start_index" value="0" hidden>
                         <input id="fragment_end_index" class="form-control" name="fragment_end_index"
-                               value="-1">
+                               value="-1" hidden>
                     </div>
                     <input
                             class="register-button btn btn-primary mb-2"
@@ -131,29 +134,33 @@
                                 <input id="fragment_text" class="form-control" type="text" value="{{ fragment_text }}"
                                        name="fragment_text"
                                        readonly>
+                                <div class="form-text">Text fragment that will be annotated.</div>
                                 <input id="fragment_start_index" class="form-control" type="hidden"
-                                       name="fragment_start_index" value="{{ start_index }}">
+                                       name="fragment_start_index" value="{{ start_index }}" hidden>
                                 <input id="fragment_end_index" class="form-control" type="hidden"
                                        name="fragment_end_index"
-                                       value="{{ end_index }}">
+                                       value="{{ end_index }}" hidden>
                             </div>
                         {% endif %}
                         <p></p>
                         <div class="form-group">
                             <label for="qid">Entry ID:</label>
                             <input type="text" class="form-control" name="qid" value="{{ qid }}" readonly>
+                            <div class="form-text">Qid of wikidata entry</div>
                         </div>
                         <p></p>
                         <div class="form-group">
                             <label for="label">Label:</label>
                             <textarea type="text" class="form-control" name="label" cols="80" rows="1"
                                       readonly>{{ label }}</textarea>
+                            <div class="form-text">Label for the wikidata entry.</div>
                         </div>
                         <p></p>
                         <div class="form-group">
                             <label for="description">Description:</label>
                             <textarea type="text" class="form-control" name="description" cols="80" rows="5"
                                       readonly>{{ description }}</textarea>
+                            <div class="form-text">Description for the wikidata entry.</div>
                         </div>
                         <p></p>
                         <input
@@ -175,20 +182,21 @@
                         <label for="fragment_text">Fragment Text:</label>
                         <input id="free_fragment_text" class="form-control" type="text" value="" name="fragment_text"
                                readonly>
+                        <div class="form-text">Text fragment that will be annotated.</div>
                         <input id="free_fragment_start_index" class="form-control" type="hidden"
-                               name="fragment_start_index" value="0">
+                               name="fragment_start_index" value="0" hidden>
                         <input id="free_fragment_end_index" class="form-control" type="hidden" name="fragment_end_index"
-                               value="-1">
+                               value="-1" hidden>
                     </div>
                     <p></p>
                     <div class="form-group">
                         <label for="label">Label:</label>
-                        <textarea type="text" class="form-control" name="label" cols="80" rows="1" required></textarea>
+                        <textarea placeholder="Enter a free text label." type="text" class="form-control" name="label" cols="80" rows="1" required></textarea>
                     </div>
                     <p></p>
                     <div class="form-group">
                         <label for="description">Description:</label>
-                        <textarea type="text" class="form-control" name="description" cols="80" rows="5"></textarea>
+                        <textarea placeholder="Enter a description for your annotation (optional)" type="text" class="form-control" name="description" cols="80" rows="5"></textarea>
                     </div>
                     <p></p>
                     <input

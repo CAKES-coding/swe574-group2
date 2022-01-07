@@ -39,7 +39,7 @@ class TagForm(forms.Form):
         widget=autocomplete.ListSelect2(
             url='tag-autocomplete',
             attrs={
-                'style': 'width:100%',
+                'style': 'width:500px',
             }),
         label="Search Wikidata Entry",
     )
