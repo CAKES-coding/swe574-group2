@@ -263,14 +263,22 @@ class SuggestionManager:
     def get_random_article(self):
         viewed_article_id_list = self.get_my_viewed_id_list()
         while (len(self.article_list) < self.suggestion_limit):
-            article = random.choice(Article.objects.all())
-            if article.id in self.article_id_list:
-                continue
-            else:
-                if article.id in viewed_article_id_list:
-                    continue
+            id = random.randrange(200, 20000)
+            try:
+                article = Article.objects.get(pk=id)
+                if article:
+                    if id in self.article_id_list:
+                        pass
+                    else:
+                        if id in viewed_article_id_list:
+                            pass
+                        else:
+                            self.article_id_list.append(id)
+                            self.article_list.append(article)
                 else:
-                    self.article_list.append(article)
+                    pass
+            except:
+                pass
 
     # Returns followees of a user
     # who owner follows
