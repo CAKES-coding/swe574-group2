@@ -5,22 +5,28 @@
 
     {% if date_labels %}
         <div class="container">
-<!--Added this here in order to show the sarched keyword in search results, highlighted as well.             -->
-            <h3 class="lead">Article Results for : <mark> <b>{{search_term}}</b></mark></h3>
-<!--Added this here in order to show the filter options, meaning what the user is filtered.             -->
+            <!--Added this here in order to show the sarched keyword in search results, highlighted as well.             -->
+            <h3 class="lead">Article Results for :
+                <mark><b>{{ search_term }}</b></mark>
+            </h3>
+            <!--Added this here in order to show the filter options, meaning what the user is filtered.             -->
 
-            <h3 id="filterID" class="lead">Filter Parameters : <mark><b>{{filter_params}}</b></mark></h3>
-<!--Added these in order to fix the view of filter parameters            -->
+            <h3 id="filterID" class="lead">Filter Parameters :
+                <mark><b>{{ filter_params }}</b></mark>
+            </h3>
+            <!--Added these in order to fix the view of filter parameters            -->
             <script>
-            let text = document.getElementById("filterID").innerHTML;
-            document.getElementById("filterID").innerHTML = text.replaceAll("_", " ");;
-            let text2 = document.getElementById("filterID").innerHTML;
-            document.getElementById("filterID").innerHTML = text2.replaceAll("&amp", " ");;
+                let text = document.getElementById("filterID").innerHTML;
+                document.getElementById("filterID").innerHTML = text.replaceAll("_", " ");
+                ;
+                let text2 = document.getElementById("filterID").innerHTML;
+                document.getElementById("filterID").innerHTML = text2.replaceAll("&amp", " ");
+                ;
 
 
             </script>
 
-<!--Here we show the chart            -->
+            <!--Here we show the chart            -->
             <canvas id="myChart" width="100" height="30"></canvas>
         </div>
 
@@ -31,7 +37,7 @@
     {% block search_box %}
     {% endblock %}
 
-<!--Here we show the article search results with the required details-->
+    <!--Here we show the article search results with the required details-->
     <div class="container">
         <h3 class="lead">Search Results ({{ result_size }} articles)</h3>
         <table class="table table-striped">
@@ -57,21 +63,55 @@
                 {% else %}
                     <li class="disabled page-item"><span class="page-link">&laquo;</span></li>
                 {% endif %}
-                {% for i in results_list.paginator.page_range %}
-                    {% if results_list.number == i %}
-                        <li class="active page-item"><span class="page-link">{{ i }} <span
-                                class="sr-only">(current)</span></span></li>
-                    {% else %}
-                        <li class="page-item"><a class="page-link"
+                {% if results_list.paginator.page_range|length < 21 %}
+                    {% for i in results_list.paginator.page_range %}
+                        {% if results_list.number == i %}
+                            <li class="active page-item"><span class="page-link">{{ i }} <span
+                                    class="sr-only">(current)</span></span></li>
+                        {% else %}
+                            <li class="page-item"><a class="page-link"
 
-                                {% if filter_params %}
-                                                 href="?page={{ i }}&term={{ search_term }}&{{ filter_params }}">
-                                {% else %}
-                                    href="?page={{ i }}&term={{ search_term }}">
-                                {% endif %}
-                        {{ i }}</a></li>
-                    {% endif %}
-                {% endfor %}
+                                    {% if filter_params %}
+                                                     href="?page={{ i }}&term={{ search_term }}&{{ filter_params }}">
+                                    {% else %}
+                                        href="?page={{ i }}&term={{ search_term }}">
+                                    {% endif %}
+                            {{ i }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    {% for i in results_list.paginator.page_range|slice:"10" %}
+                        {% if results_list.number == i %}
+                            <li class="active page-item"><span class="page-link">{{ i }} <span
+                                    class="sr-only">(current)</span></span></li>
+                        {% else %}
+                            <li class="page-item"><a class="page-link"
+
+                                    {% if filter_params %}
+                                                     href="?page={{ i }}&term={{ search_term }}&{{ filter_params }}">
+                                    {% else %}
+                                        href="?page={{ i }}&term={{ search_term }}">
+                                    {% endif %}
+                            {{ i }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                    <li class="page-item"><a class="page-link" href="#" disabled="True">...</a></li>
+                    {% for i in results_list.paginator.page_range|slice:"-11:-1" %}
+                        {% if results_list.number == i %}
+                            <li class="active page-item"><span class="page-link">{{ i }} <span
+                                    class="sr-only">(current)</span></span></li>
+                        {% else %}
+                            <li class="page-item"><a class="page-link"
+
+                                    {% if filter_params %}
+                                                     href="?page={{ i }}&term={{ search_term }}&{{ filter_params }}">
+                                    {% else %}
+                                        href="?page={{ i }}&term={{ search_term }}">
+                                    {% endif %}
+                            {{ i }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
                 {% if results_list.has_next %}
                     <li class="page-item"><a class="page-link"
                                              href="?page={{ results_list.next_page_number }}&term={{ search_term }}">&raquo;</a>
@@ -82,7 +122,7 @@
             </ul>
         {% endif %}
 
-<!--This is the chart that shows number of articles for searched keyword        -->
+        <!--This is the chart that shows number of articles for searched keyword        -->
     </div>
     {% if date_labels %}
         <script>
@@ -99,14 +139,18 @@
                 },
                 options: {
                     scales: {
-                            yAxes: [{
-                                ticks: {
-                                    beginAtZero: true,
-                                    callback: function(value) {if (value % 1 === 0) {return value;}}
-                        }
-                    }]
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                                callback: function (value) {
+                                    if (value % 1 === 0) {
+                                        return value;
+                                    }
+                                }
+                            }
+                        }]
+                    }
                 }
-              }
             });
         </script>
     {% endif %}
