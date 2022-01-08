@@ -6,11 +6,11 @@ This course is the higher course of SWE 573 - Software Development Practices, wh
 
 The name of the team comes from the initials of the team members.
 
-- 🍰 C an Dayan
-- 🍰 A nıl Turan
-- 🍰 K enan Kural
-- 🍰 E mre Çalık
-- 🍰 S emih Solmaz
+- 🍰 [C an Dayan](https://github.com/active-sludge)
+- 🍰 [A nıl Turan](https://github.com/jajimentol)
+- 🍰 [K enan Kural](https://github.com/kenankural)
+- 🍰 [E mre Çalık](https://github.com/emrecalik)
+- 🍰 [S emih Solmaz](https://github.com/semihsolmaz)
 
 To reach our team;
 
