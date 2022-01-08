@@ -107,7 +107,7 @@ def homePage(request):
 
         else:
             # In order to get recent activities we retrieve the last 50 activities entered to DB
-            recent_activities = Activity.objects.order_by('-id')[:50]
+            recent_activities = Activity.objects.exclude(user=request.user).order_by('-id')[:50]
             feed_list = Feed(recent_activities).getFeed()
 
             suggestion_manager = SuggestionManager(request.user.id)
