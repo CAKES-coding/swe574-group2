@@ -9,7 +9,7 @@ django-compat==1.0.15
 django-crispy-forms==1.11.2
 django-tables2==2.3.4
 django-tsvector-field==0.9.5
-numpy==1.21.3
+numpy==1.22.2
 six==1.16.0
 Wikidata==0.7.0
 wincertstore==0.2
